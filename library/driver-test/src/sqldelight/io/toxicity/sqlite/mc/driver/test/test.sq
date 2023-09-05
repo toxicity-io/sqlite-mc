@@ -1,0 +1,18 @@
+CREATE TABLE testDbo(
+    key     TEXT    PRIMARY KEY,
+    value   TEXT    NOT NULL
+);
+
+get:
+SELECT value
+FROM testDbo
+WHERE key = ?;
+
+upsert {
+    UPDATE testDbo
+    SET value = :value
+    WHERE key = :key;
+
+    INSERT OR IGNORE INTO testDbo(key, value)
+    VALUES(:key,:value);
+}

@@ -1,0 +1,522 @@
+public abstract interface annotation class io/toxicity/sqlite/mc/driver/MCCipherConfigDsl : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class io/toxicity/sqlite/mc/driver/MCConfigDsl : java/lang/annotation/Annotation {
+}
+
+public abstract interface class io/toxicity/sqlite/mc/driver/MCConfigQueries {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/MCConfigQueries$Companion;
+	public abstract fun cipher (Z)Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
+	public abstract fun cipherParam (Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;Lio/toxicity/sqlite/mc/driver/config/Pragma$MC;)Ljava/lang/Object;
+	public abstract fun cipherSalt (Ljava/lang/String;)Ljava/lang/String;
+	public abstract fun cipherSaltRaw (Ljava/lang/String;)[B
+	public static fun from (Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;)Lio/toxicity/sqlite/mc/driver/MCConfigQueries;
+	public abstract fun hmacCheck (Z)Z
+	public abstract fun mcLegacyWAL (Z)Z
+}
+
+public final class io/toxicity/sqlite/mc/driver/MCConfigQueries$Companion {
+	public final fun from (Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;)Lio/toxicity/sqlite/mc/driver/MCConfigQueries;
+}
+
+public abstract class io/toxicity/sqlite/mc/driver/RekeyDriver : app/cash/sqldelight/driver/jdbc/JdbcDriver, app/cash/sqldelight/db/SqlDriver {
+	protected static final field Companion Lio/toxicity/sqlite/mc/driver/RekeyDriver$Companion;
+	public synthetic fun <init> (Lio/toxicity/sqlite/mc/driver/RekeyDriver$Companion$Args;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun addListener ([Ljava/lang/String;Lapp/cash/sqldelight/Query$Listener;)V
+	public final fun beginTransaction (Ljava/sql/Connection;)V
+	public final fun close ()V
+	public final fun closeConnection (Ljava/sql/Connection;)V
+	public static final synthetic fun create$driver (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;Ljava/util/Map;Z)Lio/toxicity/sqlite/mc/driver/RekeyDriver$Companion$Args;
+	public final fun currentTransaction ()Lapp/cash/sqldelight/Transacter$Transaction;
+	public final fun endTransaction (Ljava/sql/Connection;)V
+	public final fun execute (Ljava/lang/Integer;Ljava/lang/String;ILkotlin/jvm/functions/Function1;)Lapp/cash/sqldelight/db/QueryResult;
+	public final fun executeQuery (Ljava/lang/Integer;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/functions/Function1;)Lapp/cash/sqldelight/db/QueryResult;
+	public final fun getConnection ()Ljava/sql/Connection;
+	public final fun getTransaction ()Lapp/cash/sqldelight/driver/jdbc/ConnectionManager$Transaction;
+	public final fun newTransaction ()Lapp/cash/sqldelight/db/QueryResult;
+	public final fun notifyListeners ([Ljava/lang/String;)V
+	protected final fun rekey (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;)V
+	public final fun removeListener ([Ljava/lang/String;Lapp/cash/sqldelight/Query$Listener;)V
+	public final fun rollbackTransaction (Ljava/sql/Connection;)V
+	public final fun setTransaction (Lapp/cash/sqldelight/driver/jdbc/ConnectionManager$Transaction;)V
+}
+
+protected final class io/toxicity/sqlite/mc/driver/RekeyDriver$Companion {
+}
+
+public final class io/toxicity/sqlite/mc/driver/SQLiteMCDriver : io/toxicity/sqlite/mc/driver/RekeyDriver {
+	public final field config Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;
+	public final field isInMemory Z
+	public synthetic fun <init> (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;ZLio/toxicity/sqlite/mc/driver/RekeyDriver$Companion$Args;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/SQLiteMCDriver$Factory {
+	public final field config Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;
+	public fun <init> (Ljava/lang/String;Lapp/cash/sqldelight/db/SqlSchema;Lkotlin/jvm/functions/Function1;)V
+	public final fun create (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun create (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun createBlocking (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;)Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;
+	public final fun createBlocking (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lio/toxicity/sqlite/mc/driver/config/encryption/Key;)Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/DatabasesDir {
+	public fun <init> (Ljava/io/File;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun pathOrNull ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/FactoryConfig {
+	public final field dbName Ljava/lang/String;
+	public final field filesystemConfig Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;
+	public final field schema Lapp/cash/sqldelight/db/SqlSchema;
+	public synthetic fun <init> (Ljava/lang/String;Lapp/cash/sqldelight/db/SqlSchema;Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;Lkotlinx/coroutines/CoroutineDispatcher;[Lapp/cash/sqldelight/db/AfterVersion;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder {
+	public final field afterVersions Ljava/util/List;
+	public final field dbName Ljava/lang/String;
+	public field logger Lkotlin/jvm/functions/Function1;
+	public field redactLogs Z
+	public final field schema Lapp/cash/sqldelight/db/SqlSchema;
+	public final fun afterVersion (JLkotlin/jvm/functions/Function1;)V
+	public final fun filesystem (Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;)V
+	public final fun filesystem (Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;Lkotlin/jvm/functions/Function1;)V
+	public final fun filesystem (Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;)V
+	public final fun filesystem (Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun filesystem$default (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static synthetic fun filesystem$default (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/FilesystemConfig {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig$Companion;
+	public final field databasesDir Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;
+	public final field encryptionConfig Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;
+	public final field encryptionMigrationConfig Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;
+	public synthetic fun <init> (Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public static final fun new (Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;
+	public final fun new (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/FilesystemConfig$Builder {
+	public final field databasesDir Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;
+	public final fun encryption (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;)V
+	public final fun encryption (Lkotlin/jvm/functions/Function1;)V
+	public final fun encryptionMigrations (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;)V
+	public final fun encryptionMigrations (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/FilesystemConfig$Companion {
+	public final fun new (Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;
+}
+
+public abstract class io/toxicity/sqlite/mc/driver/config/Pragma {
+	public final field name Ljava/lang/String;
+	public synthetic fun <init> (Ljava/lang/String;Lio/toxicity/sqlite/mc/driver/config/Pragma$Transformer;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/toxicity/sqlite/mc/driver/config/Pragma$MC : io/toxicity/sqlite/mc/driver/config/Pragma {
+	public synthetic fun <init> (Ljava/lang/String;Lio/toxicity/sqlite/mc/driver/config/Pragma$Transformer;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final synthetic fun getALL$driver ()Ljava/util/Set;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$FAST_KDF_ITER : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$FAST_KDF_ITER;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_ALGORITHM : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_ALGORITHM;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_PNGO : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_PNGO;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_SALT_MASK : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_SALT_MASK;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_USE : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_USE;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$KDF_ALGORITHM : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$KDF_ALGORITHM;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$KDF_ITER : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$KDF_ITER;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$LEGACY : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$LEGACY;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$LEGACY_PAGE_SIZE : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$LEGACY_PAGE_SIZE;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$PLAIN_TEXT_HEADER_SIZE : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$PLAIN_TEXT_HEADER_SIZE;
+}
+
+public abstract class io/toxicity/sqlite/mc/driver/config/encryption/Cipher : java/lang/Comparable {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher$Companion;
+	public final field id I
+	public final field name Ljava/lang/String;
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun compareTo (Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;)I
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public final fun toString ()Ljava/lang/String;
+	public static final fun valueOf (I)Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
+	public static final fun valueOf (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
+	public static final fun valueOfOrNull (I)Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
+	public static final fun valueOfOrNull (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/Cipher$AES128CBC : io/toxicity/sqlite/mc/driver/config/encryption/Cipher {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher$AES128CBC;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/Cipher$AES256CBC : io/toxicity/sqlite/mc/driver/config/encryption/Cipher {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher$AES256CBC;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/Cipher$CHACHA20 : io/toxicity/sqlite/mc/driver/config/encryption/Cipher {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher$CHACHA20;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/Cipher$Companion {
+	public final fun valueOf (I)Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
+	public final fun valueOf (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
+	public final fun valueOfOrNull (I)Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
+	public final fun valueOfOrNull (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/Cipher$RC4 : io/toxicity/sqlite/mc/driver/config/encryption/Cipher {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher$RC4;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/Cipher$SQLCIPHER : io/toxicity/sqlite/mc/driver/config/encryption/Cipher {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher$SQLCIPHER;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Companion;
+	public final field cipherConfig Lio/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig;
+	public final field hmacCheck Z
+	public final field mcLegacyWAL Z
+	public synthetic fun <init> (Lio/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig;ZZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public static final fun new (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;
+	public final fun new (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;
+	public static final fun newOrNull (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;
+	public final fun newOrNull (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;
+	public fun toString ()Ljava/lang/String;
+}
+
+public class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder {
+	public final fun chaCha20 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config;)V
+	public final fun chaCha20 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config;Lkotlin/jvm/functions/Function1;)V
+	public final fun chaCha20 (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun chaCha20$default (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun hmacCheck ()Z
+	public final fun hmacCheck (Z)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;
+	public final fun mcLegacyWAL ()Z
+	public final fun mcLegacyWAL (Z)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;
+	public final fun rc4 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config;)V
+	public final fun rc4 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config;Lkotlin/jvm/functions/Function1;)V
+	public final fun rc4 (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun rc4$default (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;Lio/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun sqlCipher (Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig;)V
+	public final fun sqlCipher (Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig;Lkotlin/jvm/functions/Function1;)V
+	public final fun sqlCipher (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun sqlCipher$default (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun wxAES128 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config;)V
+	public final fun wxAES128 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config;Lkotlin/jvm/functions/Function1;)V
+	public final fun wxAES128 (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun wxAES128$default (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun wxAES256 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config;)V
+	public final fun wxAES256 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config;Lkotlin/jvm/functions/Function1;)V
+	public final fun wxAES256 (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun wxAES256$default (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Companion {
+	public final fun new (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;
+	public final fun newOrNull (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigration {
+	public final field encryptionConfig Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;
+	public final field note Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigration$Builder : io/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder {
+	public field note Ljava/lang/String;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig$Companion;
+	public final field migrations Ljava/util/Set;
+	public synthetic fun <init> (Ljava/util/Set;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public static final fun new (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;
+	public final fun new (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;
+	public static final fun newOrNull (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;
+	public final fun newOrNull (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig$Builder {
+	public final fun migrationFrom (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigration;)V
+	public final fun migrationFrom (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig$Companion {
+	public final fun new (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;
+	public final fun newOrNull (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm : java/lang/Enum {
+	public static final field SHA1 Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
+	public static final field SHA256 Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
+	public static final field SHA512 Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
+	public static fun valueOf (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
+	public static fun values ()[Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/HmacPngo : java/lang/Enum {
+	public static final field BIG_ENDIAN Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
+	public static final field LITTLE_ENDIAN Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
+	public static final field NATIVE Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
+	public static fun valueOf (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
+	public static fun values ()[Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm : java/lang/Enum {
+	public static final field SHA1 Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
+	public static final field SHA256 Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
+	public static final field SHA512 Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
+	public static fun valueOf (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
+	public static fun values ()[Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/Key {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/Key$Companion;
+	public static final field EMPTY Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+	public static final field IN_MEMORY Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+	public final field isRaw Z
+	public synthetic fun <init> (Ljava/lang/String;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun passphrase (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+	public static final fun raw ([B[B)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+	public static final fun raw ([B[BZ)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/Key$Companion {
+	public final fun passphrase (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+	public final fun raw ([B[B)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+	public final fun raw ([B[BZ)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+	public static synthetic fun raw$default (Lio/toxicity/sqlite/mc/driver/config/encryption/Key$Companion;[B[BZILjava/lang/Object;)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config : io/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config$Companion;
+	public static final field Default Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config;
+	public static final field SQLeet Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config;
+	public final field kdfIter I
+	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config$Builder {
+	public final fun default ()V
+	public final fun kdfIter ()I
+	public final fun kdfIter (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config$Builder;
+	public final fun legacy ()I
+	public final fun legacy (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config$Builder;
+	public final fun legacyPageSize ()I
+	public final fun legacyPageSize (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config$Builder;
+	public final fun sqleet ()V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config$Companion {
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config$Options {
+	public final fun default ()V
+	public final fun default (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun default$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun sqleet ()V
+	public final fun sqleet (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun sqleet$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public abstract class io/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig {
+	protected static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig$Companion;
+	public final field cipher Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
+	public final field legacy I
+	public final field legacyPageSize I
+	public synthetic fun <init> (Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun checkKdfIter$driver (I)V
+	public static final fun checkLegacyPageSize$driver (I)V
+	public final fun equals (Ljava/lang/Object;)Z
+	public final fun hashCode ()I
+	public final fun toString ()Ljava/lang/String;
+}
+
+protected final class io/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig$Companion {
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config : io/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config$Companion;
+	public static final field Default Lio/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config;
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config$Builder {
+	public final fun default ()V
+	public final fun legacyPageSize ()I
+	public final fun legacyPageSize (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config$Builder;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config$Companion {
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config$Options {
+	public final fun default ()V
+	public final fun default (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun default$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCRC4Config$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig : io/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Companion;
+	public static final field Default Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig;
+	public final field fastKdfIter I
+	public final field hmacAlgorithm Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
+	public final field hmacPngo Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
+	public final field hmacSaltMask Ljava/lang/Byte;
+	public final field hmacUse Z
+	public final field kdfAlgorithm Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
+	public final field kdfIter I
+	public final field plaintextHeaderSize Ljava/lang/Integer;
+	public static final field v1 Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig;
+	public static final field v2 Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig;
+	public static final field v3 Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig;
+	public static final field v4 Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig;
+	public synthetic fun <init> (IIIIZLio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;Ljava/lang/Byte;Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;Ljava/lang/Integer;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder {
+	public final fun default ()V
+	public final fun fastKdfIter ()I
+	public final fun fastKdfIter (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder;
+	public final fun hmacAlgorithm ()Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
+	public final fun hmacAlgorithm (Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;)Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder;
+	public final fun hmacPngo ()Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
+	public final fun hmacPngo (Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;)Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder;
+	public final fun hmacSaltMask ()Ljava/lang/Byte;
+	public final fun hmacSaltMask (Ljava/lang/Byte;)Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder;
+	public final fun hmacUse ()Z
+	public final fun hmacUse (Z)Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder;
+	public final fun kdfAlgorithm ()Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
+	public final fun kdfAlgorithm (Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;)Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder;
+	public final fun kdfIter ()I
+	public final fun kdfIter (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder;
+	public final fun legacy ()I
+	public final fun legacy (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder;
+	public final fun legacyPageSize ()I
+	public final fun legacyPageSize (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder;
+	public final fun plaintextHeaderSize ()Ljava/lang/Integer;
+	public final fun plaintextHeaderSize (Ljava/lang/Integer;)Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Builder;
+	public final fun v1 ()V
+	public final fun v2 ()V
+	public final fun v3 ()V
+	public final fun v4 ()V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Companion {
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Options {
+	public final fun default ()V
+	public final fun default (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun default$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun v1 ()V
+	public final fun v1 (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun v1$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun v2 ()V
+	public final fun v2 (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun v2$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun v3 ()V
+	public final fun v3 (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun v3$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun v4 ()V
+	public final fun v4 (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun v4$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCSqlCipherConfig$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config : io/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config$Companion;
+	public static final field Default Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config;
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config$Builder {
+	public final fun default ()V
+	public final fun legacy ()I
+	public final fun legacy (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config$Builder;
+	public final fun legacyPageSize ()I
+	public final fun legacyPageSize (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config$Builder;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config$Companion {
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config$Options {
+	public final fun default ()V
+	public final fun default (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun default$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES128Config$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config : io/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config$Companion;
+	public static final field Default Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config;
+	public final field kdfIter I
+	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config$Builder {
+	public final fun default ()V
+	public final fun kdfIter ()I
+	public final fun kdfIter (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config$Builder;
+	public final fun legacy ()I
+	public final fun legacy (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config$Builder;
+	public final fun legacyPageSize ()I
+	public final fun legacyPageSize (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config$Builder;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config$Companion {
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config$Options {
+	public final fun default ()V
+	public final fun default (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun default$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCWxAES256Config$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/internal/ext/StringExtKt {
+	public static final synthetic fun appendIndent (Ljava/lang/StringBuilder;Ljava/lang/Object;)V
+}
+
