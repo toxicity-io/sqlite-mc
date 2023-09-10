@@ -18,7 +18,6 @@ package io.toxicity.sqlite.mc.driver.config.encryption
 import io.toxicity.sqlite.mc.driver.MCCipherConfigDsl
 import io.toxicity.sqlite.mc.driver.MCConfigDsl
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
-import io.toxicity.sqlite.mc.driver.internal.IS_JVM
 import io.toxicity.sqlite.mc.driver.internal.ext.appendIndent
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
 import io.toxicity.sqlite.mc.driver.config.Pragma
@@ -350,10 +349,6 @@ public class EncryptionConfig private constructor(
     @Throws(IllegalArgumentException::class)
     internal fun applyKeyPragma(pragmas: MutablePragmas, key: Key): EncryptionConfig {
         Pragma.MC.KEY.put(pragmas, Pair(key, cipherConfig.cipher))
-
-        if (cipherConfig.cipher is Cipher.SQLCIPHER && key.isRaw && IS_JVM) {
-            Pragma.MC.JDBC_HEXKEY_MODE_SQLCIPHER.put(pragmas, Unit)
-        }
         return this
     }
 }

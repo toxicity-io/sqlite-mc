@@ -65,7 +65,7 @@ class KeyUnitTest {
     @Test
     fun givenRawKey_whenEncoded_thenIsSingleLine() {
         val key = Key.raw(key = random(32), salt = null)
-        val formatted = key.retrieve(cipher = Cipher.SQLCIPHER, isReKey = true)
+        val formatted = key.retrieveFormatted(cipher = Cipher.SQLCIPHER)
 
         assertEquals(1, formatted.lines().size)
     }
@@ -73,7 +73,7 @@ class KeyUnitTest {
     @Test
     fun givenRawKeyWithSalt_whenEncoded_thenIsSingleLine() {
         val key = Key.raw(key = random(32), salt = random(16))
-        val formatted = key.retrieve(cipher = Cipher.SQLCIPHER, isReKey = true)
+        val formatted = key.retrieveFormatted(cipher = Cipher.SQLCIPHER)
 
         assertEquals(1, formatted.lines().size)
     }

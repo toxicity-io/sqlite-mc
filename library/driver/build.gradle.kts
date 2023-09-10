@@ -48,7 +48,7 @@ kmpConfiguration {
 
             sourceSetMain {
                 dependencies {
-                    implementation(files(jdbcRepack.jarJdbcSqliteAndroid))
+                    implementation(files(jdbcRepack.jarSQLiteJDBCAndroid))
                 }
             }
             sourceSetTest {
@@ -67,7 +67,7 @@ kmpConfiguration {
         jvm {
             sourceSetMain {
                 dependencies {
-                    implementation(files(jdbcRepack.jarJdbcSqliteJvm))
+                    implementation(files(jdbcRepack.jarSQLiteJDBCJvm))
                 }
             }
         }
@@ -88,11 +88,13 @@ kmpConfiguration {
             sourceSets {
                 findByName("jvmAndroidMain")?.apply {
                     dependencies {
-                        api(libs.sql.delight.driver.jdbc)
-                        compileOnly(libs.sql.jdbc.crypt)
+                        implementation(libs.encoding.base64)
 
-                        compileOnly(libs.sql.delight.driver.jvm)
-                        implementation(files(jdbcRepack.jarSqliteDriver))
+                        api(libs.sql.delight.driver.jdbc)
+                        compileOnly(jdbcRepack.depSQLiteJDBC)
+
+                        compileOnly(jdbcRepack.depSQLDelightDriver)
+                        implementation(files(jdbcRepack.jarSQLDelightDriver))
                     }
                 }
 
@@ -131,7 +133,7 @@ kmpConfiguration {
 private class JdbcRepack(
     // For debug purposes, can set to false
     // and will use xerial/sqlite-jdbc
-    useJdbcSqliteCrypt: Boolean = true
+    useSQLiteJDBCCrypt: Boolean = true
 ) {
 
     val dirJniLibs = projectDir
@@ -139,12 +141,12 @@ private class JdbcRepack(
         .resolve("androidMain")
         .resolve("jniLibs")
 
-    val jarSqliteDriver: File
-    val jarJdbcSqliteAndroid: File
-    val jarJdbcSqliteJvm: File
+    val jarSQLDelightDriver: File
+    val jarSQLiteJDBCAndroid: File
+    val jarSQLiteJDBCJvm: File
 
-    private val depSqlDelightDriver = libs.sql.delight.driver.jvm.get()
-    private val depJdbcSqlite = if (useJdbcSqliteCrypt) {
+    val depSQLDelightDriver: MinimalExternalModuleDependency = libs.sql.delight.driver.jvm.get()
+    val depSQLiteJDBC: MinimalExternalModuleDependency = if (useSQLiteJDBCCrypt) {
         libs.sql.jdbc.crypt.get()
     } else {
         libs.sql.jdbc.xerial.get()
@@ -153,14 +155,14 @@ private class JdbcRepack(
     init {
         val repackDir = projectDir.resolveSibling("jdbc-repack")
 
-        jarSqliteDriver = repackDir.resolve(depSqlDelightDriver.toJarFileName())
-        jarJdbcSqliteAndroid = repackDir.resolve("android").resolve(depJdbcSqlite.toJarFileName())
-        jarJdbcSqliteJvm = repackDir.resolve("jvm").resolve(depJdbcSqlite.toJarFileName())
+        jarSQLDelightDriver = repackDir.resolve(depSQLDelightDriver.toJarFileName())
+        jarSQLiteJDBCAndroid = repackDir.resolve("android").resolve(depSQLiteJDBC.toJarFileName())
+        jarSQLiteJDBCJvm = repackDir.resolve("jvm").resolve(depSQLiteJDBC.toJarFileName())
 
         if (
-            !jarSqliteDriver.exists()
-            || !jarJdbcSqliteAndroid.exists()
-            || !jarJdbcSqliteJvm.exists()
+            !jarSQLDelightDriver.exists()
+            || !jarSQLiteJDBCAndroid.exists()
+            || !jarSQLiteJDBCJvm.exists()
         ) {
             Repackage()
         }
@@ -174,8 +176,8 @@ private class JdbcRepack(
 
         init {
             dependencies {
-                "jdbc-repack"(depJdbcSqlite)
-                "jdbc-repack"(depSqlDelightDriver)
+                "jdbc-repack"(depSQLiteJDBC)
+                "jdbc-repack"(depSQLDelightDriver)
             }
         }
 
@@ -183,26 +185,26 @@ private class JdbcRepack(
         // b/c we're using a fork (Willena/sqlite-jdbc-crypt)
         private val repackSqliteDriver by lazy {
             val jarFile = configJdbcRepack.files.first { file ->
-                file.absolutePath.contains(depSqlDelightDriver.group.toString())
-                && file.name == depSqlDelightDriver.toJarFileName()
+                file.absolutePath.contains(depSQLDelightDriver.group.toString())
+                && file.name == depSQLDelightDriver.toJarFileName()
             }
 
             copy {
                 from(jarFile)
-                into(jarSqliteDriver.parentFile)
+                into(jarSQLDelightDriver.parentFile)
             }
         }
 
         private val jdbcSqliteJar: File by lazy {
             configJdbcRepack.files.first { file ->
-                file.absolutePath.contains(depJdbcSqlite.group.toString())
-                && file.name == depJdbcSqlite.toJarFileName()
+                file.absolutePath.contains(depSQLiteJDBC.group.toString())
+                && file.name == depSQLiteJDBC.toJarFileName()
             }
         }
 
         private val repackJdbcSqliteAndroid by lazy {
-            if (jarJdbcSqliteAndroid.exists()) return@lazy
-            jarJdbcSqliteAndroid.ensureParentDirsCreated()
+            if (jarSQLiteJDBCAndroid.exists()) return@lazy
+            jarSQLiteJDBCAndroid.ensureParentDirsCreated()
 
             val jf = JarFile(jdbcSqliteJar)
 
@@ -214,7 +216,7 @@ private class JdbcRepack(
 
             mcDriverAndroidTestResources.deleteRecursively()
 
-            JarOutputStream(jarJdbcSqliteAndroid.outputStream()).use { oStream ->
+            JarOutputStream(jarSQLiteJDBCAndroid.outputStream()).use { oStream ->
 
                 val soFileName = "libsqlitejdbc.so"
 
@@ -259,12 +261,12 @@ private class JdbcRepack(
         }
 
         private val repackJdbcSqliteJvm by lazy {
-            if (jarJdbcSqliteJvm.exists()) return@lazy
-            jarJdbcSqliteJvm.ensureParentDirsCreated()
+            if (jarSQLiteJDBCJvm.exists()) return@lazy
+            jarSQLiteJDBCJvm.ensureParentDirsCreated()
 
             val jf = JarFile(jdbcSqliteJar)
 
-            JarOutputStream(jarJdbcSqliteJvm.outputStream()).use { oStream ->
+            JarOutputStream(jarSQLiteJDBCJvm.outputStream()).use { oStream ->
                 jf.entries().iterator().forEach { entry ->
 
                     // Exclude resources for platforms that will not be run on.
