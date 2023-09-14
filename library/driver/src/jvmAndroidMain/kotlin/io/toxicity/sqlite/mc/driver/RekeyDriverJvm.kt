@@ -226,7 +226,11 @@ private fun DatabasesDir.ensureExists() {
 // register itself with DriverManager.
 //
 // https://github.com/cashapp/sqldelight/issues/4575
+//
+// Also, JDBCMC is not using service loaders, so we're simply
+// initializing it here alongside JDBC.
 private val initializeJDBC: Unit by lazy {
+    JDBC.isValidURL(null)
     JDBCMC.isValidURL(null)
     Unit
 }

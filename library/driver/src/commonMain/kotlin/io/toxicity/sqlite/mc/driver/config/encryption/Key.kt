@@ -35,6 +35,7 @@ import kotlin.jvm.JvmSynthetic
  * @see [passphrase]
  * @see [raw]
  * @see [EMPTY]
+ * @see [IN_MEMORY]
  * */
 public class Key private constructor(
     private val value: String,

@@ -16,6 +16,7 @@
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.IOException
+import java.io.InputStream
 import java.io.OutputStream
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -114,8 +115,8 @@ kmpConfiguration {
  * For SqlDelight's sqlite-driver (JVM), it will extract only
  * that jar file to the /library/jdbc-repack directory. This is
  * because the sqlite-driver depends on xerial/sqlite-jdbc which
- * we do not want as a transitive dependency. This allows swapping it
- * out for Willena/sqlite-jdbc-crypt (a fork of xerial/sqlite-jdbc),
+ * we do not want as a transitive dependency as we are compiling
+ * our own sqlite-jdbc jar that uses SQLite3MultipleCiphers.
  *
  * For JVM, Mac/Windows/Linux/Linux-Musl/FreeBSD binaries are
  * repackaged, while Linux-Android is dropped.
@@ -130,11 +131,7 @@ kmpConfiguration {
  * can force it to repackage by deleting the /library/jdbc-repack directory
  * and performing a gradle sync.
  * */
-private class JdbcRepack(
-    // For debug purposes, can set to false
-    // and will use xerial/sqlite-jdbc
-    useSQLiteJDBCCrypt: Boolean = true
-) {
+private class JdbcRepack {
 
     val dirJniLibs = projectDir
         .resolve("src")
@@ -146,11 +143,9 @@ private class JdbcRepack(
     val jarSQLiteJDBCJvm: File
 
     val depSQLDelightDriver: MinimalExternalModuleDependency = libs.sql.delight.driver.jvm.get()
-    val depSQLiteJDBC: MinimalExternalModuleDependency = if (useSQLiteJDBCCrypt) {
-        libs.sql.jdbc.crypt.get()
-    } else {
-        libs.sql.jdbc.xerial.get()
-    }
+    val depSQLiteJDBC: MinimalExternalModuleDependency = libs.sql.jdbc.xerial.get()
+
+    private fun MinimalExternalModuleDependency.toJarFileName(): String = "$name-$version.jar"
 
     init {
         val repackDir = projectDir.resolveSibling("jdbc-repack")
@@ -168,15 +163,12 @@ private class JdbcRepack(
         }
     }
 
-    private fun MinimalExternalModuleDependency.toJarFileName(): String = "$name-$version.jar"
-
     private inner class Repackage {
 
-        private val configJdbcRepack: Configuration = configurations.create("jdbc-repack")
+        private val configJDBCRepack: Configuration = configurations.create("jdbc-repack")
 
         init {
             dependencies {
-                "jdbc-repack"(depSQLiteJDBC)
                 "jdbc-repack"(depSQLDelightDriver)
             }
         }
@@ -184,7 +176,7 @@ private class JdbcRepack(
         // Only want the jar file and not xerial/sqlite-jdbc dependency
         // b/c we're using a fork (Willena/sqlite-jdbc-crypt)
         private val repackSqliteDriver by lazy {
-            val jarFile = configJdbcRepack.files.first { file ->
+            val jarFile = configJDBCRepack.files.first { file ->
                 file.absolutePath.contains(depSQLDelightDriver.group.toString())
                 && file.name == depSQLDelightDriver.toJarFileName()
             }
@@ -195,26 +187,16 @@ private class JdbcRepack(
             }
         }
 
-        private val jdbcSqliteJar: File by lazy {
-            configJdbcRepack.files.first { file ->
-                file.absolutePath.contains(depSQLiteJDBC.group.toString())
-                && file.name == depSQLiteJDBC.toJarFileName()
-            }
-        }
+        private val jdbcSqliteJar: File = rootDir
+            .resolve("external")
+            .resolve("out")
+            .resolve(depSQLiteJDBC.toJarFileName())
 
         private val repackJdbcSqliteAndroid by lazy {
             if (jarSQLiteJDBCAndroid.exists()) return@lazy
             jarSQLiteJDBCAndroid.ensureParentDirsCreated()
 
             val jf = JarFile(jdbcSqliteJar)
-
-            val mcDriverAndroidTestResources = projectDir
-                .resolveSibling("android-unit-test")
-                .resolve("src")
-                .resolve("main")
-                .resolve("resources")
-
-            mcDriverAndroidTestResources.deleteRecursively()
 
             JarOutputStream(jarSQLiteJDBCAndroid.outputStream()).use { oStream ->
 
@@ -230,26 +212,16 @@ private class JdbcRepack(
                             entry.name.endsWith("/Linux-Android/aarch64/$soFileName") -> {
                                 jf.extractEntryTo(entry, dirJniLibs.resolve("arm64-v8a").resolve(soFileName))
                             }
-
                             entry.name.endsWith("/Linux-Android/arm/$soFileName") -> {
                                 jf.extractEntryTo(entry, dirJniLibs.resolve("armeabi-v7a").resolve(soFileName))
                             }
-
                             entry.name.endsWith("/Linux-Android/x86/$soFileName") -> {
                                 jf.extractEntryTo(entry, dirJniLibs.resolve("x86").resolve(soFileName))
                             }
-
                             entry.name.endsWith("/Linux-Android/x86_64/$soFileName") -> {
                                 jf.extractEntryTo(entry, dirJniLibs.resolve("x86_64").resolve(soFileName))
                             }
-
-                            entry.name.endsWith("readme.txt") -> {}
-                            else -> {
-                                if (!entry.isDirectory) {
-                                    // So UnitTests have platform support
-                                    jf.extractEntryTo(entry, mcDriverAndroidTestResources.resolve(entry.name))
-                                }
-                            }
+                            else -> {}
                         }
 
                         return@forEach
@@ -266,20 +238,87 @@ private class JdbcRepack(
 
             val jf = JarFile(jdbcSqliteJar)
 
+            val jdbcSignedDir: File = rootDir
+                .resolve("external")
+                .resolve("out")
+                .resolve("signed")
+
+            val mcDriverAndroidTestResources = projectDir
+                .resolveSibling("android-unit-test")
+                .resolve("src")
+                .resolve("main")
+                .resolve("resources")
+
+            mcDriverAndroidTestResources.deleteRecursively()
+
             JarOutputStream(jarSQLiteJDBCJvm.outputStream()).use { oStream ->
                 jf.entries().iterator().forEach { entry ->
 
-                    // Exclude resources for platforms that will not be run on.
                     if (
                         entry.name == "org/sqlite/native/readme.txt"
-//                        || entry.name.startsWith("org/sqlite/native/FreeBSD")
-//                        || entry.name.startsWith("org/sqlite/native/Linux-Musl")
                         || entry.name.startsWith("org/sqlite/native/Linux-Android")
                     ) {
                         return@forEach
                     }
 
-                    jf.extractEntryTo(entry, oStream)
+                    var signedLib: File? = null
+
+                    if (!entry.isDirectory) {
+                        when {
+                            entry.name.startsWith("org/sqlite/native/Mac/aarch64") -> {
+                                signedLib = jdbcSignedDir
+                                    .resolve("Mac")
+                                    .resolve("aarch64")
+                                    .resolve("libsqlitejdbc.dylib")
+                            }
+                            entry.name.startsWith("org/sqlite/native/Mac/x86_64") -> {
+                                signedLib = jdbcSignedDir
+                                    .resolve("Mac")
+                                    .resolve("x86_64")
+                                    .resolve("libsqlitejdbc.dylib")
+                            }
+                            entry.name.startsWith("org/sqlite/native/Windows/x86") -> {
+                                signedLib = jdbcSignedDir
+                                    .resolve("Windows")
+                                    .resolve("x86")
+                                    .resolve("sqlitejdbc.dll")
+                            }
+                            entry.name.startsWith("org/sqlite/native/Windows/x86_64") -> {
+                                signedLib = jdbcSignedDir
+                                    .resolve("Windows")
+                                    .resolve("x86_64")
+                                    .resolve("sqlitejdbc.dll")
+                            }
+
+                            // All other native binaries, also extract to android-unit-test resources
+                            entry.name.startsWith("org/sqlite/native") -> {
+                                jf.extractEntryTo(entry, mcDriverAndroidTestResources.resolve(entry.name))
+                            }
+                        }
+                    }
+
+                    if (signedLib != null) {
+                        // Instead of repackaging the unsigned lib
+                        // that the external/out/sqlite-jdbc-{version}.jar
+                        // contains, swap in our codesigned lib
+                        oStream.putNextEntry(entry)
+                        signedLib.inputStream().use { iStream ->
+                            iStream.extractTo(oStream)
+                        }
+                        oStream.closeEntry()
+
+                        // Also make sure to write signed lib to android-unit-test resources
+                        val resFile = mcDriverAndroidTestResources.resolve(entry.name)
+                        resFile.prepareFileWrite()
+
+                        signedLib.inputStream().use { iStream ->
+                            resFile.outputStream().use { rStream ->
+                                iStream.extractTo(rStream)
+                            }
+                        }
+                    } else {
+                        jf.extractEntryTo(entry, oStream)
+                    }
                 }
             }
         }
@@ -299,14 +338,7 @@ private class JdbcRepack(
 
         @Throws(IOException::class)
         private fun JarFile.extractEntryTo(entry: JarEntry, destination: File) {
-            if (destination.isDirectory) {
-                throw IOException("destination must be a file, but isDirectory[true] >> $destination")
-            }
-            if (destination.exists() && !destination.delete()) {
-                throw IOException("Failed to delete destination file >> $destination")
-            }
-
-            destination.ensureParentDirsCreated()
+            destination.prepareFileWrite()
 
             destination.outputStream().use { oStream ->
                 extractEntryTo(entry, oStream)
@@ -327,18 +359,33 @@ private class JdbcRepack(
             }
 
             getInputStream(entry).use { iStream ->
-                val buf = ByteArray(4096)
-
-                while (true) {
-                    val read = iStream.read(buf)
-                    if (read == -1) break
-                    oStream.write(buf, 0, read)
-                }
+                iStream.extractTo(oStream)
             }
 
             if (oStream is JarOutputStream) {
                 oStream.closeEntry()
             }
+        }
+
+        private fun InputStream.extractTo(oStream: OutputStream) {
+            val buf = ByteArray(4096)
+
+            while (true) {
+                val read = read(buf)
+                if (read == -1) break
+                oStream.write(buf, 0, read)
+            }
+        }
+
+        private fun File.prepareFileWrite() {
+            if (isDirectory) {
+                throw IOException("destination must be a file, but isDirectory[true] >> $this")
+            }
+            if (exists() && !delete()) {
+                throw IOException("Failed to delete destination file >> $this")
+            }
+
+            ensureParentDirsCreated()
         }
     }
 }

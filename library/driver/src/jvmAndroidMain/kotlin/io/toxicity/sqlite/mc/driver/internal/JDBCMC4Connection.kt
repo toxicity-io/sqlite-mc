@@ -23,7 +23,6 @@ import io.toxicity.sqlite.mc.driver.config.Pragma
 import io.toxicity.sqlite.mc.driver.config.encryption.Cipher
 import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
 import org.sqlite.JDBC
-import org.sqlite.SQLiteConfig
 import org.sqlite.jdbc4.JDBC4Connection
 import org.sqlite.jdbc4.JDBC4Statement
 import java.sql.SQLException
@@ -137,12 +136,12 @@ internal class JDBCMC4Connection private constructor(
 
             // Pass all of our statements in the "password" pragma
             // in order to catch them when SQLiteConfig.apply is called
-            newProp[SQLiteConfig.Pragma.PASSWORD.pragmaName] = sb.toString()
+            newProp["password"] = sb.toString()
 
             // Remove, just in case, as we want PRAGMA key to execute
             // with the expected formatting of just a passphrase in order
             // to decode the contents and execute each statement separately.
-            newProp.remove(SQLiteConfig.Pragma.HEXKEY_MODE.pragmaName)
+            newProp.remove("hexkey_mode")
 
             sb.clear()
             repeat(sbLen) { sb.append(' ') }
@@ -154,7 +153,7 @@ internal class JDBCMC4Connection private constructor(
             connection.database
                 .config
                 .toProperties()
-                .remove(SQLiteConfig.Pragma.PASSWORD.pragmaName)
+                .remove("password")
 
             // Also clear newProps which was copied over to another
             // new Properties object in SQLiteConfig.open
