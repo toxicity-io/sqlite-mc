@@ -217,36 +217,6 @@ val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Scheme) {
 
 ### Get Started
 
-Versioning is in the form of `X-Y` where:
- - `X` is the `SQLDelight` version being tracked.
- - `Y` is the `sqlite-mc-driver` version.
-
-e.g. `SQLDelight` version `2.0.0` *and* `sqlite-mc-driver` version `0.1.0` will be 
-`io.toxicity.sqlite-mc-driver:driver:2.0.0-0.1.0`
-
-<!-- TAG_VERSION -->
-```kotlin
-// build.gradle.kts
-
-dependencies {
-    // Remove all other SQLDelight driver dependencies
-
-    implementation("io.toxicity.sqlite-mc-driver:driver:2.0.0-0.1.0")
-    
-    // For Android Unit Test (not instrumentation tests)
-    testImplementation("io.toxicity.sqlite-mc-driver:android-unit-test:2.0.0-0.1.0")
-}
-
-sqldelight {
-    databases {
-        linkSqlite.set(false)
-        
-        // ...
-    }
-}
-```
-
-
 <!-- TAG_VERSION -->
 [badge-latest-release]: https://img.shields.io/badge/latest--release-0.1.0--alpha01-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
@@ -260,7 +230,7 @@ sqldelight {
 [badge-sql-jdbc-crypt]: https://img.shields.io/badge/sqlite--jdbc--crypt-3.41.2.1-blue.svg?style=flat
 
 <!-- TAG_PLATFORMS -->
-[badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2024]-6EDB8D.svg?style=flat
+[badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2023]-6EDB8D.svg?style=flat
 [badge-platform-jvm]: http://img.shields.io/badge/-jvm-DB413D.svg?style=flat
 [badge-platform-js]: http://img.shields.io/badge/-js-F8DB5D.svg?style=flat
 [badge-platform-js-node]: https://img.shields.io/badge/-nodejs-68a063.svg?style=flat
