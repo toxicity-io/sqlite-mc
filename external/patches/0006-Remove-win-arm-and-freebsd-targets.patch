@@ -1,0 +1,25 @@
+From 5099807026a3834271601f763754e01b3b45b4f8 Mon Sep 17 00:00:00 2001
+From: Matthew Nelson <developer@matthewnelson.io>
+Date: Thu, 14 Sep 2023 07:17:17 -0400
+Subject: [PATCH 06/10] Remove win-arm and freebsd targets
+
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 178e243..cd4c210 100644
+--- a/Makefile
++++ b/Makefile
+@@ -109,7 +109,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
+ NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
+ 
+ # For cross-compilation, install docker. See also https://github.com/dockcross/dockcross
+-native-all: native win32 win64 win-armv7 win-arm64 mac64-signed mac-arm64-signed linux32 linux64 freebsd32 freebsd64 freebsd-arm64 linux-arm linux-armv6 linux-armv7 linux-arm64 linux-android-arm linux-android-arm64 linux-android-x86 linux-android-x64 linux-ppc64 linux-musl32 linux-musl64 linux-musl-arm64
++native-all: native win32 win64 mac64-signed mac-arm64-signed linux32 linux64 linux-arm linux-armv6 linux-armv7 linux-arm64 linux-android-arm linux-android-arm64 linux-android-x86 linux-android-x64 linux-ppc64 linux-musl32 linux-musl64 linux-musl-arm64
+ 
+ native: $(NATIVE_DLL)
+ 
+-- 
+2.34.1
+

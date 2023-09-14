@@ -105,7 +105,7 @@ public abstract class Pragma<FieldType: Any> private constructor(
 
         internal object KEY: MC<Pair<Key, Cipher>>(
             name = "key",
-            transformer = { (key, cipher) -> key.retrieve(cipher, isReKey = false) },
+            transformer = { (key, cipher) -> key.retrieveFormatted(cipher) },
             mapper = MapIllegalState.unsafeCast(),
         )
         internal object RE_KEY: MC<Pair<Key, Cipher>>(
@@ -114,18 +114,6 @@ public abstract class Pragma<FieldType: Any> private constructor(
             // as the mc_config interface is used to set parameters and the
             // PRAGMA rekey = 'xxxxx'; statement is executed separately.
             transformer = { throw IllegalArgumentException("Use key.retrieve") },
-            mapper = MapIllegalState.unsafeCast(),
-        )
-
-        // Needed for when a raw key is passed for SQLCipher
-        // such that JDBC knows to format it in line with
-        // what is expected >> "x'<key><salt??>'"
-        //
-        // Otherwise, JDBC will execute it as any other passphrase
-        // and wrap in '' (which will fudge thigs).
-        internal object JDBC_HEXKEY_MODE_SQLCIPHER: MC<Unit>(
-            name = "hexkey_mode",
-            transformer = { "SQLCIPHER" },
             mapper = MapIllegalState.unsafeCast(),
         )
 
@@ -150,7 +138,6 @@ public abstract class Pragma<FieldType: Any> private constructor(
                     add(PLAIN_TEXT_HEADER_SIZE)
                     add(KEY)
                     add(RE_KEY)
-                    add(JDBC_HEXKEY_MODE_SQLCIPHER)
                 }
             }
         }

@@ -54,14 +54,14 @@ public interface MCConfigQueries {
 
         @JvmStatic
         public fun from(
-            driver: io.toxicity.sqlite.mc.driver.SQLiteMCDriver
-        ): io.toxicity.sqlite.mc.driver.MCConfigQueries = io.toxicity.sqlite.mc.driver.MCConfigQueriesImpl(driver)
+            driver: SQLiteMCDriver
+        ): MCConfigQueries = MCConfigQueriesImpl(driver)
     }
 }
 
 private class MCConfigQueriesImpl(
-    private val driver: io.toxicity.sqlite.mc.driver.SQLiteMCDriver
-): io.toxicity.sqlite.mc.driver.MCConfigQueries {
+    private val driver: SQLiteMCDriver
+): MCConfigQueries {
 
     // TODO: QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null) fix null pointers
     // TODO: If driver is closed, this should fail, so, should annotate exceptions
@@ -102,7 +102,7 @@ private class MCConfigQueriesImpl(
 
     private inner class GetCipherQuery(
         transient: Boolean
-    ): io.toxicity.sqlite.mc.driver.MCConfigQueriesImpl.GetConfigQuery<Cipher>(
+    ): MCConfigQueriesImpl.GetConfigQuery<Cipher>(
         paramName = Pragma.MC.CIPHER.name,
         optionalParamName = null,
         transient = transient,
@@ -111,7 +111,7 @@ private class MCConfigQueriesImpl(
 
     private inner class GetHmacCheckQuery(
         transient: Boolean
-    ): io.toxicity.sqlite.mc.driver.MCConfigQueriesImpl.GetConfigQuery<Boolean>(
+    ): MCConfigQueriesImpl.GetConfigQuery<Boolean>(
         paramName = Pragma.MC.HMAC_CHECK.name,
         optionalParamName = null,
         transient = transient,
@@ -120,7 +120,7 @@ private class MCConfigQueriesImpl(
 
     private inner class GetMCLegacyWALQuery(
         transient: Boolean
-    ): io.toxicity.sqlite.mc.driver.MCConfigQueriesImpl.GetConfigQuery<Boolean>(
+    ): MCConfigQueriesImpl.GetConfigQuery<Boolean>(
         paramName = Pragma.MC.MC_LEGACY_WAL.name,
         optionalParamName = null,
         transient = transient,
@@ -130,7 +130,7 @@ private class MCConfigQueriesImpl(
     private inner class GetCipherParameterQuery<T: Any>(
         cipher: Cipher,
         pragma: Pragma.MC<T>,
-    ): io.toxicity.sqlite.mc.driver.MCConfigQueriesImpl.GetConfigQuery<T>(
+    ): MCConfigQueriesImpl.GetConfigQuery<T>(
         paramName = cipher.name,
         optionalParamName = pragma.name,
         transient = true,
@@ -182,13 +182,12 @@ private class MCConfigQueriesImpl(
                 Pragma.MC.MC_LEGACY_WAL.name -> {
                     require(optionalParamName == null) {
                         "$p cannot declare a field parameter." +
-                                "That would change the setting."
+                        "That would change the setting."
                     }
                 }
 
                 Pragma.MC.KEY.name,
-                Pragma.MC.RE_KEY.name,
-                Pragma.MC.JDBC_HEXKEY_MODE_SQLCIPHER.name -> {
+                Pragma.MC.RE_KEY.name -> {
                     throw IllegalArgumentException("$p does not have a config option")
                 }
             }

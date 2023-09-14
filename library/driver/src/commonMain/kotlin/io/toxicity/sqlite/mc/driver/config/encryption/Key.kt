@@ -18,7 +18,7 @@ package io.toxicity.sqlite.mc.driver.config.encryption
 import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.core.use
 import io.matthewnelson.encoding.core.util.LineBreakOutFeed
-import io.toxicity.sqlite.mc.driver.internal.IS_JVM
+import io.toxicity.sqlite.mc.driver.internal.ext.escapeSQL
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -35,6 +35,7 @@ import kotlin.jvm.JvmSynthetic
  * @see [passphrase]
  * @see [raw]
  * @see [EMPTY]
+ * @see [IN_MEMORY]
  * */
 public class Key private constructor(
     private val value: String,
@@ -133,38 +134,24 @@ public class Key private constructor(
 
     @JvmSynthetic
     @Throws(IllegalArgumentException::class)
-    internal fun retrieve(
-        cipher: Cipher,
-        isReKey: Boolean,
-    ): String {
+    internal fun retrieveFormatted(cipher: Cipher): String {
         // passphrase
-        if (!isRaw) return value
+        if (!isRaw) return "'${value.escapeSQL()}'"
 
         return when (cipher) {
             is Cipher.SQLCIPHER -> {
-
-                // PRAGMA key statement for JDBC will
-                // automatically format a raw key for
-                // SQLCIPHER. We just need to pass it
-                // the unformatted value when opening
-                // the database for the first time.
-                //
-                // PRAGMA rekey is handled via MCDriver
-                // and should always be formatted.
-                if (isReKey || !IS_JVM) {
-                    "\"x'${value}'\""
-                } else {
-                    value
-                }
+                "\"x'${value}'\""
             }
             is Cipher.CHACHA20 -> {
-                "raw:${value}"
+                "'raw:${value}'"
             }
-            else -> null
-        } ?: throw IllegalArgumentException(
-            "Invalid key type for $cipher. " +
-            "Only ${Cipher.SQLCIPHER} and ${Cipher.CHACHA20} support use of raw keys."
-        )
+            else -> {
+                throw IllegalArgumentException(
+                    "Invalid key type for $cipher. " +
+                    "Only ${Cipher.SQLCIPHER} and ${Cipher.CHACHA20} support raw keys."
+                )
+            }
+        }
     }
 
     override fun toString(): String = "Key(value=[REDACTED], isRaw=$isRaw)"

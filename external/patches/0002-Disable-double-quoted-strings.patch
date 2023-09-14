@@ -1,0 +1,91 @@
+From 4101ad7188e9bb8bca3af51f897bf52b4a04b9d3 Mon Sep 17 00:00:00 2001
+From: Matthew Nelson <developer@matthewnelson.io>
+Date: Thu, 14 Sep 2023 05:54:44 -0400
+Subject: [PATCH 02/10] Disable double-quoted strings
+
+---
+ Makefile                                    | 1 +
+ src/test/java/org/sqlite/BackupTest.java    | 6 +++---
+ src/test/java/org/sqlite/ExtensionTest.java | 2 +-
+ src/test/java/org/sqlite/PrepStmtTest.java  | 2 +-
+ src/test/java/org/sqlite/StatementTest.java | 2 +-
+ 5 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 3f9d151..1a480fc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -99,6 +99,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+ 	    -DSQLITE_MAX_FUNCTION_ARG=127 \
+ 	    -DSQLITE_MAX_ATTACHED=125 \
+ 	    -DSQLITE_MAX_PAGE_COUNT=4294967294 \
++	    -DSQLITE_DQS=0 \
+ 	    $(SQLITE_FLAGS) \
+ 	    $(SQLITE_OUT)/sqlite3.c
+ 
+diff --git a/src/test/java/org/sqlite/BackupTest.java b/src/test/java/org/sqlite/BackupTest.java
+index f906bcf..fa76217 100644
+--- a/src/test/java/org/sqlite/BackupTest.java
++++ b/src/test/java/org/sqlite/BackupTest.java
+@@ -56,8 +56,8 @@ public class BackupTest {
+ 
+     private void createTableAndInsertRows(Statement stmt) throws SQLException {
+         stmt.executeUpdate("create table sample(id, name)");
+-        stmt.executeUpdate("insert into sample values(1, \"leo\")");
+-        stmt.executeUpdate("insert into sample values(2, \"yui\")");
++        stmt.executeUpdate("insert into sample values(1, 'leo')");
++        stmt.executeUpdate("insert into sample values(2, 'yui')");
+     }
+ 
+     @Test
+@@ -96,7 +96,7 @@ public class BackupTest {
+                 Statement stmt = conn.createStatement()) {
+             stmt.executeUpdate("create table sample(id integer primary key autoincrement, name)");
+             for (int i = 0; i < 10000; i++) {
+-                stmt.executeUpdate("insert into sample(name) values(\"leo\")");
++                stmt.executeUpdate("insert into sample(name) values('leo')");
+             }
+ 
+             File tmpFile = File.createTempFile("backup-test2", ".sqlite", tempDir);
+diff --git a/src/test/java/org/sqlite/ExtensionTest.java b/src/test/java/org/sqlite/ExtensionTest.java
+index a79cd86..89dd54b 100644
+--- a/src/test/java/org/sqlite/ExtensionTest.java
++++ b/src/test/java/org/sqlite/ExtensionTest.java
+@@ -68,7 +68,7 @@ public class ExtensionTest {
+         Utils.assumeJdbcExtensions(conn);
+ 
+         {
+-            ResultSet rs = stat.executeQuery("select reverse(\"ACGT\")");
++            ResultSet rs = stat.executeQuery("select reverse('ACGT')");
+             assertThat(rs.next()).isTrue();
+             assertThat(rs.getString(1)).isEqualTo("TGCA");
+             rs.close();
+diff --git a/src/test/java/org/sqlite/PrepStmtTest.java b/src/test/java/org/sqlite/PrepStmtTest.java
+index 393f237..88922c7 100644
+--- a/src/test/java/org/sqlite/PrepStmtTest.java
++++ b/src/test/java/org/sqlite/PrepStmtTest.java
+@@ -599,7 +599,7 @@ public class PrepStmtTest {
+     public void clearParameters() throws SQLException {
+         stat.executeUpdate(
+                 "create table tbl (colid integer primary key AUTOINCREMENT, col varchar)");
+-        stat.executeUpdate("insert into tbl(col) values (\"foo\")");
++        stat.executeUpdate("insert into tbl(col) values ('foo')");
+         stat.executeUpdate("insert into tbl(col) values (?)");
+ 
+         PreparedStatement prep = conn.prepareStatement("select colid from tbl where col = ?");
+diff --git a/src/test/java/org/sqlite/StatementTest.java b/src/test/java/org/sqlite/StatementTest.java
+index dc7a7aa..40e5cc0 100644
+--- a/src/test/java/org/sqlite/StatementTest.java
++++ b/src/test/java/org/sqlite/StatementTest.java
+@@ -108,7 +108,7 @@ public class StatementTest {
+ 
+     @Test
+     public void stringRS() throws SQLException {
+-        ResultSet rs = stat.executeQuery("select \"Russell\";");
++        ResultSet rs = stat.executeQuery("select 'Russell';");
+         assertThat(rs.next()).isTrue();
+         assertThat(rs.getString(1)).isEqualTo("Russell");
+         assertThat(rs.next()).isFalse();
+-- 
+2.34.1
+

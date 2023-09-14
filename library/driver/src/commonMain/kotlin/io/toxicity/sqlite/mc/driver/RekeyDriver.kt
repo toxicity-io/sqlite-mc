@@ -84,18 +84,7 @@ internal fun EncryptionConfig.createRekeyParameters(
 ): RekeyParameters {
     check(!isInMemory) { "Unable to rekey. In Memory databases do not use encryption" }
 
-    var pragmaRekeySQL = key.retrieve(cipherConfig.cipher, isReKey = true)
-
-    // Key.retrieve automatically formats raw SQLCipher key for us.
-    // All others (passphrases, or raw ChaCha20) need to be escaped
-    // & quoted. This is b/c of a limitation with JDBC when opening
-    // a connection and to make things more seamless from commonMain,
-    // this is the simplest way, imo.
-    if (!(key.isRaw && cipherConfig.cipher is Cipher.SQLCIPHER)) {
-        pragmaRekeySQL = "'${pragmaRekeySQL.escapeSQL()}'"
-    }
-
-    pragmaRekeySQL = "PRAGMA ${Pragma.MC.RE_KEY.name} = $pragmaRekeySQL;"
+    val pragmaRekeySQL = "PRAGMA ${Pragma.MC.RE_KEY.name} = ${key.retrieveFormatted(cipherConfig.cipher)};"
 
     val pragmas = mutablePragmas()
     applyPragmas(pragmas)

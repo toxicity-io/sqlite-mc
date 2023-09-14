@@ -13,7 +13,6 @@ gradle-maven-publish = "0.25.2"
 kotlinx-coroutines = "1.7.3"
 
 sql-delight = "2.0.0"
-sql-jdbc-crypt = "3.41.2.1"
 sql-jdbc-xerial = "3.43.0.0"
 
 [libraries]
@@ -21,6 +20,7 @@ androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-te
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 
 encoding-base16 = { module = "io.matthewnelson.encoding:base16", version.ref = "encoding" }
+encoding-base64 = { module = "io.matthewnelson.encoding:base64", version.ref = "encoding" }
 
 gradle-android = { module = "com.android.tools.build:gradle", version.ref = "gradle-android" }
 gradle-kmp-configuration = { module = "io.matthewnelson:gradle-kmp-configuration-plugin", version.ref = "gradle-configuration" }
@@ -34,7 +34,6 @@ sql-delight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version
 sql-delight-driver-jdbc = { module = "app.cash.sqldelight:jdbc-driver", version.ref = "sql-delight" }
 sql-delight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sql-delight" }
 sql-delight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sql-delight" }
-sql-jdbc-crypt = { module = "io.github.willena:sqlite-jdbc", version.ref = "sql-jdbc-crypt" }
 sql-jdbc-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "sql-jdbc-xerial" }
 
 [plugins]

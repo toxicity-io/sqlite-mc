@@ -29,6 +29,7 @@ import app.cash.sqldelight.logs.LogSqliteDriver
 import io.toxicity.sqlite.mc.driver.config.*
 import io.toxicity.sqlite.mc.driver.config.encryption.EncryptionConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
+import io.toxicity.sqlite.mc.driver.internal.JDBCMC
 import org.sqlite.JDBC
 import java.sql.Connection
 import java.sql.SQLException
@@ -165,11 +166,6 @@ public actual sealed class RekeyDriver actual constructor(args: Args): JdbcDrive
             val url = filesystemConfig.toJDBCUrl(dbName, isInMemory)
             val properties = pragmas.toProperties()
 
-            // Always add so that JDBC will apply non-transient MC properties
-            // using the sqlite3mc_config interface instead of executing PRAGMA
-            // statements.
-            properties["mc_use_sql_interface"] = "true"
-
             val driver = try {
                 JdbcSqliteDriver(
                     url = url,
@@ -199,11 +195,11 @@ public actual sealed class RekeyDriver actual constructor(args: Args): JdbcDrive
 @Throws(IllegalStateException::class)
 private fun FilesystemConfig?.toJDBCUrl(dbName: String, isInMemory: Boolean): String {
     // TODO: Resource database
-    if (this == null || isInMemory) return JdbcSqliteDriver.IN_MEMORY
+    if (this == null || isInMemory) return JDBC.PREFIX
 
     databasesDir.ensureExists()
 
-    return JdbcSqliteDriver.IN_MEMORY + databasesDir.directory.resolve(dbName)
+    return JDBCMC.PREFIX + databasesDir.directory.resolve(dbName)
 }
 
 private fun Pragmas.toProperties(): Properties {
@@ -230,7 +226,11 @@ private fun DatabasesDir.ensureExists() {
 // register itself with DriverManager.
 //
 // https://github.com/cashapp/sqldelight/issues/4575
+//
+// Also, JDBCMC is not using service loaders, so we're simply
+// initializing it here alongside JDBC.
 private val initializeJDBC: Unit by lazy {
     JDBC.isValidURL(null)
+    JDBCMC.isValidURL(null)
     Unit
 }

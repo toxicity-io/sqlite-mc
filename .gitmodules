@@ -1,0 +1,4 @@
+[submodule "external/sqlite-jdbc"]
+	path = external/sqlite-jdbc
+	url = https://github.com/xerial/sqlite-jdbc.git
+	branch = master
