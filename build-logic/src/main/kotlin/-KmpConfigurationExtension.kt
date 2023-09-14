@@ -65,15 +65,11 @@ fun KmpConfigurationExtension.configureShared(
     }
 }
 
-// TODO: minSdk = 23
-//  https://github.com/Willena/sqlite-jdbc-crypt/issues/89
-// TODO: minSdk = 21
-//  https://github.com/xerial/sqlite-jdbc/issues/961
 fun KmpConfigurationContainerDsl.androidLibrary(
     namespace: String,
     buildTools: String? = "34.0.0",
     compileSdk: Int = 34,
-    minSdk: Int = 24,
+    minSdk: Int = 23,
     javaVersion: JavaVersion = JavaVersion.VERSION_1_8,
     action: (Action<TargetAndroidContainer.Library>)? = null,
 ) {
