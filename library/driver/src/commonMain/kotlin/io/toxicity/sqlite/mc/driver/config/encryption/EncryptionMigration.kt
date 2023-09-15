@@ -93,11 +93,3 @@ public class EncryptionMigration(
         }
     }
 }
-
-private fun EncryptionMigration.Builder.ll() {
-    note = """
-        asdfasdf
-    """.trimIndent()
-
-    sqlCipher { v4() }
-}
