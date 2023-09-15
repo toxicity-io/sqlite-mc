@@ -1,7 +1,7 @@
-From 5099807026a3834271601f763754e01b3b45b4f8 Mon Sep 17 00:00:00 2001
+From 9c184fa0bfeee94b025b221bd997421ce95a940b Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Thu, 14 Sep 2023 07:17:17 -0400
-Subject: [PATCH 06/10] Remove win-arm and freebsd targets
+Date: Fri, 15 Sep 2023 10:03:16 -0400
+Subject: [PATCH 06/11] Remove win-arm and freebsd targets
 
 ---
  Makefile | 2 +-

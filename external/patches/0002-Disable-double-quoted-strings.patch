@@ -1,7 +1,7 @@
-From 4101ad7188e9bb8bca3af51f897bf52b4a04b9d3 Mon Sep 17 00:00:00 2001
+From 685cba8bef8b220d0a11e970242a90cd3835cfc5 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Thu, 14 Sep 2023 05:54:44 -0400
-Subject: [PATCH 02/10] Disable double-quoted strings
+Date: Fri, 15 Sep 2023 10:00:58 -0400
+Subject: [PATCH 02/11] Disable double-quoted strings
 
 ---
  Makefile                                    | 1 +

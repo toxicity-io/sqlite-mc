@@ -12,7 +12,6 @@ readonly DIR_EXTERNAL="$DIR_SCRIPTS/.."
 readonly DIR_JDBC="$DIR_EXTERNAL/sqlite-jdbc"
 readonly DIR_PATCHES="$DIR_EXTERNAL/patches"
 readonly DIR_OUT="$DIR_EXTERNAL/out"
-readonly DIR_3MC_AMAL="$DIR_EXTERNAL/sqlite3mc_amalgamation"
 readonly DIR_UNSIGNED="$DIR_OUT/unsigned"
 
 # Programs
@@ -76,14 +75,6 @@ echo "Mac/Windows unsigned shared libs have been copied to $DIR_UNSIGNED"
 for JAR in "$DIR_JDBC/target/sqlite-jdbc-${version}"*.jar; do
   echo "Copying $JAR to $DIR_OUT"
   cp "$JAR" "$DIR_OUT"
-done
-
-rm -rf "$DIR_3MC_AMAL"
-mkdir -p "$DIR_3MC_AMAL"
-
-for JDBC_DIR_AMAL in "$DIR_JDBC/target/sqlite-amalgamation-"*; do
-  echo "Copying sqlite3mc amalgamation files to $DIR_3MC_AMAL"
-  cp -R "$JDBC_DIR_AMAL"/* "$DIR_3MC_AMAL"
 done
 
 rm -rf "$DIR_JDBC/target"
