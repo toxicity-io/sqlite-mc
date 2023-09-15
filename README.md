@@ -61,9 +61,9 @@ val factory = SQLiteMCDriver.Factory(dbName = "test.db", schema = TestDatabase.S
 
     // SqlDelight AfterVersion migration hooks
     afterVersions.add(AfterVersion(afterVersion = 2) { driver ->
-        
+        // do something
     })
-    afterVersion(value = 2) { driver ->
+    afterVersion(of = 2) { driver ->
         // do something
     }
 

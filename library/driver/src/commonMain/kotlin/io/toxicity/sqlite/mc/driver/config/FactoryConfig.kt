@@ -109,10 +109,10 @@ public class FactoryConfig private constructor(
 
         @MCConfigDsl
         public fun afterVersion(
-            value: Long,
+            of: Long,
             block: (SqlDriver) -> Unit,
         ) {
-            afterVersions.add(AfterVersion(value, block))
+            afterVersions.add(AfterVersion(afterVersion = of, block))
         }
 
         /**
