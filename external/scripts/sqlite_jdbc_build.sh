@@ -9,9 +9,10 @@ readonly TIME_START=$(date +%s)
 readonly DIR_SCRIPTS=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 
 readonly DIR_EXTERNAL="$DIR_SCRIPTS/.."
-readonly DIR_JDBC="$DIR_EXTERNAL/sqlite-jdbc"
-readonly DIR_PATCHES="$DIR_EXTERNAL/patches"
-readonly DIR_OUT="$DIR_EXTERNAL/out"
+readonly DIR_JNI="$DIR_EXTERNAL/jni"
+readonly DIR_JDBC="$DIR_JNI/sqlite-jdbc"
+readonly DIR_PATCHES="$DIR_JNI/patches"
+readonly DIR_OUT="$DIR_JNI/out"
 readonly DIR_UNSIGNED="$DIR_OUT/unsigned"
 
 # Programs
