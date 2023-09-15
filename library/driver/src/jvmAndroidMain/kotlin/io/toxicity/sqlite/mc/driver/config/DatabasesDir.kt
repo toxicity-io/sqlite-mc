@@ -20,7 +20,7 @@ import java.io.File
 /**
  * The directory in which databases reside.
  *
- * For Android, see [io.toxicity.core.data.mc.driver.config.databasesDir]
+ * For Android, see [io.toxicity.sqlite.mc.driver.config.databasesDir]
  * */
 public actual class DatabasesDir public constructor(file: File) {
 

@@ -138,7 +138,7 @@ Easily migrate encryption configurations between software releases by simply def
 
 ```kotlin
 val factory = SQLiteMCDriver.Factory(dbName = "test.db", schema = TestDatabase.Schema) {
-    logger = { log -> prinlnt(log) }
+    logger = { log -> println(log) }
     redactLogs = false
 
     filesystem(databasesDir) {
