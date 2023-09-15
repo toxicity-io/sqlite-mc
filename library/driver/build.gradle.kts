@@ -174,7 +174,7 @@ private class JdbcRepack {
         }
 
         // Only want the jar file and not xerial/sqlite-jdbc dependency
-        // b/c we're using a fork (Willena/sqlite-jdbc-crypt)
+        // b/c we're using a custom build which uses SQLite3MultipleCiphers
         private val repackSqliteDriver by lazy {
             val jarFile = configJDBCRepack.files.first { file ->
                 file.absolutePath.contains(depSQLDelightDriver.group.toString())
@@ -189,6 +189,7 @@ private class JdbcRepack {
 
         private val jdbcSqliteJar: File = rootDir
             .resolve("external")
+            .resolve("jni")
             .resolve("out")
             .resolve(depSQLiteJDBC.toJarFileName())
 
@@ -240,6 +241,7 @@ private class JdbcRepack {
 
             val jdbcSignedDir: File = rootDir
                 .resolve("external")
+                .resolve("jni")
                 .resolve("out")
                 .resolve("signed")
 

@@ -36,8 +36,6 @@ import kotlin.jvm.JvmField
  *
  * See: [SQLite3MultipleCiphers](https://github.com/utelle/SQLite3MultipleCiphers)
  *
- * See: [sqlite-jdbc-crypt](https://github.com/Willena/sqlite-jdbc-crypt/)
- *
  * @see [Factory]
  * @see [MCConfigQueries]
  * */

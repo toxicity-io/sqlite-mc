@@ -9,7 +9,8 @@ readonly TIME_START=$(date +%s)
 readonly DIR_SCRIPTS=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 
 readonly DIR_EXTERNAL="$DIR_SCRIPTS/.."
-readonly DIR_OUT="$DIR_EXTERNAL/out"
+readonly DIR_JNI="$DIR_EXTERNAL/jni"
+readonly DIR_OUT="$DIR_JNI/out"
 readonly DIR_UNSIGNED="$DIR_OUT/unsigned"
 readonly DIR_SIGNED="$DIR_OUT/signed"
 

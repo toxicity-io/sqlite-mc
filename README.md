@@ -7,7 +7,7 @@
 [![badge-encoding]][url-encoding]
 [![badge-sql-delight]][url-sql-delight]
 [![badge-sql-mc]][url-sql-mc]
-[![badge-sql-jdbc-crypt]][url-sql-jdbc-crypt]
+[![badge-sql-jdbc]][url-sql-jdbc]
 
 ![badge-platform-android]
 ![badge-platform-jvm]
@@ -61,9 +61,9 @@ val factory = SQLiteMCDriver.Factory(dbName = "test.db", schema = TestDatabase.S
 
     // SqlDelight AfterVersion migration hooks
     afterVersions.add(AfterVersion(afterVersion = 2) { driver ->
-        
+        // do something
     })
-    afterVersion(value = 2) { driver ->
+    afterVersion(of = 2) { driver ->
         // do something
     }
 
@@ -226,8 +226,8 @@ val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Scheme) {
 [badge-coroutines]: https://img.shields.io/badge/coroutines-1.7.3-blue.svg?logo=kotlin
 [badge-encoding]: https://img.shields.io/badge/encoding-2.0.0-blue.svg?style=flat
 [badge-sql-delight]: https://img.shields.io/badge/SQLDelight-2.0.0-blue.svg?style=flat
-[badge-sql-mc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.6.2-blue.svg?style=flat
-[badge-sql-jdbc-crypt]: https://img.shields.io/badge/sqlite--jdbc--crypt-3.41.2.1-blue.svg?style=flat
+[badge-sql-mc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.6.4-blue.svg?style=flat
+[badge-sql-jdbc]: https://img.shields.io/badge/sqlite--jdbc-3.43.0.0-blue.svg?style=flat
 
 <!-- TAG_PLATFORMS -->
 [badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2023]-6EDB8D.svg?style=flat
@@ -254,6 +254,6 @@ val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Scheme) {
 [url-coroutines]: https://github.com/Kotlin/kotlinx.coroutines
 [url-encoding]: https://github.com/05nelsonm/encoding
 [url-sql-delight]: https://github.com/cashapp/sqldelight
-[url-sql-mc]: https://utelle.github.io/SQLite3MultipleCiphers/
-[url-sql-jdbc-crypt]: https://github.com/Willena/sqlite-jdbc-crypt
+[url-sql-mc]: https://github.com/utelle/SQLite3MultipleCiphers
+[url-sql-jdbc]: https://github.com/xerial/sqlite-jdbc
 

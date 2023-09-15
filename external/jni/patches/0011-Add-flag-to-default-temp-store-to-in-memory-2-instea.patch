@@ -1,0 +1,25 @@
+From 0a450f67e26d6a2261f76db5179682223896fdd9 Mon Sep 17 00:00:00 2001
+From: Matthew Nelson <developer@matthewnelson.io>
+Date: Fri, 15 Sep 2023 10:07:33 -0400
+Subject: [PATCH 11/11] Add flag to default temp store to in memory (2) instead
+ of filesystem (1)
+
+---
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Makefile b/Makefile
+index f2c3328..602e743 100644
+--- a/Makefile
++++ b/Makefile
+@@ -88,6 +88,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+ 	    -DCODEC_TYPE=CODEC_TYPE_CHACHA20 \
+ 	    -DSQLITE_ENABLE_EXTFUNC=1 \
+ 	    -DSQLITE_ENABLE_REGEXP=1 \
++	    -DSQLITE_TEMP_STORE=2 \
+ 	    -DSQLITE_USE_URI=1 \
+ 	    $(SQLITE_FLAGS) \
+ 	    $(SQLITE_OUT)/sqlite3mc_amalgamation.c
+-- 
+2.34.1
+
