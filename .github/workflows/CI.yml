@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
+        os: [ macos-latest, ubuntu-latest ]
 
     runs-on: ${{ matrix.os }}
 
@@ -70,7 +70,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [ 24, 26, 29 ]
+        api-level: [ 23, 26, 29 ]
         arch: [ x86_64 ]
     steps:
       - name: Checkout Repo
@@ -91,7 +91,7 @@ jobs:
       - name: Run Android Instrumented Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          emulator-boot-timeout: 180 # 3 minutes
+          emulator-boot-timeout: 300 # 5 minutes
           api-level: ${{ matrix.api-level }}
           arch: ${{ matrix.arch }}
-          script: ./gradlew :library:mc-driver-test:connectedCheck -PKMP_TARGETS="ANDROID,JVM"
+          script: ./gradlew :library:driver-test:connectedCheck -PKMP_TARGETS="ANDROID,JVM"

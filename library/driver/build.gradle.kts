@@ -148,7 +148,7 @@ private class JdbcRepack {
     private fun MinimalExternalModuleDependency.toJarFileName(): String = "$name-$version.jar"
 
     init {
-        val repackDir = projectDir.resolveSibling("jdbc-repack")
+        val repackDir = buildDir.resolve("jdbc-repack")
 
         jarSQLDelightDriver = repackDir.resolve(depSQLDelightDriver.toJarFileName())
         jarSQLiteJDBCAndroid = repackDir.resolve("android").resolve(depSQLiteJDBC.toJarFileName())
