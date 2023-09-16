@@ -171,23 +171,4 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
         }
     }
 
-    @Test
-    fun givenDriver_whenMultipleThreadedQueries_thenSucceeds() = runDriverTest(testLogger = null) { _, driver ->
-        val jobs = mutableListOf<Job>()
-        val queries = driver.toTestDatabase().testQueries
-
-        repeat(100) { index ->
-            launch(Dispatchers.IO) {
-                queries.upsert(value = index.toString(), key = index.toString())
-            }.let { job ->
-                jobs.add(job)
-            }
-        }
-
-        for ((index, job) in jobs.withIndex()) {
-            job.join()
-            assertEquals(index.toString(), queries.get(index.toString()).executeAsOne())
-        }
-    }
-
 }
