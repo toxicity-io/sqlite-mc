@@ -91,7 +91,7 @@ jobs:
       - name: Run Android Instrumented Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          emulator-boot-timeout: 180 # 3 minutes
+          emulator-boot-timeout: 300 # 5 minutes
           api-level: ${{ matrix.api-level }}
           arch: ${{ matrix.arch }}
           script: ./gradlew :library:driver-test:connectedCheck -PKMP_TARGETS="ANDROID,JVM"
