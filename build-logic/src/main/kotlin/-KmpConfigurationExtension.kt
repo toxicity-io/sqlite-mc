@@ -20,8 +20,6 @@ import io.matthewnelson.kmp.configuration.extension.container.target.KmpConfigur
 import io.matthewnelson.kmp.configuration.extension.container.target.TargetAndroidContainer
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
-import org.gradle.kotlin.dsl.NamedDomainObjectContainerScope
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 fun KmpConfigurationExtension.configureShared(
     action: (Action<KmpConfigurationContainerDsl>)? = null,
