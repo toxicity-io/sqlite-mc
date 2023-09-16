@@ -94,4 +94,4 @@ jobs:
           emulator-boot-timeout: 180 # 3 minutes
           api-level: ${{ matrix.api-level }}
           arch: ${{ matrix.arch }}
-          script: ./gradlew :library:mc-driver-test:connectedCheck -PKMP_TARGETS="ANDROID,JVM"
+          script: ./gradlew :library:driver-test:connectedCheck -PKMP_TARGETS="ANDROID,JVM"
