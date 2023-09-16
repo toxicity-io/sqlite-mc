@@ -29,7 +29,6 @@ import kotlin.test.Test
  * */
 class SQLiteMCDriverRekeyAndroidTest: SQLiteMCDriverRekeyTest() {
 
-    override val dbName: String = "test_rekey.db"
     private val ctx = ApplicationProvider.getApplicationContext<Application>()
     override val databasesDir: DatabasesDir = ctx.databasesDir()
     override val logger: (log: String) -> Unit = { Log.d("TEST", it)  }

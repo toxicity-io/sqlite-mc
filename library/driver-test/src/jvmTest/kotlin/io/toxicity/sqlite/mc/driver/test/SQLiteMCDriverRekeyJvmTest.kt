@@ -25,7 +25,6 @@ import kotlin.test.Test
  * */
 class SQLiteMCDriverRekeyJvmTest: SQLiteMCDriverRekeyTest() {
 
-    override val dbName: String = "test_rekey.db"
     override val databasesDir: DatabasesDir = File(
         System.getProperty("java.io.tmpdir", "/tmp"),
         "mc_driver_test"

@@ -43,6 +43,7 @@ kmpConfiguration {
                 dependencies {
                     implementation(project(":library:driver"))
                     implementation(libs.kotlinx.coroutines.test)
+                    implementation(libs.encoding.base16)
                 }
             }
         }

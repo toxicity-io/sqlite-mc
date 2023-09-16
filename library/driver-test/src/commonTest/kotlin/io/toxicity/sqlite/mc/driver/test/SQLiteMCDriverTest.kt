@@ -87,7 +87,7 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
         driver.upsert("key", expected)
         driver.close()
 
-        val factory2 = SQLiteMCDriver.Factory(dbName, TestDatabase.Schema) {
+        val factory2 = SQLiteMCDriver.Factory(factory.config.dbName, TestDatabase.Schema) {
             filesystem(driver.config.filesystemConfig!!) {
                 // remove encryptionConfig from inherited filesystem
                 encryption {  }

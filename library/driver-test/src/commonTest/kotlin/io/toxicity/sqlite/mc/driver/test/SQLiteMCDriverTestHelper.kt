@@ -16,6 +16,8 @@
 package io.toxicity.sqlite.mc.driver.test
 
 import app.cash.sqldelight.db.use
+import io.matthewnelson.encoding.base16.Base16
+import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.config.DatabasesDir
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
@@ -27,7 +29,6 @@ import kotlin.random.Random
 
 abstract class SQLiteMCDriverTestHelper {
 
-    protected abstract val dbName: String
     protected abstract val databasesDir: DatabasesDir
     protected abstract val logger: (log: String) -> Unit
     protected abstract fun deleteDbFile(directory: String, dbName: String)
@@ -55,12 +56,12 @@ abstract class SQLiteMCDriverTestHelper {
     protected fun runDriverTest(
         key: Key? = this.keyPassphrase,
         // pass null to use in memory db
-        filesystem: (FilesystemConfig.Builder.() -> Unit)? = {
-            encryption { chaCha20 { default() } }
-        },
+        filesystem: (FilesystemConfig.Builder.() -> Unit)? = { encryption { chaCha20 { default() } } },
         testLogger: ((String) -> Unit)? = this.logger,
         block: suspend TestScope.(factory: SQLiteMCDriver.Factory, driver: SQLiteMCDriver) -> Unit
     ): TestResult = runTest {
+        val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
+
         deleteDbFile(databasesDir.pathOrNull()!!, dbName)
 
         val factory = SQLiteMCDriver.Factory(
