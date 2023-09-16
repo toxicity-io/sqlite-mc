@@ -279,16 +279,17 @@ private class JdbcRepack {
                                     .resolve("x86_64")
                                     .resolve("libsqlitejdbc.dylib")
                             }
-                            entry.name.startsWith("org/sqlite/native/Windows/x86") -> {
-                                signedLib = jdbcSignedDir
-                                    .resolve("Windows")
-                                    .resolve("x86")
-                                    .resolve("sqlitejdbc.dll")
-                            }
                             entry.name.startsWith("org/sqlite/native/Windows/x86_64") -> {
                                 signedLib = jdbcSignedDir
                                     .resolve("Windows")
                                     .resolve("x86_64")
+                                    .resolve("sqlitejdbc.dll")
+                            }
+                            // Must come after check for Windows/x86_64
+                            entry.name.startsWith("org/sqlite/native/Windows/x86") -> {
+                                signedLib = jdbcSignedDir
+                                    .resolve("Windows")
+                                    .resolve("x86")
                                     .resolve("sqlitejdbc.dll")
                             }
 

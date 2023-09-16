@@ -19,7 +19,6 @@ import android.app.Application
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import io.toxicity.sqlite.mc.driver.config.DatabasesDir
-import io.toxicity.sqlite.mc.driver.config.databasesDir
 import java.io.File
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -29,9 +28,8 @@ import kotlin.test.Test
  * */
 class SQLiteMCDriverAndroidTest: SQLiteMCDriverTest() {
 
-    override val dbName: String = "test.db"
     private val ctx = ApplicationProvider.getApplicationContext<Application>()
-    override val databasesDir: DatabasesDir = ctx.databasesDir()
+    override val databasesDir: DatabasesDir = DatabasesDir(ctx.cacheDir)
     override val logger: (log: String) -> Unit = { Log.d("TEST", it)  }
 
     override fun deleteDbFile(directory: String, dbName: String) { File(directory, dbName).delete() }

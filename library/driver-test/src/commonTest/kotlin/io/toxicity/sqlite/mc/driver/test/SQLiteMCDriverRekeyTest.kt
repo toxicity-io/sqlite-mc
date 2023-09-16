@@ -88,6 +88,8 @@ abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
         key = keyPassphrase,
         filesystem = { encryption { chaCha20 { sqleet() } } }
     ) { factory1, driver ->
+        val dbName = factory1.config.dbName
+
         val expected = "alsdkjnflaskdnfa"
         driver.upsert("key", expected)
         driver.close()
