@@ -1,8 +1,7 @@
-From 0a450f67e26d6a2261f76db5179682223896fdd9 Mon Sep 17 00:00:00 2001
+From 1545e24fa913425b01ade36371e150fd59df2364 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Fri, 15 Sep 2023 10:07:33 -0400
-Subject: [PATCH 11/11] Add flag to default temp store to in memory (2) instead
- of filesystem (1)
+Date: Sat, 16 Sep 2023 06:35:02 -0400
+Subject: [PATCH 11/11] Add flag SQLITE_TEMP_STORE=2 (in memory)
 
 ---
  Makefile | 1 +
