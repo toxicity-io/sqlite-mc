@@ -1,4 +1,17 @@
-#!/usr/bin/env bash
+#!/bin/sh
+# Copyright (c) 2023 Toxicity
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 export LC_ALL=C
 set -e
@@ -6,34 +19,31 @@ set -e
 readonly TIME_START=$(date +%s)
 
 # Absolute path to the directory which this script resides in
-readonly DIR_SCRIPTS=$( cd "$( dirname "$0" )" >/dev/null && pwd )
+readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 
-readonly DIR_EXTERNAL="$DIR_SCRIPTS/.."
-readonly DIR_JNI="$DIR_EXTERNAL/jni"
-readonly DIR_OUT="$DIR_JNI/out"
-readonly DIR_UNSIGNED="$DIR_OUT/unsigned"
-readonly DIR_SIGNED="$DIR_OUT/signed"
+readonly DIR_LIBS="$DIR_SCRIPT/libs"
+readonly DIR_UNSIGNED="$DIR_LIBS/unsigned"
+readonly DIR_SIGNED="$DIR_LIBS/signed"
 
 # Programs
 readonly RCODESIGN=$(which rcodesign)
 readonly OSSLSIGNCODE=$(which osslsigncode)
 
-if [ -z $RCODESIGN ]; then
+if [ -z "$RCODESIGN" ]; then
     echo "rcodesign is required to run this script"
     exit 1
 fi
 
-if [ -z $OSSLSIGNCODE ]; then
+if [ -z "$OSSLSIGNCODE" ]; then
     echo "osslsigncode is required to run this script"
     exit 1
 fi
 
 sign_macos() {
-  cd "$DIR_OUT"
+  cd "$DIR_LIBS"
   cp -R "$DIR_UNSIGNED/Mac" "$DIR_SIGNED"
 
   # Read in .p12 key file path
-  local PATH_KEY_P12=
   printf "Path to .p12 key file (e.g. /home/user/dir/key.p12): "
   read -r PATH_KEY_P12
 
@@ -43,7 +53,6 @@ sign_macos() {
   fi
 
   # Read in App Store Connect apikey.json file path
-  local PATH_KEY_API=
   printf "Path to App Store Connect api-key json file (e.g. /home/user/dir/api_key.json): "
   read -r PATH_KEY_API
 
@@ -52,10 +61,6 @@ sign_macos() {
     exit 1
   fi
 
-  local DIR_ARCH=
-  local BUNDLE=
-  local BUNDLE_MACOS=
-  local BUNDLE_LIB=
   for DIR_ARCH in "$DIR_SIGNED/Mac"/*; do
     cd "$DIR_ARCH"
     BUNDLE="$DIR_ARCH/SQLiteMCDriver.app"
@@ -96,9 +101,8 @@ sign_macos() {
 }
 
 sign_mingw() {
-  cd "$DIR_OUT"
+  cd "$DIR_LIBS"
 
-  local PATH_KEY=
   printf "Path to .key file (e.g. /home/user/dir/my_key.key): "
   read -r PATH_KEY
 
@@ -107,7 +111,6 @@ sign_mingw() {
     exit 1
   fi
 
-  local PATH_CERT=
   printf "Path to cert file (e.g. /home/user/dir/cert.cer): "
   read -r PATH_CERT
 
@@ -116,8 +119,6 @@ sign_mingw() {
     exit 1
   fi
 
-  local DIR_ARCH=
-  local ARCH_NAME=
   for DIR_ARCH in "$DIR_UNSIGNED/Windows"/*; do
     cd "$DIR_ARCH"
     ARCH_NAME=$(echo "$DIR_ARCH" | rev | cut -d '/' -f 1 | rev)

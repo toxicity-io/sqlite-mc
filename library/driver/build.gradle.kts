@@ -190,7 +190,7 @@ private class JdbcRepack {
         private val jdbcSqliteJar: File = rootDir
             .resolve("external")
             .resolve("jni")
-            .resolve("out")
+            .resolve("libs")
             .resolve(depSQLiteJDBC.toJarFileName())
 
         private val repackJdbcSqliteAndroid by lazy {
@@ -242,7 +242,7 @@ private class JdbcRepack {
             val jdbcSignedDir: File = rootDir
                 .resolve("external")
                 .resolve("jni")
-                .resolve("out")
+                .resolve("libs")
                 .resolve("signed")
 
             val mcDriverAndroidTestResources = projectDir
