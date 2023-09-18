@@ -74,113 +74,113 @@ function build:all:watchos { ## Builds all watchosOS libs
 function build:ios:arm64 { ## Builds iOS arm64
   local os_name="ios"
   local os_target="arm64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:ios:simulator_arm64 { ## Builds iOS simulator arm64
   local os_name="ios"
   local os_target="simulator_arm64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:ios:x64 { ## Builds iOS x64
   local os_name="ios"
   local os_target="x64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:linux:x64 { ## Builds Linux x64
   local os_name="linux"
   local os_target="x64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:macos:arm64 { ## Builds macOS arm64
   local os_name="macos"
   local os_target="arm64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:macos:x64 { ## Builds macOS x64
   local os_name="macos"
   local os_target="x64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:mingw:x64 { ## Builds Windows x64
   local os_name="mingw"
   local os_target="x64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:tvos:arm64 { ## Builds tvOS arm64
   local os_name="tvos"
   local os_target="arm64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:tvos:simulator_arm64 { ## Builds tvOS simulator arm64
   local os_name="tvos"
   local os_target="simulator_arm64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:tvos:x64 { ## Builds tvOS x64
   local os_name="tvos"
   local os_target="x64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:watchos:arm32 { ## Builds watchOS arm32
   local os_name="watchos"
   local os_target="arm32"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:watchos:arm64 { ## Builds watchOS arm64
   local os_name="watchos"
   local os_target="arm64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:watchos:simulator_arm64 { ## Builds watchOS simulator arm64
   local os_name="watchos"
   local os_target="simulator_arm64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function build:watchos:x64 { ## Builds watchOS x64
   local os_name="watchos"
   local os_target="x64"
-  local dir_target_build dir_target_libs log_file
+  local dir_target_build dir_target_libs
   trap '__log_target_time' RETURN
-  __pre_build:target
+  __build:configure:target
 }
 
 function clean { ## Cleans build directory of old versions and log files
@@ -192,13 +192,12 @@ function clean { ## Cleans build directory of old versions and log files
     return 0
   fi
 
-  cd "build"
   local location=
-  for location in ./*; do
+  for location in "build"/*; do
     if [ "$(echo "$location" | cut -d '-' -f 2)" != "$version_sqlite3mc" ]; then
-      rm -rfv "$DIR_SCRIPT/build/$location"
+      rm -rfv "$DIR_SCRIPT/$location"
     elif [ "$(echo "$location" | rev | cut -d '.' -f 1)" = "gol" ]; then
-      rm -rfv "$DIR_SCRIPT/build/$location"
+      rm -rfv "$DIR_SCRIPT/$location"
     fi
   done
 }
@@ -231,11 +230,11 @@ $(
 function __init {
   # Ensure always start in the external/native directory
   cd "$DIR_SCRIPT"
-  __pre_build:init "$1"
+  __build:configure:init "$1"
   "$1"
 }
 
-function __pre_build:init {
+function __build:configure:init {
   if ! echo "$1" | grep -q "^build"; then
     return 0
   fi
@@ -257,7 +256,7 @@ function __pre_build:init {
   ${UNZIP} -q "$DIR_AMAL_ZIP.zip" -d "$DIR_AMAL_ZIP"
 }
 
-function __pre_build:target {
+function __build:configure:target {
   if [ -z "$os_name" ] || [ -z "$os_target" ]; then
     echo "ERROR: os_name & os_target must be set locally from function caller"
     exit 1
@@ -274,7 +273,7 @@ function __pre_build:target {
 
   dir_target_build="build/sqlite3mc-$version_sqlite3mc-$os_name-$os_target"
   dir_target_libs="libs/$os_name/$os_target"
-  log_file="$dir_target_build.log"
+  local log_file="$dir_target_build.log"
 
   mkdir -p "$dir_target_build"
   mkdir -p "$dir_target_libs"
@@ -309,8 +308,8 @@ function __require:cmd {
     return 0
   fi
 
-  echo "ERROR: $2 is required to run this script"
-  exit 1
+  echo 1>&2 "ERROR: $2 is required to run this script"
+  exit 3
 }
 
 function __log_target_time {
@@ -325,7 +324,7 @@ function __log_target_time {
 if [ -z "$1" ] || [ "$1" = "help" ] || echo "$1" | grep -q "^__"; then
   help
 elif ! grep -qE "^function $1 {" "$0"; then
-  echo "
+  echo 1>&2 "
 
     ERROR: Unknown task '$1'
   "
