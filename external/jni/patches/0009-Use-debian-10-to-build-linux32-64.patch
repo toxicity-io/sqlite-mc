@@ -1,18 +1,14 @@
-From 1595ff96b7523a6c20a9a3c3b4507564a27168cb Mon Sep 17 00:00:00 2001
+From baf0cd105db59bc0e309b5fbb36814dec277e875 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Sat, 16 Sep 2023 06:33:39 -0400
-Subject: [PATCH 09/11] Use debian-10 to build linux32/64
+Date: Tue, 19 Sep 2023 14:06:50 -0400
+Subject: [PATCH 09/10] Use debian-10 to build linux32/64
 
 ---
- Makefile                              | 8 ++++----
- docker/Dockerfile.debian-linux_x86    | 7 +++++++
- docker/Dockerfile.debian-linux_x86_64 | 7 +++++++
- 3 files changed, 18 insertions(+), 4 deletions(-)
- create mode 100644 docker/Dockerfile.debian-linux_x86
- create mode 100644 docker/Dockerfile.debian-linux_x86_64
+ Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 7d184f9..577622d 100644
+index 7d184f9..823ffa5 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -132,10 +132,10 @@ win-arm64: $(SQLITE_UNPACKED) jni-header
@@ -28,45 +24,6 @@ index 7d184f9..577622d 100644
  
  freebsd32: $(SQLITE_UNPACKED) jni-header
  	docker run $(DOCKER_RUN_OPTS) -v $$PWD:/workdir empterdose/freebsd-cross-build:9.3 sh -c 'apk add bash; apk add openjdk8; apk add perl; make clean-native native OS_NAME=FreeBSD OS_ARCH=x86 CROSS_PREFIX=i386-freebsd9-'
-@@ -217,10 +217,10 @@ clean-tests:
- 	rm -rf $(TARGET)/{surefire*,testdb.jar*}
- 
- docker-linux64:
--	docker build -f docker/Dockerfile.linux_x86_64 -t xerial/centos5-linux-x86_64 .
-+	docker build -f docker/Dockerfile.debian-linux_x86_64 -t toxicity-io/debian10-linux-x86_64 .
- 
- docker-linux32:
--	docker build -f docker/Dockerfile.linux_x86 -t xerial/centos5-linux-x86 .
-+	docker build -f docker/Dockerfile.debian-linux_x86 -t toxicity-io/debian10-linux-x86 .
- 
- docker-linux-musl32:
- 	docker build -f docker/Dockerfile.alpine-linux_x86 -t gotson/alpine-linux-x86 .
-diff --git a/docker/Dockerfile.debian-linux_x86 b/docker/Dockerfile.debian-linux_x86
-new file mode 100644
-index 0000000..b865e44
---- /dev/null
-+++ b/docker/Dockerfile.debian-linux_x86
-@@ -0,0 +1,7 @@
-+FROM i386/debian:10-slim
-+
-+RUN apt-get update
-+RUN apt-get -y install gcc make perl
-+RUN apt-get clean
-+
-+WORKDIR /work
-diff --git a/docker/Dockerfile.debian-linux_x86_64 b/docker/Dockerfile.debian-linux_x86_64
-new file mode 100644
-index 0000000..0f3843d
---- /dev/null
-+++ b/docker/Dockerfile.debian-linux_x86_64
-@@ -0,0 +1,7 @@
-+FROM amd64/debian:10-slim
-+
-+RUN apt-get update
-+RUN apt-get -y install gcc make perl
-+RUN apt-get clean
-+
-+WORKDIR /work
 -- 
 2.34.1
 
