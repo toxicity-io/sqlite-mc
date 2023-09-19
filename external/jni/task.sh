@@ -50,15 +50,13 @@ function build { ## Build sqlite-jdbc native libs and package .jar file
   ${MAKE} docker-linux64
   ${MAKE} native-all package test
 
-  cp -R "$DIR_JDBC/src/main/resources/org/sqlite/native/Mac/" "$DIR_UNSIGNED/"
-  cp -R "$DIR_JDBC/src/main/resources/org/sqlite/native/Windows/" "$DIR_UNSIGNED/"
-  echo "Mac/Windows unsigned shared libs have been copied to $DIR_UNSIGNED"
+  cp -Rv "$DIR_JDBC/src/main/resources/org/sqlite/native/Mac/" "$DIR_UNSIGNED/"
+  cp -Rv "$DIR_JDBC/src/main/resources/org/sqlite/native/Windows/" "$DIR_UNSIGNED/"
 
   local jar_file=
   # shellcheck disable=SC2154
   for jar_file in "$DIR_JDBC/target/sqlite-jdbc-${version}"*.jar; do
-    echo "Copying $jar_file to $DIR_LIBS"
-    cp "$jar_file" "$DIR_LIBS"
+    cp -v "$jar_file" "$DIR_LIBS"
   done
 }
 
@@ -69,10 +67,10 @@ function sign:macos { ## Sign and notarize macOS libs. 2 ARGS - [1]: /path/to/ke
     exit 3
   fi
 
-  local file_key="$1"
-  local file_cert="$2"
-  __require:file_exists "$file_key"
-  __require:file_exists "$file_cert"
+  local file_key_p12="$1"
+  local file_key_api="$2"
+  __require:file_exists "$file_key_p12"
+  __require:file_exists "$file_key_api"
   __require:cmd "$RCODESIGN" "rcodesign"
 
   mkdir -p "$DIR_SIGNED"
@@ -103,13 +101,13 @@ function sign:macos { ## Sign and notarize macOS libs. 2 ARGS - [1]: /path/to/ke
     cp "$dir_arch/libsqlitejdbc.dylib" "$dir_bundle_macos/sqlite-mc-driver.program"
     mv "$dir_arch/libsqlitejdbc.dylib" "$dir_bundle_libs/"
 
-    ${RCODESIGN} sign --p12-file "$file_key" --code-signature-flags runtime "$dir_bundle"
+    ${RCODESIGN} sign --p12-file "$file_key_p12" --code-signature-flags runtime "$dir_bundle"
 
     sleep 1
 
-    ${RCODESIGN} notary-submit --api-key-path "$file_cert" --staple "$dir_bundle"
+    ${RCODESIGN} notary-submit --api-key-path "$file_key_api" --staple "$dir_bundle"
 
-    mv "$dir_bundle_libs/libsqlitejdbc.dylib" "$dir_arch"
+    mv -v "$dir_bundle_libs/libsqlitejdbc.dylib" "$dir_arch"
     rm -rf "$dir_bundle"
   done
 }
