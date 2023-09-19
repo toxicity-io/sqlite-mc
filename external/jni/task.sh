@@ -221,6 +221,6 @@ elif ! grep -qE "^function $1 {" "$0"; then
 else
   # Ensure always start in the external/jni directory
   cd "$DIR_SCRIPT"
-  TIMEFORMAT="Task completed in %3lR"
+  TIMEFORMAT="Task '$1' completed in %3lR"
   time "$@"
 fi
