@@ -210,7 +210,7 @@ val sharedConfig = FilesystemConfig.new(databasesDir) {
 val factory1 = SQLiteMCDriver.Factory("first.db", DatabaseFirst.Schema) {
     filesystem(sharedConfig)
 }
-val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Scheme) {
+val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Schema) {
     filesystem(sharedConfig)
 }
 ```

@@ -1,7 +1,7 @@
 From 8bad9fc0f1fcf0973a0cff4b4a2a60edbb9f27a5 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Sat, 16 Sep 2023 06:32:48 -0400
-Subject: [PATCH 07/11] Disable mac shared lib adhoc signing
+Subject: [PATCH 07/10] Disable mac shared lib adhoc signing
 
 ---
  Makefile | 2 +-
