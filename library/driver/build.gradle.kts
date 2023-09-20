@@ -14,6 +14,7 @@
  * limitations under the License.
  **/
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.IOException
 import java.io.InputStream
@@ -105,6 +106,36 @@ kmpConfiguration {
                     }
                 }
             }
+
+            targets.filterIsInstance<KotlinNativeTarget>().forEach { it.sqlite3mcInterop() }
+        }
+    }
+}
+
+fun KotlinNativeTarget.sqlite3mcInterop() {
+    val kt = konanTarget
+
+    val libsDir = rootDir
+        .resolve("external")
+        .resolve("native")
+        .resolve("libs")
+        .resolve(kt.name.substringBefore('_'))
+        .resolve(kt.name.substringAfter('_'))
+
+    val staticLib = libsDir
+        .resolve(kt.family.staticPrefix + "sqlite3mc." + kt.family.staticSuffix)
+
+    // TODO: Remove once all build targets have static lib compilations
+    if (!staticLib.exists()) return
+
+    compilations["main"].apply {
+        kotlinOptions {
+            freeCompilerArgs += listOf("-include-binary", staticLib.path)
+            freeCompilerArgs += listOf("-linker-options", "-L$libsDir -lsqlite3")
+        }
+
+        cinterops.create("sqlite3mc").apply {
+            includeDirs(libsDir.resolve("include").path)
         }
     }
 }

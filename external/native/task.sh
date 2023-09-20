@@ -26,10 +26,19 @@ readonly DOCKER=$(which docker)
 readonly UNZIP=$(which unzip)
 readonly XCRUN=$(which xcrun)
 
+readonly U_ID=$(id -u)
+readonly G_ID=$(id -g)
+
 OS_NAME=
 OS_TARGET=
 DIR_TARGET_BUILD=
 DIR_TARGET_LIBS=
+
+CFLAGS=
+LIB_NAME="libsqlite3mc.a"
+
+CMD_CC=
+CMD_AR=
 
 function build:all:desktop { ## Builds all Linux, all macOS, & all Windows libs
   build:all:linux &
@@ -98,6 +107,25 @@ function build:linux:x64 { ## Builds Linux x64
   OS_NAME="linux"
   OS_TARGET="x64"
   __build:configure:target
+
+  __CFLAGS -v -g -O3 -msse4.2 -maes
+  __build:configure:SQLITE_FLAGS
+
+  ${DOCKER} build \
+    -f "$DIR_SCRIPT/../docker/Dockerfile.debian-linux_x86_64" \
+    -t toxicity-io/debian10-linux-x86_64 \
+    .
+
+  __build:configure:CMD_CC gcc
+  __build:configure:CMD_AR ar rcs
+
+  ${DOCKER} run --rm \
+    -u "$U_ID:$G_ID" \
+    -v "$DIR_SCRIPT":/work \
+    toxicity-io/debian10-linux-x86_64 \
+    bash -c "$CMD_CC; $CMD_AR"
+
+  __build:target:package
 }
 
 function build:macos:arm64 { ## Builds macOS arm64
@@ -243,6 +271,12 @@ function __build:configure:target {
       ;;
     *)
       __require:cmd "$DOCKER" "docker"
+      __require:var_set "$U_ID" "U_ID"
+      __require:var_set "$G_ID" "G_ID"
+      if [ "$U_ID" = "0" ] || [ "$G_ID" = "0" ]; then
+        echo 1>&2 "ERROR: U_ID[$U_ID] or G_ID[$G_ID] unacceptable value (0). Unable to specify non-root docker user."
+        exit 3
+      fi
       ;;
   esac
 
@@ -272,11 +306,81 @@ function __build:configure:target {
   # Prepare target's libs directory
   # shellcheck disable=SC2115
   rm -rfv "$DIR_TARGET_LIBS/"*
+}
 
-  # TODO: Remove
-  sleep "$(shuf -i 2-14 -n 1)"
+# shellcheck disable=SC2120
+function __build:configure:SQLITE_FLAGS {
+  __require:var_set "$OS_TARGET" "OS_TARGET"
+  __require:var_set "$DIR_TARGET_BUILD" "DIR_TARGET_BUILD"
+  __require:var_set "$DIR_TARGET_LIBS" "DIR_TARGET_LIBS"
 
-  # TODO: Flags
+  __CFLAGS -I"$DIR_TARGET_BUILD" -I"$DIR_TARGET_LIBS"
+
+  __CFLAGS \
+    -DSQLITE_HAVE_ISNAN=1 \
+    -DHAVE_USLEEP=1 \
+    -DSQLITE_ENABLE_COLUMN_METADATA=1 \
+    -DSQLITE_CORE=1 \
+    -DSQLITE_ENABLE_FTS3=1 \
+    -DSQLITE_ENABLE_FTS3_PARENTHESIS=1 \
+    -DSQLITE_ENABLE_FTS5=1 \
+    -DSQLITE_ENABLE_RTREE=1 \
+    -DSQLITE_ENABLE_STAT4=1 \
+    -DSQLITE_ENABLE_DBSTAT_VTAB=1 \
+    -DSQLITE_ENABLE_MATH_FUNCTIONS=1 \
+    -DSQLITE_THREADSAFE=1 \
+    -DSQLITE_DEFAULT_MEMSTATUS=0 \
+    -DSQLITE_DEFAULT_FILE_PERMISSIONS=0666 \
+    -DSQLITE_MAX_VARIABLE_NUMBER=250000 \
+    -DSQLITE_MAX_MMAP_SIZE=1099511627776 \
+    -DSQLITE_MAX_LENGTH=2147483647 \
+    -DSQLITE_MAX_COLUMN=32767 \
+    -DSQLITE_MAX_SQL_LENGTH=1073741824 \
+    -DSQLITE_MAX_FUNCTION_ARG=127 \
+    -DSQLITE_MAX_ATTACHED=125 \
+    -DSQLITE_MAX_PAGE_COUNT=4294967294 \
+    -DSQLITE_DQS=0 \
+    -DCODEC_TYPE=CODEC_TYPE_CHACHA20 \
+    -DSQLITE_ENABLE_EXTFUNC=1 \
+    -DSQLITE_ENABLE_REGEXP=1 \
+    -DSQLITE_TEMP_STORE=2 \
+    -DSQLITE_USE_URI=1 \
+    "$*"
+}
+
+function __build:configure:CMD_CC {
+  __require:not_empty "$1" "Compiler argument must be passed (e.g. clang, gcc, ...)"
+  __require:var_set "$CFLAGS" "CFLAGS"
+  __require:var_set "$DIR_TARGET_BUILD" "DIR_TARGET_BUILD"
+  __require:var_set "$DIR_TARGET_LIBS" "DIR_TARGET_LIBS"
+
+  CMD_CC="$* $CFLAGS -c $DIR_TARGET_BUILD/sqlite3mc_amalgamation.c -o $DIR_TARGET_BUILD/sqlite3.o"
+  echo "CMD_CC: $CMD_CC"
+}
+
+function __build:configure:CMD_AR {
+  __require:not_empty "$1" "Archiver argument must be passed (e.g. ar, libtool, ...)"
+  __require:var_set "$DIR_TARGET_BUILD" "DIR_TARGET_BUILD"
+  __require:var_set "$DIR_TARGET_LIBS" "DIR_TARGET_LIBS"
+  __require:var_set "$LIB_NAME" "LIB_NAME"
+
+  CMD_AR="$* $DIR_TARGET_LIBS/$LIB_NAME $DIR_TARGET_BUILD/sqlite3.o"
+  echo "CMD_AR: $CMD_AR"
+}
+
+function __build:target:package {
+  __require:var_set "$DIR_TARGET_BUILD" "DIR_TARGET_BUILD"
+  __require:var_set "$DIR_TARGET_LIBS" "DIR_TARGET_LIBS"
+  __require:var_set "$LIB_NAME" "LIB_NAME"
+
+  echo ""
+  chmod -v 755 "$DIR_TARGET_LIBS/$LIB_NAME"
+  mkdir -pv "$DIR_TARGET_LIBS/include"
+  cp -v "$DIR_TARGET_BUILD/sqlite3mc_amalgamation.h" "$DIR_TARGET_LIBS/include/sqlite3mc.h"
+}
+
+function __CFLAGS {
+  CFLAGS+=" $*"
 }
 
 function __require:cmd {
