@@ -1,4 +1,4 @@
-package = io.toxicity.sqlite.mc.driver.sqlite3mc
+package = utelle.sqlite3mc
 headers = sqlite3mc.h
 
 linkerOpts.linux_x64 = -lpthread -ldl -lm
