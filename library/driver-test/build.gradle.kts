@@ -14,6 +14,8 @@
  * limitations under the License.
  **/
 import app.cash.sqldelight.gradle.SqlDelightExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 
 plugins {
     id("configuration")
@@ -50,6 +52,33 @@ kmpConfiguration {
 
         kotlin {
             extensions.configure<SqlDelightExtension>("sqldelight") {
+                linkSqlite.set(false)
+
+                // TODO: Issue #18
+                afterEvaluate {
+                    targets
+                        .filterIsInstance<KotlinNativeTarget>()
+                        .forEach {
+                            val kt = it.konanTarget
+
+                            val libsDir = rootDir
+                                .resolve("external")
+                                .resolve("native")
+                                .resolve("libs")
+                                .resolve(kt.name.substringBefore('_'))
+                                .resolve(kt.name.substringAfter('_'))
+
+                            val staticLib = libsDir
+                                .resolve(kt.family.staticPrefix + "sqlite3mc." + kt.family.staticSuffix)
+
+                            if (!staticLib.exists()) return@forEach
+
+                            it.binaries.forEach { compilationUnit ->
+                                compilationUnit.linkerOpts("-L$libsDir -lsqlite3mc")
+                            }
+                        }
+                }
+
                 databases {
                     linkSqlite.set(false)
 
@@ -61,4 +90,8 @@ kmpConfiguration {
             }
         }
     }
+}
+
+fun SqlDelightExtension.linkSqliteMC() {
+    linkSqlite.set(false)
 }

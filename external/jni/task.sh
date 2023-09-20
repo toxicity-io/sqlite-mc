@@ -47,12 +47,12 @@ function build { ## Build sqlite-jdbc native libs and package .jar file
   mkdir -p "$DIR_UNSIGNED"
 
   ${DOCKER} build \
-    -f "$DIR_SCRIPT/../docker/Dockerfile.debian-linux_x86" \
-    -t toxicity-io/debian10-linux-x86 \
+    -f "$DIR_SCRIPT/../docker/Dockerfile.ubuntu16-linux-x86" \
+    -t toxicity-io/ubuntu16-linux-x86 \
     .
   ${DOCKER} build \
-    -f "$DIR_SCRIPT/../docker/Dockerfile.debian-linux_x86_64" \
-    -t toxicity-io/debian10-linux-x86_64 \
+    -f "$DIR_SCRIPT/../docker/Dockerfile.ubuntu16-linux-x86_64" \
+    -t toxicity-io/ubuntu16-linux-x86_64 \
     .
   ${MAKE} native-all package test
 
