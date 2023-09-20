@@ -108,7 +108,7 @@ function build:linux:x64 { ## Builds Linux x64
   OS_TARGET="x64"
   __build:configure:target
 
-  __CFLAGS -v -g -O3 -msse4.2 -maes
+  __CFLAGS -v -O3 -msse4.2 -maes
   __build:configure:SQLITE_FLAGS
 
   ${DOCKER} build \
