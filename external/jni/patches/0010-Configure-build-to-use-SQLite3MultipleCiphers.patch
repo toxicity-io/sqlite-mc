@@ -1,6 +1,6 @@
-From b02947cea742c64e4864725cbb5154abecee78a7 Mon Sep 17 00:00:00 2001
+From 7b917eec7f06693a2f7fec0537fa311a111ed435 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Tue, 19 Sep 2023 14:08:04 -0400
+Date: Wed, 20 Sep 2023 15:32:03 -0400
 Subject: [PATCH 10/10] Configure build to use SQLite3MultipleCiphers
 
 ---
@@ -11,7 +11,7 @@ Subject: [PATCH 10/10] Configure build to use SQLite3MultipleCiphers
  4 files changed, 27 insertions(+), 26 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 823ffa5..dc504c4 100644
+index 840ad53..f619ee9 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -19,7 +19,7 @@ SQLITE_OBJ?=$(SQLITE_OUT)/sqlite3.o

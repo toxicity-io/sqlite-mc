@@ -36,6 +36,7 @@ DIR_TARGET_LIBS=
 
 CFLAGS=
 LIB_NAME="libsqlite3mc.a"
+readonly OBJ_NAME="sqlite3mc.o"
 
 CMD_CC=
 CMD_AR=
@@ -112,8 +113,8 @@ function build:linux:x64 { ## Builds Linux x64
   __build:configure:SQLITE_FLAGS
 
   ${DOCKER} build \
-    -f "$DIR_SCRIPT/../docker/Dockerfile.debian-linux_x86_64" \
-    -t toxicity-io/debian10-linux-x86_64 \
+    -f "$DIR_SCRIPT/../docker/Dockerfile.ubuntu16-linux-x86_64" \
+    -t toxicity-io/ubuntu16-linux-x86_64 \
     .
 
   __build:configure:CMD_CC gcc
@@ -122,7 +123,7 @@ function build:linux:x64 { ## Builds Linux x64
   ${DOCKER} run --rm \
     -u "$U_ID:$G_ID" \
     -v "$DIR_SCRIPT":/work \
-    toxicity-io/debian10-linux-x86_64 \
+    toxicity-io/ubuntu16-linux-x86_64 \
     bash -c "$CMD_CC; $CMD_AR"
 
   __build:target:package
@@ -354,7 +355,7 @@ function __build:configure:CMD_CC {
   __require:var_set "$DIR_TARGET_BUILD" "DIR_TARGET_BUILD"
   __require:var_set "$DIR_TARGET_LIBS" "DIR_TARGET_LIBS"
 
-  CMD_CC="$* $CFLAGS -c $DIR_TARGET_BUILD/sqlite3mc_amalgamation.c -o $DIR_TARGET_BUILD/sqlite3.o"
+  CMD_CC="$* $CFLAGS -c $DIR_TARGET_BUILD/sqlite3mc_amalgamation.c -o $DIR_TARGET_BUILD/$OBJ_NAME"
   echo "CMD_CC: $CMD_CC"
 }
 
@@ -364,7 +365,7 @@ function __build:configure:CMD_AR {
   __require:var_set "$DIR_TARGET_LIBS" "DIR_TARGET_LIBS"
   __require:var_set "$LIB_NAME" "LIB_NAME"
 
-  CMD_AR="$* $DIR_TARGET_LIBS/$LIB_NAME $DIR_TARGET_BUILD/sqlite3.o"
+  CMD_AR="$* $DIR_TARGET_LIBS/$LIB_NAME $DIR_TARGET_BUILD/$OBJ_NAME"
   echo "CMD_AR: $CMD_AR"
 }
 

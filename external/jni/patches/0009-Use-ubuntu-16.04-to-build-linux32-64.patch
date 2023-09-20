@@ -1,0 +1,29 @@
+From b29e70d1765b702706234aff9dedd9c3c000dcf2 Mon Sep 17 00:00:00 2001
+From: Matthew Nelson <developer@matthewnelson.io>
+Date: Tue, 19 Sep 2023 14:06:50 -0400
+Subject: [PATCH 09/10] Use ubuntu 16.04 to build linux32/64
+
+---
+ Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 7d184f9..840ad53 100644
+--- a/Makefile
++++ b/Makefile
+@@ -132,10 +132,10 @@ win-arm64: $(SQLITE_UNPACKED) jni-header
+ 	./docker/dockcross-windows-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-w64-mingw32- OS_NAME=Windows OS_ARCH=aarch64'
+ 
+ linux32: $(SQLITE_UNPACKED) jni-header
+-	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work xerial/centos5-linux-x86 bash -c 'make clean-native native OS_NAME=Linux OS_ARCH=x86'
++	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work toxicity-io/ubuntu16-linux-x86 bash -c 'make clean-native native OS_NAME=Linux OS_ARCH=x86'
+ 
+ linux64: $(SQLITE_UNPACKED) jni-header
+-	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work xerial/centos5-linux-x86_64 bash -c 'make clean-native native OS_NAME=Linux OS_ARCH=x86_64'
++	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work toxicity-io/ubuntu16-linux-x86_64 bash -c 'make clean-native native OS_NAME=Linux OS_ARCH=x86_64'
+ 
+ freebsd32: $(SQLITE_UNPACKED) jni-header
+ 	docker run $(DOCKER_RUN_OPTS) -v $$PWD:/workdir empterdose/freebsd-cross-build:9.3 sh -c 'apk add bash; apk add openjdk8; apk add perl; make clean-native native OS_NAME=FreeBSD OS_ARCH=x86 CROSS_PREFIX=i386-freebsd9-'
+-- 
+2.34.1
+

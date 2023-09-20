@@ -1,7 +1,0 @@
-FROM amd64/debian:10-slim
-
-RUN apt-get update
-RUN apt-get -y install gcc make
-RUN apt-get clean
-
-WORKDIR /work

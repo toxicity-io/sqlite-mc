@@ -131,7 +131,7 @@ fun KotlinNativeTarget.sqlite3mcInterop() {
     compilations["main"].apply {
         kotlinOptions {
             freeCompilerArgs += listOf("-include-binary", staticLib.path)
-            freeCompilerArgs += listOf("-linker-options", "-L$libsDir -lsqlite3")
+            freeCompilerArgs += listOf("-linker-options", "-L$libsDir -lsqlite3mc")
         }
 
         cinterops.create("sqlite3mc").apply {
