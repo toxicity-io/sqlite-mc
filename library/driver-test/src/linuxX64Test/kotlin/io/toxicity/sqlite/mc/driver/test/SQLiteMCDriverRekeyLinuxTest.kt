@@ -36,11 +36,14 @@ class SQLiteMCDriverRekeyLinuxTest: SQLiteMCDriverRekeyTest() {
     @Test
     fun stub() {}
 
+    @Test
     override fun givenConfig_whenMigrations_thenRekeyedToNewestEncryptionConfig(): TestResult {
         // TODO: Fix rekeying
     }
 
+    @Test
     override fun givenDriver_whenReKey_thenIsSuccessful() {
         // TODO: Fix rekeying
     }
+
 }
