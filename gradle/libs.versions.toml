@@ -12,6 +12,8 @@ gradle-maven-publish = "0.25.2"
 
 kotlinx-coroutines = "1.7.3"
 
+okio = "3.4.0"
+
 sql-delight = "2.0.0"
 sql-jdbc-xerial = "3.43.0.0"
 
@@ -29,6 +31,8 @@ gradle-maven-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", 
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 
 sql-delight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql-delight" }
 sql-delight-driver-jdbc = { module = "app.cash.sqldelight:jdbc-driver", version.ref = "sql-delight" }

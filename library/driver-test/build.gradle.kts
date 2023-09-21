@@ -15,7 +15,6 @@
  **/
 import app.cash.sqldelight.gradle.SqlDelightExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 
 plugins {
     id("configuration")
@@ -41,11 +40,17 @@ kmpConfiguration {
         common {
             pluginIds(libs.plugins.sql.delight.get().pluginId)
 
-            sourceSetTest {
+            sourceSetMain {
                 dependencies {
                     implementation(project(":library:driver"))
-                    implementation(libs.kotlinx.coroutines.test)
+                }
+            }
+
+            sourceSetTest {
+                dependencies {
                     implementation(libs.encoding.base16)
+                    implementation(libs.kotlinx.coroutines.test)
+                    implementation(libs.okio)
                 }
             }
         }
@@ -58,30 +63,29 @@ kmpConfiguration {
                 afterEvaluate {
                     targets
                         .filterIsInstance<KotlinNativeTarget>()
-                        .forEach {
-                            val kt = it.konanTarget
-
+                        .forEach { target ->
                             val libsDir = rootDir
                                 .resolve("external")
                                 .resolve("native")
                                 .resolve("libs")
-                                .resolve(kt.name.substringBefore('_'))
-                                .resolve(kt.name.substringAfter('_'))
+                                .resolve(target.konanTarget.name.substringBefore('_'))
+                                .resolve(target.konanTarget.name.substringAfter('_'))
 
-                            val staticLib = libsDir
-                                .resolve(kt.family.staticPrefix + "sqlite3mc." + kt.family.staticSuffix)
+                            val staticLib = libsDir.resolve(
+                                target.konanTarget.family.staticPrefix
+                                + "sqlite3mc."
+                                + target.konanTarget.family.staticSuffix
+                            )
 
                             if (!staticLib.exists()) return@forEach
 
-                            it.binaries.forEach { compilationUnit ->
+                            target.binaries.forEach { compilationUnit ->
                                 compilationUnit.linkerOpts("-L$libsDir -lsqlite3mc")
                             }
                         }
                 }
 
                 databases {
-                    linkSqlite.set(false)
-
                     create("TestDatabase") {
                         packageName.set("io.toxicity.sqlite.mc.driver.test")
                         srcDirs("src/sqldelight")
@@ -90,8 +94,4 @@ kmpConfiguration {
             }
         }
     }
-}
-
-fun SqlDelightExtension.linkSqliteMC() {
-    linkSqlite.set(false)
 }

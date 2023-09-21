@@ -29,8 +29,6 @@ class SQLiteMCDriverJvmTest: SQLiteMCDriverTest() {
         System.getProperty("java.io.tmpdir", "/tmp"),
         "mc_driver_test"
     ).let { DatabasesDir(it) }
-    override val logger: (log: String) -> Unit = { println(it)  }
-
     override fun deleteDbFile(directory: String, dbName: String) { File(directory, dbName).delete() }
 
     @Test

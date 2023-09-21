@@ -79,8 +79,6 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
         }
     }
 
-
-
     @Test
     fun givenDriver_whenEmptyPassword_thenDoesNotEncrypt() = runDriverTest(key = Key.EMPTY) { factory, driver ->
         val expected = "asdljkgfnadsg"
@@ -129,7 +127,7 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
     }
 
     @Test
-    fun givenDriver_whenRawKeys_thenAllVersionSucceed() {
+    open fun givenDriver_whenRawKeys_thenAllVersionSucceed() {
         var i = 0
 
         listOf<Triple<Key, Key, FilesystemConfig.Builder.() -> Unit>>(

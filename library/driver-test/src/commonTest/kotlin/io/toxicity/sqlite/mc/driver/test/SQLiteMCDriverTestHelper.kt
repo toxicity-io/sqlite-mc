@@ -29,9 +29,13 @@ import kotlin.random.Random
 
 abstract class SQLiteMCDriverTestHelper {
 
+    // TODO: Issue #14
+    //  can move here to common code and use okio tmp dir
     protected abstract val databasesDir: DatabasesDir
-    protected abstract val logger: (log: String) -> Unit
+    // TODO: Issue #14
+    //  use okio
     protected abstract fun deleteDbFile(directory: String, dbName: String)
+    protected open val logger: (log: String) -> Unit = { log -> println(log) }
 
     protected val keyPassphrase = Key.passphrase(value = "password")
     protected val keyRaw = Key.raw(
@@ -62,7 +66,7 @@ abstract class SQLiteMCDriverTestHelper {
     ): TestResult = runTest {
         val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
 
-        deleteDbFile(databasesDir.pathOrNull()!!, dbName)
+        databasesDir.pathOrNull()?.let { deleteDbFile(it, dbName) }
 
         val factory = SQLiteMCDriver.Factory(
             dbName = dbName,
@@ -76,19 +80,17 @@ abstract class SQLiteMCDriverTestHelper {
             }
         )
 
-        val driver = factory.create(key)
-
         var error: Throwable? = null
 
         try {
-            driver.use { block(factory, it) }
+            factory.create(key).use { block(factory, it) }
         } catch (t: Throwable) {
             error = t
         } finally {
-            deleteDbFile(databasesDir.pathOrNull()!!, dbName)
+            databasesDir.pathOrNull()?.let { deleteDbFile(it, dbName) }
 
             error?.let { ex ->
-                val msg = driver
+                val msg = factory
                     .config
                     .filesystemConfig
                     ?.toString()
