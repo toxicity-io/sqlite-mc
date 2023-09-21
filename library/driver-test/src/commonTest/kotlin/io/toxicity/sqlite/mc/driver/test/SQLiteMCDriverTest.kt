@@ -28,14 +28,14 @@ import kotlin.test.*
 abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
 
     @Test
-    fun givenDriver_whenOpened_thenIsSuccessful() = runDriverTest { _, driver ->
+    open fun givenDriver_whenOpened_thenIsSuccessful() = runDriverTest { _, driver ->
         val expected = "alskdjvn"
         driver.upsert("key", expected)
         assertEquals(expected, driver.get("key"))
     }
 
     @Test
-    fun givenDriver_whenReOpened_thenIsSuccessful() = runDriverTest { factory, driver ->
+    open fun givenDriver_whenReOpened_thenIsSuccessful() = runDriverTest { factory, driver ->
         val expected = "abcd123"
         driver.upsert("key", expected)
 
@@ -47,7 +47,7 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
     }
 
     @Test
-    fun givenDriver_whenIncorrectPassword_thenOpenFails() = runDriverTest { factory, driver ->
+    open fun givenDriver_whenIncorrectPassword_thenOpenFails() = runDriverTest { factory, driver ->
         driver.upsert("key", "asdfasdf")
         driver.close()
 
@@ -69,7 +69,7 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
     }
 
     @Test
-    fun givenDriver_whenFilesystemButNullKey_thenCreatesInMemory() = runDriverTest { factory, driver ->
+    open fun givenDriver_whenFilesystemButNullKey_thenCreatesInMemory() = runDriverTest { factory, driver ->
         val expected = "abcd12319823y5"
         factory.create(key = Key.IN_MEMORY).use { inMemoryDriver ->
             inMemoryDriver.upsert("key", expected)
@@ -79,10 +79,8 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
         }
     }
 
-
-
     @Test
-    fun givenDriver_whenEmptyPassword_thenDoesNotEncrypt() = runDriverTest(key = Key.EMPTY) { factory, driver ->
+    open fun givenDriver_whenEmptyPassword_thenDoesNotEncrypt() = runDriverTest(key = Key.EMPTY) { factory, driver ->
         val expected = "asdljkgfnadsg"
         driver.upsert("key", expected)
         driver.close()
@@ -115,7 +113,7 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
     }
 
     @Test
-    fun givenDriver_whenClose_thenCredentialsCleared() = runDriverTest { _, driver ->
+    open fun givenDriver_whenClose_thenCredentialsCleared() = runDriverTest { _, driver ->
         val expected = "198noinqgao"
         driver.upsert("key", expected)
         assertEquals(expected, driver.get("key"))
@@ -129,7 +127,7 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
     }
 
     @Test
-    fun givenDriver_whenRawKeys_thenAllVersionSucceed() {
+    open fun givenDriver_whenRawKeys_thenAllVersionSucceed() {
         var i = 0
 
         listOf<Triple<Key, Key, FilesystemConfig.Builder.() -> Unit>>(

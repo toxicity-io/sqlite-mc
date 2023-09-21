@@ -36,7 +36,7 @@ abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
     }
 
     @Test
-    fun givenDriver_whenReKey_thenIsSuccessful() = runBlocking {
+    open fun givenDriver_whenReKey_thenIsSuccessful() = runBlocking {
         var i = 0
         listOf<Triple<Key, Key, FilesystemConfig.Builder.() -> Unit>>(
             Triple(keyPassphrase, keyRawWithSalt) { encryption { sqlCipher { default() } } },
@@ -84,7 +84,7 @@ abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
     }
 
     @Test
-    fun givenConfig_whenMigrations_thenRekeyedToNewestEncryptionConfig() = runDriverTest(
+    open fun givenConfig_whenMigrations_thenRekeyedToNewestEncryptionConfig() = runDriverTest(
         key = keyPassphrase,
         filesystem = { encryption { chaCha20 { sqleet() } } }
     ) { factory1, driver ->

@@ -113,17 +113,18 @@ kmpConfiguration {
 }
 
 fun KotlinNativeTarget.sqlite3mcInterop() {
-    val kt = konanTarget
-
     val libsDir = rootDir
         .resolve("external")
         .resolve("native")
         .resolve("libs")
-        .resolve(kt.name.substringBefore('_'))
-        .resolve(kt.name.substringAfter('_'))
+        .resolve(konanTarget.name.substringBefore('_'))
+        .resolve(konanTarget.name.substringAfter('_'))
 
-    val staticLib = libsDir
-        .resolve(kt.family.staticPrefix + "sqlite3mc." + kt.family.staticSuffix)
+    val staticLib = libsDir.resolve(
+        konanTarget.family.staticPrefix
+        + "sqlite3mc."
+        + konanTarget.family.staticSuffix
+    )
 
     // TODO: Remove once all build targets have static lib compilations
     if (!staticLib.exists()) return
