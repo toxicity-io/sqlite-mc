@@ -15,16 +15,23 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
-import kotlin.test.Ignore
+import android.app.Application
+import androidx.test.core.app.ApplicationProvider
+import io.toxicity.sqlite.mc.driver.config.DatabasesDir
+import io.toxicity.sqlite.mc.driver.config.databasesDir
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
-/**
- * See [SQLiteMCDriverTest]
- * */
-class SQLiteMCDriverJvmTest: SQLiteMCDriverTest() {
+class DatabasesDirAndroidTest {
+
+    private val ctx = ApplicationProvider.getApplicationContext<Application>()
 
     @Test
-    @Ignore("Unused")
-    fun stub() {}
+    fun givenDatabasesDir_whenDefaultLocation_returnsSameAsContextDatabasesDir() {
+        val databasesDir = DatabasesDir(path = null)
+        assertNotNull(databasesDir.path)
+        assertEquals(ctx.databasesDir().path, databasesDir.path)
+    }
 
 }

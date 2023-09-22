@@ -13,34 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("KotlinRedundantDiagnosticSuppress", "ConvertSecondaryConstructorToPrimary")
 
 package io.toxicity.sqlite.mc.driver.config
 
-import kotlin.jvm.JvmSynthetic
+import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
+import kotlin.jvm.JvmField
 
 /**
  * The directory in which databases reside.
+ *
+ * Passing a null or blank [path] will result in usage of the
+ * system default location.
+ *
+ * In the event of an inability to establish the system default
+ * location (very rare), [path] will be null and delegate
+ * the exception handling to [SQLiteMCDriver.Factory.create] as
+ * to not throw exception when [DatabasesDir] is instantiated.
+ *
+ * Default Locations:
+ * - Android: `/data/user/{userid}/{your.application.id}/databases/`
+ * - Jvm - Unix: `~/.databases/`
+ * - Jvm - Mingw: `{drive}:\Users\{username}\.databases\`
+ * - Native - Apple: `~/Documents/databases/`
+ * - Native - Linux: `~/`
+ * - Native - Mingw: `{drive}:\Users\{username}\`
+ *
+ * For Android, also see [io.toxicity.sqlite.mc.driver.config.databasesDir]
  * */
-public expect class DatabasesDir {
+public expect class DatabasesDir(path: String?) {
 
-    internal val path: String
+    @JvmField
+    public val path: String?
 
-    public fun pathOrNull(): String?
+    public constructor()
 
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
     override fun toString(): String
 }
-
-@JvmSynthetic
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun DatabasesDir.commonEquals(other: Any?): Boolean {
-    return other is DatabasesDir && other.pathOrNull() == pathOrNull()
-}
-@JvmSynthetic
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun DatabasesDir.commonHashCode(): Int = 17 * 31 + pathOrNull().hashCode()
-@JvmSynthetic
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun DatabasesDir.commonToString(): String = pathOrNull() ?: ""

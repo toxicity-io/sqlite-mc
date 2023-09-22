@@ -16,43 +16,45 @@
 package io.toxicity.sqlite.mc.driver.config
 
 import co.touchlab.sqliter.DatabaseFileContext
+import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 
 /**
  * The directory in which databases reside.
  *
- * Passing a blank [path] will result in using
- * the system default location for native clients.
+ * Passing a null or blank [path] will result in usage of the
+ * system default location.
+ *
+ * In the event of an inability to establish the system default
+ * location (very rare), [path] will be null and delegate
+ * the exception handling to [SQLiteMCDriver.Factory.create] as
+ * to not throw exception when [DatabasesDir] is instantiated.
+ *
+ * Default Locations:
+ * - Native - Apple: `~/Documents/databases/`
+ * - Native - Linux: `~/`
+ * - Native - Mingw: `{drive}:\Users\{username}\`
  * */
-public actual class DatabasesDir public constructor(path: String?) {
+public actual class DatabasesDir public actual constructor(path: String?) {
 
-    /**
-     * Use the system default location.
-     * */
-    public constructor(): this(null)
+    public actual constructor(): this(null)
 
-    private var isInitialized: Boolean = false
+    public actual val path: String? by lazy {
+        try {
+            // Try to resolve the directory path
+            DatabaseFileContext
+                .databasePath("d", path?.ifBlank { null })
+                .dropLast(2)
+        } catch (t: Throwable) {
+            t.printStackTrace()
 
-    internal actual val path: String by lazy {
-        isInitialized = true
-
-        // This call will not only resolve the path, but
-        // create the directory if datapathPath is null.
-        //
-        // We do not want to create the directory upon
-        // initialization because it may result in an
-        // exception.
-        //
-        // `path` will only be called when creating
-        // a new driver, which will be handled there
-        DatabaseFileContext.databasePath(
-            databaseName = "",
-            datapathPath = path?.ifBlank { null },
-        )
+            // Any failures are delegated to instantiation
+            // of SQLiteMCDriver as to not crash the app
+            // when DatabasesDir is created.
+            null
+        }
     }
 
-    public actual fun pathOrNull(): String? = if (isInitialized) path else null
-
-    public actual override fun equals(other: Any?): Boolean = commonEquals(other)
-    public actual override fun hashCode(): Int = commonHashCode()
-    public actual override fun toString(): String = commonToString()
+    public actual override fun equals(other: Any?): Boolean = other is DatabasesDir && other.path == path
+    public actual override fun hashCode(): Int = 17 * 31 + path.hashCode()
+    public actual override fun toString(): String = path ?: ""
 }

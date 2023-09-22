@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:JvmName("AndroidPlatform")
+
 package io.toxicity.sqlite.mc.driver.config
 
 import android.content.Context
 import java.io.File
 
-@Suppress("NOTHING_TO_INLINE")
-public inline fun Context.databasesDir(): DatabasesDir {
+public fun Context.databasesDir(): DatabasesDir {
     val path = applicationContext.getDatabasePath("d")
     val parent = path.parentFile ?: File(path.path.dropLast(1))
 

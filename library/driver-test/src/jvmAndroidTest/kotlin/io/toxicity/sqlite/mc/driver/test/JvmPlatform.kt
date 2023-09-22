@@ -15,16 +15,9 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
-import kotlin.test.Ignore
-import kotlin.test.Test
+import okio.FileSystem
+import okio.Path
 
-/**
- * See [SQLiteMCDriverTest]
- * */
-class SQLiteMCDriverJvmTest: SQLiteMCDriverTest() {
-
-    @Test
-    @Ignore("Unused")
-    fun stub() {}
-
+internal actual fun Path.deleteRecursively() {
+    FileSystem.SYSTEM.deleteRecursively(this, mustExist = false)
 }

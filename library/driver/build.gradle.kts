@@ -53,17 +53,6 @@ kmpConfiguration {
                     implementation(files(jdbcRepack.jarSQLiteJDBCAndroid))
                 }
             }
-            sourceSetTest {
-                dependencies {
-                    implementation(project(":library:android-unit-test"))
-                }
-            }
-            sourceSetTestInstrumented {
-                dependencies {
-                    implementation(libs.androidx.test.core)
-                    implementation(libs.androidx.test.runner)
-                }
-            }
         }
 
         jvm {
