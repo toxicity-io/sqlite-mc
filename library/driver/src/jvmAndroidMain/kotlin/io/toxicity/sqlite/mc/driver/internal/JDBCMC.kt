@@ -24,8 +24,6 @@ import java.util.*
 
 internal class JDBCMC private constructor(): JDBC() {
 
-    override fun acceptsURL(url: String?): Boolean = isValidURL(url)
-
     override fun getPropertyInfo(url: String?, info: Properties?): Array<DriverPropertyInfo> {
         val jdbcInfo = super.getPropertyInfo(url, info)
         // TODO: Add Pragma.MC info
@@ -37,17 +35,27 @@ internal class JDBCMC private constructor(): JDBC() {
 
     internal companion object {
 
-        internal const val PREFIX: String = "jdbc:sqlite-mc:"
+        internal const val PREFIX: String = JDBC.PREFIX
 
-        @JvmStatic
-        internal fun isValidURL(url: String?): Boolean = url?.lowercase()?.startsWith(PREFIX) ?: false
+        // Service loaders do not work properly on Android API 23
+        // and below. Referencing JDBC will cause it to automatically
+        // register itself with DriverManager.
+        //
+        // https://github.com/cashapp/sqldelight/issues/4575
+        //
+        // Also, JDBCMC is not using service loaders such that we can
+        // de-register JDBC and take its place to intercept properties
+        // and connection management
+        internal val initialize by lazy {
+            // Reference it so it registers itself
+            isValidURL(null)
 
-        init {
+            // remove and replace
             try {
-                DriverManager.registerDriver(JDBCMC())
-            } catch (e: SQLException) {
-                e.printStackTrace()
-            }
+                val jdbc = DriverManager.getDriver(PREFIX)
+                DriverManager.deregisterDriver(jdbc)
+            } catch (_: Throwable) {}
+            DriverManager.registerDriver(JDBCMC())
         }
     }
 }
