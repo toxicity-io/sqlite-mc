@@ -55,7 +55,12 @@ internal class JDBCMC private constructor(): JDBC() {
                 val jdbc = DriverManager.getDriver(PREFIX)
                 DriverManager.deregisterDriver(jdbc)
             } catch (_: Throwable) {}
-            DriverManager.registerDriver(JDBCMC())
+
+            try {
+                DriverManager.registerDriver(JDBCMC())
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            }
         }
     }
 }
