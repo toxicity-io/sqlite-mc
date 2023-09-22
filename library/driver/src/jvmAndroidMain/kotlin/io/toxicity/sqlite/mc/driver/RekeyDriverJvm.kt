@@ -30,7 +30,6 @@ import io.toxicity.sqlite.mc.driver.config.*
 import io.toxicity.sqlite.mc.driver.config.encryption.EncryptionConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
 import io.toxicity.sqlite.mc.driver.internal.JDBCMC
-import org.sqlite.JDBC
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.Properties
@@ -161,7 +160,7 @@ public actual sealed class RekeyDriver actual constructor(args: Args): JdbcDrive
         @JvmSynthetic
         @Throws(IllegalStateException::class)
         internal actual fun FactoryConfig.create(pragmas: Pragmas, isInMemory: Boolean): Args {
-            initializeJDBC
+            JDBCMC.initialize
 
             val url = filesystemConfig.toJDBCUrl(dbName, isInMemory)
             val properties = pragmas.toProperties()
@@ -195,7 +194,7 @@ public actual sealed class RekeyDriver actual constructor(args: Args): JdbcDrive
 @Throws(IllegalStateException::class)
 private fun FilesystemConfig?.toJDBCUrl(dbName: String, isInMemory: Boolean): String {
     // TODO: Resource database
-    if (this == null || isInMemory) return JDBC.PREFIX
+    if (this == null || isInMemory) return JDBCMC.PREFIX
 
     databasesDir.ensureExists()
 
@@ -219,18 +218,4 @@ private fun DatabasesDir.ensureExists() {
     if (!exists && !directory.mkdirs()) {
         throw IllegalStateException("Failed to create databases directory >> $this")
     }
-}
-
-// Service loaders do not work properly on Android API 23
-// and below. Referencing JDBC will cause it to automatically
-// register itself with DriverManager.
-//
-// https://github.com/cashapp/sqldelight/issues/4575
-//
-// Also, JDBCMC is not using service loaders, so we're simply
-// initializing it here alongside JDBC.
-private val initializeJDBC: Unit by lazy {
-    JDBC.isValidURL(null)
-    JDBCMC.isValidURL(null)
-    Unit
 }

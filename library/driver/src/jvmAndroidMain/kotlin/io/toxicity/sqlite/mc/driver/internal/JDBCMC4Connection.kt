@@ -15,7 +15,9 @@
  **/
 package io.toxicity.sqlite.mc.driver.internal
 
+import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.base64.Base64
+import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import io.matthewnelson.encoding.core.EncodingException
 import io.matthewnelson.encoding.core.use
 import io.matthewnelson.encoding.core.util.LineBreakOutFeed
@@ -25,15 +27,16 @@ import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
 import org.sqlite.JDBC
 import org.sqlite.jdbc4.JDBC4Connection
 import org.sqlite.jdbc4.JDBC4Statement
+import java.security.SecureRandom
 import java.sql.SQLException
 import java.sql.Statement
 import java.util.Properties
 
 internal class JDBCMC4Connection private constructor(
-    jdbcUrl: String,
+    url: String,
     fileName: String,
-    jdbcProp: Properties,
-): JDBC4Connection(jdbcUrl, fileName, jdbcProp) {
+    prop: Properties,
+): JDBC4Connection(url, fileName, prop) {
 
     // Can't actually set a value b/c SQLiteConfig
     // invokes createStatement from its constructor,
@@ -61,6 +64,8 @@ internal class JDBCMC4Connection private constructor(
 
     internal companion object {
 
+
+
         @JvmStatic
         @JvmSynthetic
         @Throws(SQLException::class)
@@ -68,10 +73,9 @@ internal class JDBCMC4Connection private constructor(
             url: String?,
             prop: Properties?,
         ): JDBCMC4Connection? {
-            if (!JDBCMC.isValidURL(url)) return null
+            if (!JDBC.isValidURL(url)) return null
             val trimmed = url?.trim() ?: return null
 
-            val jdbcUrl = trimmed.replaceFirst(JDBCMC.PREFIX, JDBC.PREFIX, ignoreCase = true)
             val fileName = trimmed.substring(JDBCMC.PREFIX.length)
 
             val newProp = Properties()
@@ -83,21 +87,24 @@ internal class JDBCMC4Connection private constructor(
             }
 
             var cipher: Cipher? = null
+            var hasKey = false
+            var hasLegacy = false
 
             val sb = StringBuilder()
             val out = LineBreakOutFeed(interval = 64, out = { c -> sb.append(c) })
+            JDBCMC4Statement.KEY_IDENTIFIER.forEach { c -> out.output(c) }
 
             Base64.Default.newEncoderFeed(out).use { feed ->
 
                 for (pragma in Pragma.MC.ALL) {
-                    val value = (newProp.remove(pragma.name) as? String) ?: continue
+                    val value = (newProp[pragma.name] as? String) ?: continue
 
                     val sqlStatement = when (pragma) {
                         is Pragma.MC.CIPHER -> {
                             // cipher is first in the Pragma.MC.ALL order,
                             // so will set this parameter first (if it's
                             // present).
-                            cipher = Cipher.valueOfOrNull(value)
+                            cipher = Cipher.valueOfOrNull(value) ?: continue
 
                             pragma.name.buildMCConfigSQL(
                                 transient = false,
@@ -106,6 +113,7 @@ internal class JDBCMC4Connection private constructor(
                             )
                         }
                         is Pragma.MC.KEY -> {
+                            hasKey = true
                             "PRAGMA ${pragma.name} = $value;"
                         }
                         else -> {
@@ -117,6 +125,10 @@ internal class JDBCMC4Connection private constructor(
                                 arg3 = arg3,
                             ) ?: continue
                         }
+                    }
+
+                    if (pragma is Pragma.MC.LEGACY) {
+                        hasLegacy = true
                     }
 
                     // Encode each to base 64 with delimiter of .
@@ -134,30 +146,42 @@ internal class JDBCMC4Connection private constructor(
 
             val sbLen = sb.length
 
-            // Pass all of our statements in the "password" pragma
-            // in order to catch them when SQLiteConfig.apply is called
-            newProp["password"] = sb.toString()
+            val isUsingMC = cipher != null && hasKey && hasLegacy
 
-            // Remove, just in case, as we want PRAGMA key to execute
-            // with the expected formatting of just a passphrase in order
-            // to decode the contents and execute each statement separately.
-            newProp.remove("hexkey_mode")
+            // Only add if it contains all 3 required cipher parameters
+            if (isUsingMC) {
+                // Remove all MC pragmas from newProp
+                Pragma.MC.ALL.forEach {  pragma -> newProp.remove(pragma.name) }
+
+                // Pass all of our statements in the "password" pragma
+                // in order to catch them when SQLiteConfig.apply is called
+                newProp["password"] = sb.toString()
+
+                // Remove, just in case, as we want PRAGMA key to execute
+                // with the expected format of `pragma key = '<encoded statements'
+                // in order to decode the contents.
+                newProp.remove("hexkey_mode")
+            }
 
             sb.clear()
             repeat(sbLen) { sb.append(' ') }
 
-            val connection = JDBCMC4Connection(jdbcUrl, fileName, newProp)
+            val connection = try {
+                JDBCMC4Connection(url, fileName, newProp)
+            } finally {
+                // Also clear newProps which was copied over to another
+                // new Properties object in SQLiteConfig.open
+                newProp.clear()
+            }
 
-            // Remove key from the config's pragmaTable
-            // as to not leak it elsewhere.
-            connection.database
-                .config
-                .toProperties()
-                .remove("password")
-
-            // Also clear newProps which was copied over to another
-            // new Properties object in SQLiteConfig.open
-            newProp.clear()
+            if (isUsingMC) {
+                // Remove key from the config's pragmaTable
+                // as to not leak it elsewhere.
+                connection.database
+                    .config
+                    .toProperties()
+                    .remove("password")
+            }
 
             return connection
         }
@@ -168,14 +192,30 @@ private class JDBCMC4Statement(
     connection: JDBCMC4Connection
 ): JDBC4Statement(connection) {
 
+    internal companion object {
+        // 64 character random id which is used to ensure
+        // any encoded PRAGMA key execution values are from
+        // JDBCMCConnection. Will always be stripped and
+        // removed upon execute invocation.
+        //
+        // MUST be 64 chars max, as that is the
+        // line break interval set for the encoder.
+        internal val KEY_IDENTIFIER: String by lazy {
+            val bytes = ByteArray(32)
+            SecureRandom().nextBytes(bytes)
+            bytes.encodeToString(Base16)
+        }
+    }
+
     override fun execute(sql: String?): Boolean {
-        if (sql == null) return false
-        if (!sql.startsWith("pragma ${Pragma.MC.KEY.name} =", ignoreCase = true)) {
+        if (sql == null || !sql.startsWith("pragma ${Pragma.MC.KEY.name} =", ignoreCase = true)) {
             return super.execute(sql)
         }
 
-        // pragma key = 'base64.encoded.cipher.statements.'
-        val sqlStatements: List<String> = sql.substringAfter('\'')
+        // pragma key = 'KEY_IDENTIFIERbase64.encoded.cipher.statements.'
+        val sqlStatements: List<String> = sql.substringAfter('\'').let {
+            if (!it.startsWith(KEY_IDENTIFIER)) return super.execute(sql) else it
+        }.substring(KEY_IDENTIFIER.length)
             .substringBeforeLast('\'')
             .split('.')
             .mapNotNull { encodedStatement ->
