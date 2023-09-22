@@ -30,6 +30,7 @@ import io.toxicity.sqlite.mc.driver.config.*
 import io.toxicity.sqlite.mc.driver.config.encryption.EncryptionConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
 import io.toxicity.sqlite.mc.driver.internal.JDBCMC
+import java.io.File
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.Properties
@@ -196,9 +197,7 @@ private fun FilesystemConfig?.toJDBCUrl(dbName: String, isInMemory: Boolean): St
     // TODO: Resource database
     if (this == null || isInMemory) return JDBCMC.PREFIX
 
-    databasesDir.ensureExists()
-
-    return JDBCMC.PREFIX + databasesDir.directory.resolve(dbName)
+    return JDBCMC.PREFIX + databasesDir.resolve().resolve(dbName)
 }
 
 private fun Pragmas.toProperties(): Properties {
@@ -208,7 +207,8 @@ private fun Pragmas.toProperties(): Properties {
 }
 
 @Throws(IllegalStateException::class)
-private fun DatabasesDir.ensureExists() {
+private fun DatabasesDir.resolve(): File {
+    val directory = path?.let { File(it) } ?: throw IllegalStateException("Failed to resolve DatabasesDir")
     val exists = directory.exists()
 
     if (exists && !directory.isDirectory) {
@@ -218,4 +218,6 @@ private fun DatabasesDir.ensureExists() {
     if (!exists && !directory.mkdirs()) {
         throw IllegalStateException("Failed to create databases directory >> $this")
     }
+
+    return directory
 }

@@ -15,11 +15,7 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
-import android.app.Application
 import android.util.Log
-import androidx.test.core.app.ApplicationProvider
-import io.toxicity.sqlite.mc.driver.config.DatabasesDir
-import java.io.File
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -28,11 +24,7 @@ import kotlin.test.Test
  * */
 class SQLiteMCDriverRekeyAndroidTest: SQLiteMCDriverRekeyTest() {
 
-    private val ctx = ApplicationProvider.getApplicationContext<Application>()
-    override val databasesDir: DatabasesDir = DatabasesDir(ctx.cacheDir)
     override val logger: (log: String) -> Unit = { Log.d("TEST", it)  }
-
-    override fun deleteDbFile(directory: String, dbName: String) { File(directory, dbName).delete() }
 
     @Test
     @Ignore("Unused")

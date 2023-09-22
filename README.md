@@ -33,18 +33,28 @@ database encryption.
 
 ### Usage
 
-Define `DatabasesDir` for your platform
+Define `DatabasesDir`
+
+**Common:**
 ```kotlin
-// Android
-val databasesDir = context.databasesDir()
+// Use system default location for the given platform
+val databasesDir = DatabasesDir()
+val databasesDir = DatabasesDir(null) // null
+val databasesDir = DatabasesDir("     ") // blank
 
-// Jvm or Android
-val databasesDir = DatabasesDir(File("/path/to/databases"))
-
-// Native - defined path
+// Specify a path
 val databasesDir = DatabasesDir("/path/to/databases")
-// Native - system defaults
-val databasesDir = DatabasesDir() // or pass null or a blank string
+```
+
+**Android:**
+```kotlin
+val databasesDir = context.databasesDir()
+```
+
+**Jvm or Android:**
+```kotlin
+val databasesDir = DatabasesDir(File("/path/to/databases"))
+val databasesDir = DatabasesDir(Path.of("/path/to/databases"))
 ```
 
 Define your `SQLiteMCDriver.Factory` configuration in `commonMain`

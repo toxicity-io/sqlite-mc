@@ -165,7 +165,7 @@ public class FilesystemConfig private constructor(
             append(this@FilesystemConfig::class.simpleName)
             appendLine(": [")
             appendIndent("databasesDir: ")
-            appendLine(databasesDir)
+            appendLine(databasesDir.path.toString())
 
             appendIndent("encryptionConfig: ")
             if (encryptionConfig == null) {

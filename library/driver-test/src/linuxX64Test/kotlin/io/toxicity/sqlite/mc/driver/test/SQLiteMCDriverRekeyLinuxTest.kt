@@ -15,23 +15,13 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
-import io.toxicity.sqlite.mc.driver.config.DatabasesDir
 import kotlinx.coroutines.test.TestResult
-import okio.FileSystem
-import okio.Path.Companion.toPath
 import kotlin.test.Test
 
 /**
  * See [SQLiteMCDriverRekeyTest]
  * */
 class SQLiteMCDriverRekeyLinuxTest: SQLiteMCDriverRekeyTest() {
-
-    override val databasesDir: DatabasesDir = DatabasesDir(
-        FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("mc_driver_test").toString()
-    )
-    override fun deleteDbFile(directory: String, dbName: String) {
-        FileSystem.SYSTEM.delete(directory.toPath().resolve(dbName))
-    }
 
     @Test
     fun stub() {}

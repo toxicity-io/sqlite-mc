@@ -15,16 +15,14 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
-import kotlin.test.Ignore
-import kotlin.test.Test
+import okio.FileSystem
+import okio.IOException
+import okio.Path
 
-/**
- * See [SQLiteMCDriverTest]
- * */
-class SQLiteMCDriverJvmTest: SQLiteMCDriverTest() {
-
-    @Test
-    @Ignore("Unused")
-    fun stub() {}
-
+internal actual fun Path.deleteDatabase() {
+    try {
+        FileSystem.SYSTEM.delete(this, mustExist = false)
+    } catch (_: IOException) {
+        // Windows fails sometimes
+    }
 }

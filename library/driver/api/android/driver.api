@@ -59,15 +59,18 @@ public final class io/toxicity/sqlite/mc/driver/SQLiteMCDriver$Factory {
 	public final fun createBlocking (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lio/toxicity/sqlite/mc/driver/config/encryption/Key;)Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;
 }
 
-public final class io/toxicity/sqlite/mc/driver/config/AndroidPlatformKt {
+public final class io/toxicity/sqlite/mc/driver/config/AndroidPlatform {
 	public static final fun databasesDir (Landroid/content/Context;)Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;
 }
 
 public final class io/toxicity/sqlite/mc/driver/config/DatabasesDir {
+	public final field path Ljava/lang/String;
+	public fun <init> ()V
 	public fun <init> (Ljava/io/File;)V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/nio/file/Path;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
-	public final fun pathOrNull ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 }
 

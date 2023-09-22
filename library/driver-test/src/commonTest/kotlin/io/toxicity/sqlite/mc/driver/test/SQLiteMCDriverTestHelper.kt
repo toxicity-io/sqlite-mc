@@ -25,16 +25,18 @@ import io.toxicity.sqlite.mc.driver.config.encryption.Key
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import okio.FileSystem
+import okio.Path
+import okio.Path.Companion.toPath
 import kotlin.random.Random
+
+internal expect fun Path.deleteDatabase()
 
 abstract class SQLiteMCDriverTestHelper {
 
-    // TODO: Issue #14
-    //  can move here to common code and use okio tmp dir
-    protected abstract val databasesDir: DatabasesDir
-    // TODO: Issue #14
-    //  use okio
-    protected abstract fun deleteDbFile(directory: String, dbName: String)
+    protected val databasesDir: DatabasesDir = DatabasesDir(
+        FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("mc_driver_test").toString()
+    )
     protected open val logger: (log: String) -> Unit = { log -> println(log) }
 
     protected val keyPassphrase = Key.passphrase(value = "password")
@@ -66,7 +68,7 @@ abstract class SQLiteMCDriverTestHelper {
     ): TestResult = runTest {
         val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
 
-        databasesDir.pathOrNull()?.let { deleteDbFile(it, dbName) }
+        databasesDir.path?.toPath()?.resolve(dbName)?.deleteDatabase()
 
         val factory = SQLiteMCDriver.Factory(
             dbName = dbName,
@@ -87,7 +89,7 @@ abstract class SQLiteMCDriverTestHelper {
         } catch (t: Throwable) {
             error = t
         } finally {
-            databasesDir.pathOrNull()?.let { deleteDbFile(it, dbName) }
+            databasesDir.path?.toPath()?.resolve(dbName)?.deleteDatabase()
 
             error?.let { ex ->
                 val msg = factory
