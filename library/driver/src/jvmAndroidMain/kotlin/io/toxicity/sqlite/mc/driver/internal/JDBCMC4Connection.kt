@@ -166,7 +166,13 @@ internal class JDBCMC4Connection private constructor(
             sb.clear()
             repeat(sbLen) { sb.append(' ') }
 
-            val connection = JDBCMC4Connection(url, fileName, newProp)
+            val connection = try {
+                JDBCMC4Connection(url, fileName, newProp)
+            } finally {
+                // Also clear newProps which was copied over to another
+                // new Properties object in SQLiteConfig.open
+                newProp.clear()
+            }
 
             if (isUsingMC) {
                 // Remove key from the config's pragmaTable
@@ -176,10 +182,6 @@ internal class JDBCMC4Connection private constructor(
                     .toProperties()
                     .remove("password")
             }
-
-            // Also clear newProps which was copied over to another
-            // new Properties object in SQLiteConfig.open
-            newProp.clear()
 
             return connection
         }
