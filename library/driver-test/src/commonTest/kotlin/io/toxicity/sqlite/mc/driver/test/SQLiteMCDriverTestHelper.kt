@@ -30,7 +30,7 @@ import okio.Path
 import okio.Path.Companion.toPath
 import kotlin.random.Random
 
-internal expect fun Path.deleteRecursively()
+internal expect fun Path.deleteDatabase()
 
 abstract class SQLiteMCDriverTestHelper {
 
@@ -68,7 +68,7 @@ abstract class SQLiteMCDriverTestHelper {
     ): TestResult = runTest {
         val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
 
-        databasesDir.path?.toPath()?.resolve(dbName)?.deleteRecursively()
+        databasesDir.path?.toPath()?.resolve(dbName)?.deleteDatabase()
 
         val factory = SQLiteMCDriver.Factory(
             dbName = dbName,
@@ -89,7 +89,7 @@ abstract class SQLiteMCDriverTestHelper {
         } catch (t: Throwable) {
             error = t
         } finally {
-            databasesDir.path?.toPath()?.resolve(dbName)?.deleteRecursively()
+            databasesDir.path?.toPath()?.resolve(dbName)?.deleteDatabase()
 
             error?.let { ex ->
                 val msg = factory

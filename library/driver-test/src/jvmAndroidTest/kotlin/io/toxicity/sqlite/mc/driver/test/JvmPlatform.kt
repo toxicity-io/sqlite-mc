@@ -16,8 +16,13 @@
 package io.toxicity.sqlite.mc.driver.test
 
 import okio.FileSystem
+import okio.IOException
 import okio.Path
 
-internal actual fun Path.deleteRecursively() {
-    FileSystem.SYSTEM.deleteRecursively(this, mustExist = false)
+internal actual fun Path.deleteDatabase() {
+    try {
+        FileSystem.SYSTEM.delete(this, mustExist = false)
+    } catch (_: IOException) {
+        // Windows fails sometimes
+    }
 }
