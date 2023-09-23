@@ -23,16 +23,14 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlPreparedStatement
 import io.toxicity.sqlite.mc.driver.config.*
 import io.toxicity.sqlite.mc.driver.config.Pragmas
-import io.toxicity.sqlite.mc.driver.config.encryption.Cipher
 import io.toxicity.sqlite.mc.driver.config.encryption.EncryptionConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
 import io.toxicity.sqlite.mc.driver.config.mutablePragmas
 import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
-import io.toxicity.sqlite.mc.driver.internal.ext.escapeSQL
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 
-public expect sealed class RekeyDriver(args: Args): SqlDriver {
+public expect sealed class PlatformDriver(args: Args): SqlDriver {
 
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     protected fun rekey(key: Key, config: EncryptionConfig)
@@ -69,52 +67,4 @@ public expect sealed class RekeyDriver(args: Args): SqlDriver {
 
         internal class Args
     }
-}
-
-internal data class RekeyParameters(
-    internal val pragmas: MutablePragmas,
-    internal val sqlStatements: List<String>,
-)
-
-@JvmSynthetic
-@Throws(IllegalArgumentException::class, IllegalStateException::class)
-internal fun EncryptionConfig.createRekeyParameters(
-    key: Key,
-    isInMemory: Boolean
-): RekeyParameters {
-    check(!isInMemory) { "Unable to rekey. In Memory databases do not use encryption" }
-
-    val pragmaRekeySQL = "PRAGMA ${Pragma.MC.RE_KEY.name} = ${key.retrieveFormatted(cipherConfig.cipher)};"
-
-    val pragmas = mutablePragmas()
-    applyPragmas(pragmas)
-
-    val sqlStatements = buildList {
-        pragmas.forEach { entry ->
-            val sql = if (entry.key is Pragma.MC.CIPHER) {
-                // e.g. SELECT sqlite3mc_config('cipher', 'chacha20');
-                entry.key.name.buildMCConfigSQL(
-                    transient = true,
-                    arg2 = entry.value,
-                    arg3 = null,
-                )
-            } else {
-                // e.g. SELECT sqlite3mc_config('chacha20', 'kdf_iter', 200_000);
-                cipherConfig.cipher.name.buildMCConfigSQL(
-                    transient = true,
-                    arg2 = entry.key.name,
-                    arg3 = entry.value.toIntOrNull()
-                        ?: throw IllegalStateException("wtf??")
-                )
-            }
-
-            add(sql)
-        }
-
-        add(pragmaRekeySQL)
-    }
-
-    applyKeyPragma(pragmas, key)
-
-    return RekeyParameters(pragmas, sqlStatements)
 }

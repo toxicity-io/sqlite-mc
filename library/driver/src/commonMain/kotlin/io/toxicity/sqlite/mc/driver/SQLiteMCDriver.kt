@@ -45,7 +45,7 @@ public class SQLiteMCDriver private constructor(
     @JvmField
     public val isInMemory: Boolean,
     args: Companion.Args
-): RekeyDriver(args) {
+): PlatformDriver(args) {
 
     /**
      * Primary entry point to create new [SQLiteMCDriver] instances.

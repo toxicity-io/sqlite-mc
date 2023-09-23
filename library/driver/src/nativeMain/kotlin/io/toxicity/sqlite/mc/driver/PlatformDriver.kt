@@ -26,7 +26,6 @@ import app.cash.sqldelight.driver.native.wrapConnection
 import app.cash.sqldelight.logs.LogSqliteDriver
 import co.touchlab.sqliter.*
 import co.touchlab.sqliter.interop.Logger
-import co.touchlab.sqliter.interop.SQLiteException
 import io.toxicity.sqlite.mc.driver.config.*
 import io.toxicity.sqlite.mc.driver.config.Pragmas
 import io.toxicity.sqlite.mc.driver.config.encryption.Cipher
@@ -34,8 +33,9 @@ import io.toxicity.sqlite.mc.driver.config.encryption.EncryptionConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
 import io.toxicity.sqlite.mc.driver.config.mutablePragmas
 import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
+import io.toxicity.sqlite.mc.driver.internal.ext.createRekeyParameters
 
-public actual sealed class RekeyDriver actual constructor(args: Args): SqlDriver {
+public actual sealed class PlatformDriver actual constructor(args: Args): SqlDriver {
 
     private val isInMemory: Boolean = args.isInMemory
     private val logger: ((String) -> Unit)? = args.logger

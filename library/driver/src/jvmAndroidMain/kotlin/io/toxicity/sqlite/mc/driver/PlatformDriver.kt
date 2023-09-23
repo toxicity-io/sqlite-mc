@@ -30,12 +30,13 @@ import io.toxicity.sqlite.mc.driver.config.*
 import io.toxicity.sqlite.mc.driver.config.encryption.EncryptionConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
 import io.toxicity.sqlite.mc.driver.internal.JDBCMC
+import io.toxicity.sqlite.mc.driver.internal.ext.createRekeyParameters
 import java.io.File
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.Properties
 
-public actual sealed class RekeyDriver actual constructor(args: Args): JdbcDriver(), SqlDriver {
+public actual sealed class PlatformDriver actual constructor(args: Args): JdbcDriver(), SqlDriver {
 
     private val url: String = args.url
     private val logger: ((String) -> Unit)? = args.logger
