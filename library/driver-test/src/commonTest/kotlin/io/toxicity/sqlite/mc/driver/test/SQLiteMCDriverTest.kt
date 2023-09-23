@@ -19,10 +19,6 @@ import app.cash.sqldelight.db.use
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlin.test.*
 
 abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
@@ -57,21 +53,9 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
     }
 
     @Test
-    fun givenDriver_whenNoFilesystem_thenCreatesInMemory() = runDriverTest(filesystem = null) { factory, driver ->
-        val expected = "abcd123"
-        driver.upsert("key", expected)
-        driver.close()
-
-        // Even if passed a key, the PRAGMA key property should not be applied
-        factory.create(keyPassphrase).use { driver2 ->
-            assertNotEquals(expected, driver2.get("key"))
-        }
-    }
-
-    @Test
     open fun givenDriver_whenFilesystemButNullKey_thenCreatesInMemory() = runDriverTest { factory, driver ->
         val expected = "abcd12319823y5"
-        factory.create(key = Key.IN_MEMORY).use { inMemoryDriver ->
+        factory.create(key = null).use { inMemoryDriver ->
             inMemoryDriver.upsert("key", expected)
 
             assertNull(driver.get("key"))
@@ -80,33 +64,30 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
     }
 
     @Test
-    open fun givenDriver_whenEmptyPassword_thenDoesNotEncrypt() = runDriverTest(key = Key.EMPTY) { factory, driver ->
+    open fun givenDriver_whenEmptyPassword_thenDoesNotEncrypt() = runDriverTest(key = Key.Empty) { factory, driver ->
         val expected = "asdljkgfnadsg"
         driver.upsert("key", expected)
         driver.close()
 
         val factory2 = SQLiteMCDriver.Factory(factory.config.dbName, TestDatabase.Schema) {
-            filesystem(driver.config.filesystemConfig!!) {
-                // remove encryptionConfig from inherited filesystem
-                encryption {  }
+            filesystem(driver.config.filesystemConfig) {
+                // Opening with a different encryption
+                // config should have no effect b/c
+                // there should be no encryption set
+                encryption { sqlCipher { v3() } }
             }
         }
 
-        assertNotNull(factory2.config.filesystemConfig)
-        assertNull(factory2.config.filesystemConfig!!.encryptionConfig)
-
-        // Using rawKey (instead of Key.EMPTY) to verify that it will not be used
-        // b/c there is no encryptionConfig
-        factory2.create(keyRaw).use { driver2 ->
+        factory2.create(Key.Empty).use { driver2 ->
             assertEquals(expected, driver2.get("key"))
         }
 
         // Can open it with initial factory + empty key
-        factory.create(Key.EMPTY).use { driver3 ->
+        factory.create(Key.Empty).use { driver3 ->
             assertEquals(expected, driver3.get("key"))
         }
 
-        // Trying non-empty password fails (b/c it's incorrect)
+        // Trying non-empty password fails b/c it's incorrect (i.e. not Key.EMPTY)
         assertFailsWith<IllegalStateException> {
             factory.create(keyRaw)
         }

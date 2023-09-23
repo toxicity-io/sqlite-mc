@@ -102,16 +102,16 @@ public class SQLiteMCDriver private constructor(
             CancellationException::class,
         )
         public suspend fun create(key: Key?): SQLiteMCDriver {
-            val isInMemory = key == null || config.filesystemConfig == null
+            val isInMemory = key == null
 
             return config.withDispatcher {
 
                 val pragmas = mutablePragmas()
 
                 if (key != null) {
-                    filesystemConfig?.encryptionConfig
-                        ?.applyPragmas(pragmas)
-                        ?.applyKeyPragma(pragmas, key)
+                    filesystemConfig.encryptionConfig
+                        .applyPragmas(pragmas)
+                        .applyKeyPragma(pragmas, key)
                 }
 
                 // will be null if there is no migration
@@ -121,7 +121,7 @@ public class SQLiteMCDriver private constructor(
                     create(pragmas, isInMemory)
                 } catch (e: IllegalStateException) {
 
-                    val migrations = filesystemConfig?.encryptionMigrationConfig
+                    val migrations = filesystemConfig.encryptionMigrationConfig
                     if (key != null && migrations != null && !hasOpened) {
                         migrationKey = key
                         migrations.attemptOpening(key, pragmas)
@@ -147,7 +147,7 @@ public class SQLiteMCDriver private constructor(
          * Creates a new [SQLiteMCDriver] for the given [config] and changes
          * the encryption [Key] to [rekey].
          *
-         * Encryption can be removed by passing [Key.EMPTY] for [rekey].
+         * Encryption can be removed by passing [Key.Empty] for [rekey].
          *
          * @param [key] The encryption [Key] to decrypt the database with.
          * @param [rekey] The encryption [Key] to rekey the database to.
@@ -230,21 +230,8 @@ public class SQLiteMCDriver private constructor(
         CancellationException::class,
     )
     private suspend fun rekey(key: Key) {
-        var rekey = key
-
-        val encryptionConfig = config
-            .filesystemConfig
-            ?.encryptionConfig
-            ?: EncryptionConfig.new(null) {
-                // Config was null, need to select anything and rekey
-                // to empty key value in order to remove encryption
-                config.logger?.invoke("No EncryptionConfig. Removing encryption.")
-                rekey = Key.EMPTY
-                chaCha20(MCChaCha20Config.Default)
-            }
-
         config.withDispatcher {
-            rekey(rekey, encryptionConfig)
+            rekey(key, config.filesystemConfig.encryptionConfig)
         }
     }
 }

@@ -98,6 +98,7 @@ public final class io/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder {
 
 public final class io/toxicity/sqlite/mc/driver/config/FilesystemConfig {
 	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig$Companion;
+	public static final field Default Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;
 	public final field databasesDir Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;
 	public final field encryptionConfig Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;
 	public final field encryptionMigrationConfig Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionMigrationConfig;
@@ -215,6 +216,7 @@ public final class io/toxicity/sqlite/mc/driver/config/encryption/Cipher$SQLCIPH
 
 public final class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig {
 	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Companion;
+	public static final field Default Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;
 	public final field cipherConfig Lio/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig;
 	public final field hmacCheck Z
 	public final field mcLegacyWAL Z
@@ -322,8 +324,7 @@ public final class io/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm :
 
 public final class io/toxicity/sqlite/mc/driver/config/encryption/Key {
 	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/Key$Companion;
-	public static final field EMPTY Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
-	public static final field IN_MEMORY Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+	public static final field Empty Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
 	public final field isRaw Z
 	public synthetic fun <init> (Ljava/lang/String;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public static final fun passphrase (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;

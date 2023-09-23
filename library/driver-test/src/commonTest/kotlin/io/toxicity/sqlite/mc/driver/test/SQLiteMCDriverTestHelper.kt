@@ -95,7 +95,7 @@ abstract class SQLiteMCDriverTestHelper {
                 val msg = factory
                     .config
                     .filesystemConfig
-                    ?.toString()
+                    .toString()
 
                 throw IllegalStateException(msg, ex)
             }

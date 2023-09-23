@@ -65,6 +65,13 @@ public class EncryptionConfig private constructor(
     public companion object {
 
         /**
+         * A default encryption config that utilizes [MCChaCha20Config.Default]
+         * as its encryption scheme.
+         * */
+        @JvmField
+        public val Default: EncryptionConfig = new(null) { chaCha20(MCChaCha20Config.Default) }
+
+        /**
          * Helper for creating a new configuration to share
          * across different [SQLiteMCDriver.Factory] or [FilesystemConfig]
          *

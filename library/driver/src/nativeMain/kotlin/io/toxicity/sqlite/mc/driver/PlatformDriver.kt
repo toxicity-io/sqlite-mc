@@ -144,7 +144,7 @@ public actual sealed class PlatformDriver actual constructor(args: Args): SqlDri
                     busyTimeout = 5_000,
                     pageSize = null,
                     synchronousFlag = null,
-                    basePath = filesystemConfig?.databasesDir?.path,
+                    basePath = filesystemConfig.databasesDir.path,
                     recursiveTriggers = false,
                     lookasideSlotSize = -1,
                     lookasideSlotCount = -1,
