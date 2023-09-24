@@ -157,8 +157,15 @@ abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
         }
         assertEquals(2, migrationAttempts)
 
-        factory3.create(keyPassphrase).close()
+        // Factory 3 has already successfully opened.
+        // Bad password should not attempt any migrations
+        assertFailsWith<IllegalStateException> {
+            factory3.create(keyRawWithSalt)
+        }
         assertEquals(2, migrationAttempts)
+
+        // Should open with correct password
+        factory3.create(keyPassphrase).close()
 
         // Should fail, factory2 uses an old encryption scheme
         assertFailsWith<IllegalStateException> {
@@ -169,6 +176,10 @@ abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
         factory3.create(keyPassphrase).use { driver3 ->
             assertEquals(expected, driver3.get("key"))
         }
+
+        // Any further openings using factory 2 or 3 should not
+        // have attempted any migrations, as there was already
+        // a successful first open for that factory.
         assertEquals(2, migrationAttempts)
     }
 

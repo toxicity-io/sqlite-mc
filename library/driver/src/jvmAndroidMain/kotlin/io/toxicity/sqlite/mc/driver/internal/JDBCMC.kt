@@ -31,7 +31,15 @@ internal class JDBCMC private constructor(): JDBC() {
     }
 
     @Throws(SQLException::class)
-    override fun connect(url: String?, info: Properties?): Connection? = JDBCMC4Connection.of(url, info)
+    override fun connect(url: String?, info: Properties?): Connection? {
+        return if (info is JDBCMCProperties) {
+            JDBCMC4Connection.of(url, info)
+        } else {
+            // Delegate back to JDBC if it's not
+            // coming from us.
+            createConnection(url, info)
+        }
+    }
 
     internal companion object {
 

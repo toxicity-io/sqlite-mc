@@ -53,17 +53,6 @@ abstract class SQLiteMCDriverTest: SQLiteMCDriverTestHelper() {
     }
 
     @Test
-    open fun givenDriver_whenFilesystemButNullKey_thenCreatesInMemory() = runDriverTest { factory, driver ->
-        val expected = "abcd12319823y5"
-        factory.create(key = null).use { inMemoryDriver ->
-            inMemoryDriver.upsert("key", expected)
-
-            assertNull(driver.get("key"))
-            assertTrue(inMemoryDriver.isInMemory)
-        }
-    }
-
-    @Test
     open fun givenDriver_whenEmptyPassword_thenDoesNotEncrypt() = runDriverTest(key = Key.Empty) { factory, driver ->
         val expected = "asdljkgfnadsg"
         driver.upsert("key", expected)

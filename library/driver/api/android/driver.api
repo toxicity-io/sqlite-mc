@@ -26,7 +26,7 @@ public abstract class io/toxicity/sqlite/mc/driver/PlatformDriver : app/cash/sql
 	public final fun beginTransaction (Ljava/sql/Connection;)V
 	public final fun close ()V
 	public final fun closeConnection (Ljava/sql/Connection;)V
-	public static final synthetic fun create$driver_release (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;Ljava/util/Map;Z)Lio/toxicity/sqlite/mc/driver/PlatformDriver$Companion$Args;
+	public static final synthetic fun create$driver_release (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;Ljava/util/Map;Ljava/util/Map;)Lio/toxicity/sqlite/mc/driver/PlatformDriver$Companion$Args;
 	public final fun currentTransaction ()Lapp/cash/sqldelight/Transacter$Transaction;
 	public final fun endTransaction (Ljava/sql/Connection;)V
 	public final fun execute (Ljava/lang/Integer;Ljava/lang/String;ILkotlin/jvm/functions/Function1;)Lapp/cash/sqldelight/db/QueryResult;
@@ -35,7 +35,6 @@ public abstract class io/toxicity/sqlite/mc/driver/PlatformDriver : app/cash/sql
 	public final fun getTransaction ()Lapp/cash/sqldelight/driver/jdbc/ConnectionManager$Transaction;
 	public final fun newTransaction ()Lapp/cash/sqldelight/db/QueryResult;
 	public final fun notifyListeners ([Ljava/lang/String;)V
-	protected final fun rekey (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig;)V
 	public final fun removeListener ([Ljava/lang/String;Lapp/cash/sqldelight/Query$Listener;)V
 	public final fun rollbackTransaction (Ljava/sql/Connection;)V
 	public final fun setTransaction (Lapp/cash/sqldelight/driver/jdbc/ConnectionManager$Transaction;)V
@@ -46,8 +45,7 @@ protected final class io/toxicity/sqlite/mc/driver/PlatformDriver$Companion {
 
 public final class io/toxicity/sqlite/mc/driver/SQLiteMCDriver : io/toxicity/sqlite/mc/driver/PlatformDriver {
 	public final field config Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;
-	public final field isInMemory Z
-	public synthetic fun <init> (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;ZLio/toxicity/sqlite/mc/driver/PlatformDriver$Companion$Args;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;Lio/toxicity/sqlite/mc/driver/PlatformDriver$Companion$Args;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class io/toxicity/sqlite/mc/driver/SQLiteMCDriver$Factory {

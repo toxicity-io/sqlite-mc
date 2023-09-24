@@ -354,8 +354,12 @@ public class EncryptionConfig private constructor(
 
     @JvmSynthetic
     @Throws(IllegalArgumentException::class)
-    internal fun applyKeyPragma(pragmas: MutablePragmas, key: Key): EncryptionConfig {
-        Pragma.MC.KEY.put(pragmas, Pair(key, cipherConfig.cipher))
+    internal fun applyKeyPragma(pragmas: MutablePragmas, key: Key, isRekey: Boolean): EncryptionConfig {
+        if (isRekey) {
+            Pragma.MC.RE_KEY.put(pragmas, Pair(key, cipherConfig.cipher))
+        } else {
+            Pragma.MC.KEY.put(pragmas, Pair(key, cipherConfig.cipher))
+        }
         return this
     }
 }

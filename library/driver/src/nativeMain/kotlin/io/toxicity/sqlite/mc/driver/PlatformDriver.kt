@@ -27,47 +27,10 @@ import app.cash.sqldelight.logs.LogSqliteDriver
 import co.touchlab.sqliter.*
 import co.touchlab.sqliter.interop.Logger
 import io.toxicity.sqlite.mc.driver.config.*
-import io.toxicity.sqlite.mc.driver.config.Pragmas
-import io.toxicity.sqlite.mc.driver.config.encryption.Cipher
-import io.toxicity.sqlite.mc.driver.config.encryption.EncryptionConfig
-import io.toxicity.sqlite.mc.driver.config.encryption.Key
-import io.toxicity.sqlite.mc.driver.config.mutablePragmas
-import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
-import io.toxicity.sqlite.mc.driver.internal.ext.createRekeyParameters
 
-public actual sealed class PlatformDriver actual constructor(args: Args): SqlDriver {
+public actual sealed class PlatformDriver actual constructor(private val args: Args): SqlDriver {
 
-    private val isInMemory: Boolean = args.isInMemory
-    private val logger: ((String) -> Unit)? = args.logger
-    private val properties: MutablePragmas = args.properties
-    private val nativeDriver: NativeSqliteDriver = args.nativeDriver
-    private val dbManager: DatabaseManager = args.dbManager
-    private val logDriver: LogSqliteDriver? = if (logger != null) LogSqliteDriver(nativeDriver, logger) else null
-
-    private val driver: SqlDriver get() = logDriver ?: nativeDriver
-
-    @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    protected actual fun rekey(key: Key, config: EncryptionConfig) {
-        val (pragmas, sqlStatements) = config.createRekeyParameters(key = key, isInMemory = isInMemory)
-
-        val connection = dbManager.createSingleThreadedConnection()
-
-        try {
-            sqlStatements.forEach { sql ->
-                logger?.invoke("EXECUTE\n $sql")
-                connection.rawExecSql(sql)
-            }
-
-            // Remove and replace cipher parameters
-            properties.removeMCPragmas()
-            properties.putAll(pragmas)
-        } catch (t: Throwable) {
-            throw IllegalStateException("Failed to rekey the database", t)
-        } finally {
-            pragmas.clear()
-            connection.close()
-        }
-    }
+    private val driver: SqlDriver get() = args.logDriver ?: args.nativeDriver
 
     actual final override fun addListener(vararg queryKeys: String, listener: Query.Listener) {
         driver.addListener(queryKeys = queryKeys, listener = listener)
@@ -109,18 +72,14 @@ public actual sealed class PlatformDriver actual constructor(args: Args): SqlDri
     }
 
     actual final override fun close() {
-        properties.clear()
+        args.properties.clear()
         driver.close()
     }
     
     protected actual companion object {
-        
-        @Throws(IllegalStateException::class)
-        internal actual fun FactoryConfig.create(pragmas: Pragmas, isInMemory: Boolean): Args {
 
-            // TODO: Need to make access concurrent
-            val properties = mutablePragmas()
-            properties.putAll(pragmas)
+        @Throws(IllegalArgumentException::class, IllegalStateException::class)
+        internal actual fun FactoryConfig.create(keyPragma: MutablePragmas, rekeyPragma: MutablePragmas?): Args {
 
             val config = DatabaseConfiguration(
                 name = dbName,
@@ -137,7 +96,7 @@ public actual sealed class PlatformDriver actual constructor(args: Args): SqlDri
                         schema.migrate(it, oldVersion.toLong(), newVersion.toLong(), callbacks = afterVersions)
                     }
                 },
-                inMemory = isInMemory,
+                inMemory = false,
                 journalMode = JournalMode.WAL, // TODO: Move to FactoryConfig.platformOptions
                 extendedConfig = DatabaseConfiguration.Extended( // TODO: Move to FactoryConfig.platformOptions
                     foreignKeyConstraints = false,
@@ -162,49 +121,42 @@ public actual sealed class PlatformDriver actual constructor(args: Args): SqlDri
                 ),
                 lifecycleConfig = DatabaseConfiguration.Lifecycle(
                     onCreateConnection = { conn ->
-                        var cipher: Cipher? = null
+                        logger?.invoke("onCreateConnection - START")
 
-                        val sqlStatements = Pragma.MC.ALL.mapNotNull { pragma ->
-                            val value = properties[pragma] ?: return@mapNotNull null
-
-                            when (pragma) {
-                                is Pragma.MC.CIPHER -> {
-                                    cipher = Cipher.valueOfOrNull(value) ?: return@mapNotNull null
-
-                                    pragma.name.buildMCConfigSQL(
-                                        transient = false,
-                                        arg2 = value,
-                                        arg3 = null
-                                    )
-                                }
-                                is Pragma.MC.KEY -> {
-                                    "PRAGMA ${pragma.name} = $value;"
-                                }
-                                else -> {
-                                    val arg3: Number = value.toIntOrNull() ?: return@mapNotNull null
-
-                                    cipher?.name?.buildMCConfigSQL(
-                                        transient = false,
-                                        arg2 = pragma.name,
-                                        arg3 = arg3,
-                                    )
-                                }
-                            }
+                        keyPragma.toMCSQLStatements().forEach { statement ->
+                            logger?.invoke("EXECUTE\n $statement")
+                            conn.rawExecSql(statement)
                         }
 
-                        if (cipher != null) {
-                            logger?.invoke("onCreateConnection - START")
+                        // Have to check if the key actually worked before going further
+                        // with rekeying to new config
+                        val verify = "SELECT 1 FROM sqlite_schema;"
+                        logger?.invoke("EXECUTE\n $verify")
+                        conn.rawExecSql(verify)
 
-                            for (statement in sqlStatements) {
+                        if (!rekeyPragma.isNullOrEmpty()) {
+
+                            rekeyPragma.toMCSQLStatements().forEach { statement ->
                                 logger?.invoke("EXECUTE\n $statement")
                                 conn.rawExecSql(statement)
                             }
 
-                            logger?.invoke("EXECUTE\n SELECT 1 FROM sqlite_schema;")
-                            conn.stringForQuery("SELECT 1 FROM sqlite_schema;")
+                            logger?.invoke("EXECUTE\n $verify")
+                            conn.rawExecSql(verify)
 
-                            logger?.invoke("onCreateConnection - FINISH")
+                            // rekey successful, swap out old for new
+                            keyPragma.clear()
+                            rekeyPragma.forEach { entry ->
+                                if (entry.key is Pragma.MC.RE_KEY) {
+                                    keyPragma[Pragma.MC.KEY] = entry.value
+                                } else {
+                                    keyPragma[entry.key] = entry.value
+                                }
+                            }
+                            rekeyPragma.clear()
                         }
+
+                        logger?.invoke("onCreateConnection - FINISH")
                     },
                     onCloseConnection = {  },
                 ),
@@ -214,48 +166,33 @@ public actual sealed class PlatformDriver actual constructor(args: Args): SqlDri
             val manager: DatabaseManager = try {
                 createDatabaseManager(config)
             } catch (t: Throwable) {
-                properties.clear()
+                keyPragma.clear()
+                rekeyPragma?.clear()
                 if (t is IllegalStateException) throw t
                 throw IllegalStateException("Failed to create DatabaseManager", t)
             }
 
             val driver = NativeSqliteDriver(manager, maxReaderConnections = 1) // TODO: Move to FactoryConfig.platformOptions
 
-            // TODO: need to rework creating an in memory db, as you could create an in memory
-            //  database for a file that is encrypted, which would need to be initialized
-            //  here to check for key correctness.
-            if (!isInMemory) {
-                try {
-                    driver.executeQuery(
-                        null,
-                        "SELECT 1 FROM sqlite_schema;",
-                        mapper = { QueryResult.Unit },
-                        parameters = 0,
-                        binders = null
-                    )
-                } catch (t: Throwable) {
-                    properties.clear()
-                    driver.close()
-                    if (t is IllegalStateException) throw t
-                    throw IllegalStateException("Failed to create NativeSqliteDriver", t)
-                }
+            try {
+                // Try opening first connection to
+                // ensure key + rekey succeeds.
+                manager.withConnection {}
+            } catch (t: Throwable) {
+                keyPragma.clear()
+                rekeyPragma?.clear()
+                driver.close()
+                if (t is IllegalStateException) throw t
+                throw IllegalStateException("Failed to create NativeSqliteDriver", t)
             }
 
-            return Args(
-                isInMemory = isInMemory,
-                logger = logger,
-                properties = properties,
-                nativeDriver = driver,
-                dbManager = manager,
-            )
+            return Args(keyPragma, driver, logger?.let { LogSqliteDriver(driver, it) })
         }
 
         internal actual class Args(
-            internal val isInMemory: Boolean,
-            internal val logger: ((String) -> Unit)?,
             internal val properties: MutablePragmas,
             internal val nativeDriver: NativeSqliteDriver,
-            internal val dbManager: DatabaseManager,
+            internal val logDriver: LogSqliteDriver?,
         )
     }
 }

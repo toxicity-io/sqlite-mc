@@ -22,18 +22,10 @@ import app.cash.sqldelight.db.SqlCursor
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlPreparedStatement
 import io.toxicity.sqlite.mc.driver.config.*
-import io.toxicity.sqlite.mc.driver.config.Pragmas
-import io.toxicity.sqlite.mc.driver.config.encryption.EncryptionConfig
-import io.toxicity.sqlite.mc.driver.config.encryption.Key
-import io.toxicity.sqlite.mc.driver.config.mutablePragmas
-import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 
 public expect sealed class PlatformDriver(args: Args): SqlDriver {
-
-    @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    protected fun rekey(key: Key, config: EncryptionConfig)
 
     final override fun addListener(vararg queryKeys: String, listener: Query.Listener)
     final override fun notifyListeners(vararg queryKeys: String)
@@ -60,10 +52,17 @@ public expect sealed class PlatformDriver(args: Args): SqlDriver {
 
     protected companion object {
 
+//        @JvmStatic
+//        @JvmSynthetic
+//        @Throws(IllegalStateException::class)
+//        internal fun FactoryConfig.create(pragmas: Pragmas, isInMemory: Boolean): Args
+
         @JvmStatic
         @JvmSynthetic
-        @Throws(IllegalStateException::class)
-        internal fun FactoryConfig.create(pragmas: Pragmas, isInMemory: Boolean): Args
+        @Throws(IllegalArgumentException::class, IllegalStateException::class)
+        internal fun FactoryConfig.create(keyPragma: MutablePragmas, rekeyPragma: MutablePragmas?): Args
+
+        // TODO: internal fun FactoryConfig.create(ephemeral: EphemeralOpts): Args
 
         internal class Args
     }

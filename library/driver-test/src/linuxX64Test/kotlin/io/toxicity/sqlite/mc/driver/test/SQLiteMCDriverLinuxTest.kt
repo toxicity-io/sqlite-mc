@@ -42,11 +42,6 @@ class SQLiteMCDriverLinuxTest: SQLiteMCDriverTest() {
     }
 
     @Test
-    override fun givenDriver_whenFilesystemButNullKey_thenCreatesInMemory(): TestResult {
-        // TODO: https://github.com/toxicity-io/sqlite-mc-driver/pull/24#issuecomment-1729836134
-    }
-
-    @Test
     override fun givenDriver_whenEmptyPassword_thenDoesNotEncrypt(): TestResult {
         // TODO: https://github.com/toxicity-io/sqlite-mc-driver/pull/24#issuecomment-1729836134
     }

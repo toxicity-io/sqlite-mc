@@ -60,7 +60,7 @@ abstract class SQLiteMCDriverTestHelper {
     }
 
     protected fun runDriverTest(
-        key: Key? = this.keyPassphrase,
+        key: Key = this.keyPassphrase,
         // pass null to use in memory db
         filesystem: (FilesystemConfig.Builder.() -> Unit)? = { encryption { chaCha20 { default() } } },
         testLogger: ((String) -> Unit)? = this.logger,
