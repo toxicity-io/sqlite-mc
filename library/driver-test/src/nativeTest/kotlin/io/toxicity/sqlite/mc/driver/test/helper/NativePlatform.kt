@@ -13,21 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.toxicity.sqlite.mc.driver.test
+package io.toxicity.sqlite.mc.driver.test.helper
 
-import android.util.Log
-import kotlin.test.Ignore
-import kotlin.test.Test
+import okio.FileSystem
 
-/**
- * See [SQLiteMCDriverTest]
- * */
-class SQLiteMCDriverAndroidTest: SQLiteMCDriverTest() {
-
-    override val logger: (log: String) -> Unit = { Log.d("TEST", it)  }
-
-    @Test
-    @Ignore("Unused")
-    fun stub() {}
-
-}
+internal actual fun filesystem(): FileSystem = FileSystem.SYSTEM

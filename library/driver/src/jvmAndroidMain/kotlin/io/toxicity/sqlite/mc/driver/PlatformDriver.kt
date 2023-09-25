@@ -30,7 +30,6 @@ import io.toxicity.sqlite.mc.driver.internal.JDBCMCProperties
 import io.toxicity.sqlite.mc.driver.internal.JDBCMC
 import java.io.File
 import java.sql.Connection
-import java.util.Properties
 
 public actual sealed class PlatformDriver actual constructor(private val args: Args): JdbcDriver(), SqlDriver {
 
@@ -137,8 +136,38 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
             return Args(properties, driver, logger?.let { LogSqliteDriver(driver, it) })
         }
 
+        @JvmStatic
+        @JvmSynthetic
+        @Throws(IllegalStateException::class)
+        internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
+            JDBCMC.initialize
+
+            val url = JDBCMC.PREFIX
+            val properties = when (opt) {
+                EphemeralOpt.InMemory -> ":memory:"
+                EphemeralOpt.Named -> "file:$dbName?mode=memory&cache=shared"
+                EphemeralOpt.Temporary -> ""
+            }.let { JDBCMCProperties.of(it) }
+            // TODO: Add config properties (and remove any "password" pragma that may have been added)
+
+            val driver = try {
+                JdbcSqliteDriver(
+                    url = url,
+                    properties = properties,
+                    schema = schema,
+                    migrateEmptySchema = false, // TODO: Move to FactoryConfig.platformOptions
+                    callbacks = afterVersions,
+                )
+            } catch (t: Throwable) {
+                if (t is IllegalStateException) throw t
+                throw IllegalStateException("Failed to open ephemeral JDBC connection with $dbName", t)
+            }
+
+            return Args(properties, driver, logger?.let { LogSqliteDriver(driver, it) })
+        }
+
         internal actual class Args(
-            internal val properties: Properties,
+            internal val properties: JDBCMCProperties,
             internal val jdbcDriver: JdbcSqliteDriver,
             internal val logDriver: LogSqliteDriver?,
         )

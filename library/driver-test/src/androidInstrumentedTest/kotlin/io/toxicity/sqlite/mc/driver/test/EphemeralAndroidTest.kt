@@ -15,25 +15,16 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
-import kotlinx.coroutines.test.TestResult
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 /**
- * See [SQLiteMCDriverRekeyTest]
+ * See [EphemeralTest]
  * */
-class SQLiteMCDriverRekeyLinuxTest: SQLiteMCDriverRekeyTest() {
+class EphemeralAndroidTest: EphemeralTest() {
 
     @Test
+    @Ignore("Unused")
     fun stub() {}
-
-    @Test
-    override fun givenDriver_whenReKey_thenIsSuccessful() {
-        // TODO: Fix rekeying
-    }
-
-    @Test
-    override fun givenConfig_whenMigrations_thenRekeyedToNewestEncryptionConfig(): TestResult {
-        // TODO: Fix rekeying
-    }
 
 }

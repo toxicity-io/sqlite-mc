@@ -15,16 +15,13 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
-import android.util.Log
 import kotlin.test.Ignore
 import kotlin.test.Test
 
 /**
- * See [SQLiteMCDriverRekeyTest]
+ * See [RekeyTest]
  * */
-class SQLiteMCDriverRekeyAndroidTest: SQLiteMCDriverRekeyTest() {
-
-    override val logger: (log: String) -> Unit = { Log.d("TEST", it)  }
+class RekeyJvmTest: RekeyTest() {
 
     @Test
     @Ignore("Unused")

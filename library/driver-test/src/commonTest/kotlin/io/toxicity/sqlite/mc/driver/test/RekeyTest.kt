@@ -19,12 +19,13 @@ import app.cash.sqldelight.db.use
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
+import io.toxicity.sqlite.mc.driver.test.helper.TestHelperNonEphemeral
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
+abstract class RekeyTest: TestHelperNonEphemeral() {
 
     @Test
     open fun givenDriver_whenReKey_thenIsSuccessful() = runBlocking {
@@ -54,7 +55,7 @@ abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
             Triple(keyRawWithSalt, keyPassphrase) { encryption { chaCha20 { default() } } },
             Triple(keyRawWithSalt, keyPassphrase) { encryption { chaCha20 { sqleet() } } },
         ).forEach { (key1, key2, filesystem) ->
-            logger("RUN - ${i++}")
+            testLogger("RUN - ${i++}")
 
             // db files automatically delete once runMCDriverTest completes.
             runDriverTest(key1, filesystem) { factory, driver ->
@@ -92,7 +93,7 @@ abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
                     migrationAttempts++
                 }
 
-                logger(log)
+                testLogger(log)
             }
         }
 

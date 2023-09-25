@@ -122,6 +122,20 @@ public class SQLiteMCDriver private constructor(
         public suspend fun create(key: Key, rekey: Key): SQLiteMCDriver = createActual(key, rekey)
 
         /**
+         * Creates an ephemeral [SQLiteMCDriver] for the given [config] and
+         * [EphemeralOpt].
+         *
+         * @param [opt] The type of ephemeral database to create.
+         * @see [EphemeralOpt]
+         * @throws [IllegalStateException] if a connection failed to be
+         *   created.
+         * */
+        @Throws(IllegalStateException::class, CancellationException::class)
+        public suspend fun create(opt: EphemeralOpt): SQLiteMCDriver {
+            return config.withDispatcher { SQLiteMCDriver(config, create(opt)) }
+        }
+
+        /**
          * Blocking call for [create]
          * */
         @Throws(
@@ -140,6 +154,16 @@ public class SQLiteMCDriver private constructor(
             CancellationException::class,
         )
         public fun createBlocking(key: Key, rekey: Key): SQLiteMCDriver = runBlocking { create(key, rekey) }
+
+        /**
+         * Blocking call for [create]
+         * */
+        @Throws(
+            IllegalArgumentException::class,
+            IllegalStateException::class,
+            CancellationException::class,
+        )
+        public fun createBlocking(opt: EphemeralOpt): SQLiteMCDriver = runBlocking { create(opt) }
 
         private suspend fun createActual(key: Key, rekey: Key?): SQLiteMCDriver {
             return config.withDispatcher {
