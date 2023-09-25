@@ -15,7 +15,6 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
-import kotlinx.coroutines.test.TestResult
 import kotlin.test.Test
 
 /**
@@ -25,31 +24,6 @@ class GeneralLinuxTest: GeneralTest() {
 
     @Test
     fun stub() {}
-
-    @Test
-    override fun givenDriver_whenOpened_thenIsSuccessful(): TestResult {
-        // TODO: https://github.com/toxicity-io/sqlite-mc-driver/pull/24#issuecomment-1729836134
-    }
-
-    @Test
-    override fun givenDriver_whenReOpened_thenIsSuccessful(): TestResult {
-        // TODO: https://github.com/toxicity-io/sqlite-mc-driver/pull/24#issuecomment-1729836134
-    }
-
-    @Test
-    override fun givenDriver_whenIncorrectPassword_thenOpenFails(): TestResult {
-        // TODO: https://github.com/toxicity-io/sqlite-mc-driver/pull/24#issuecomment-1729836134
-    }
-
-    @Test
-    override fun givenDriver_whenEmptyPassword_thenDoesNotEncrypt(): TestResult {
-        // TODO: https://github.com/toxicity-io/sqlite-mc-driver/pull/24#issuecomment-1729836134
-    }
-
-    @Test
-    override fun givenDriver_whenClose_thenCredentialsCleared(): TestResult {
-        // TODO: https://github.com/toxicity-io/sqlite-mc-driver/pull/24#issuecomment-1729836134
-    }
 
     @Test
     override fun givenDriver_whenRawKeys_thenAllVersionSucceed() {

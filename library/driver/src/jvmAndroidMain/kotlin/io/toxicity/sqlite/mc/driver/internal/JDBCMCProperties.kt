@@ -22,7 +22,6 @@ import io.matthewnelson.encoding.core.util.LineBreakOutFeed
 import io.toxicity.sqlite.mc.driver.config.MutablePragmas
 import io.toxicity.sqlite.mc.driver.config.Pragma
 import io.toxicity.sqlite.mc.driver.config.toMCSQLStatements
-import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
 import java.sql.SQLException
 import java.util.Properties
 
@@ -173,56 +172,10 @@ internal class JDBCMCProperties private constructor(
                 out.output('.')
             }
 
-            // rekey statements will execute right after
-            // key statements.
-            if (reKeyStatements != null) {
-                // Have to check if the key actually worked before going further
-                // with rekeying to new config
-                "SELECT 1 FROM sqlite_schema;".forEach { c -> feed.consume(c.code.toByte()) }
+            reKeyStatements?.forEach { statement ->
+                statement.forEach { c -> feed.consume(c.code.toByte()) }
                 feed.flush()
                 out.output('.')
-
-                reKeyStatements.forEach { statement ->
-                    statement.forEach { c -> feed.consume(c.code.toByte()) }
-                    feed.flush()
-                    out.output('.')
-                }
-            }
-
-            // If the cipher has changed, need to reset the non-transient
-            // config settings after rekey event
-            val rekeyPragma = rekeyPragma
-            if (rekeyPragma != null && rekeyPragma[Pragma.MC.CIPHER] != keyPragma[Pragma.MC.CIPHER]) {
-                // Must have a cipher, otherwise would have thrown earlier when producing rekey statements
-                val cipher: String = rekeyPragma[Pragma.MC.CIPHER]!!
-
-                for (pragma in Pragma.MC.ALL) {
-                    val value = rekeyPragma[pragma] ?: continue
-
-                    val sql = when (pragma) {
-                        is Pragma.MC.CIPHER -> {
-                            pragma.name.buildMCConfigSQL(
-                                transient = false,
-                                arg2 = value,
-                                arg3 = null
-                            )
-                        }
-                        is Pragma.MC.RE_KEY -> {
-                            "PRAGMA key = $value;"
-                        }
-                        else -> {
-                            cipher.buildMCConfigSQL(
-                                transient = false,
-                                arg2 = pragma.name,
-                                arg3 = value.toIntOrNull() ?: continue
-                            )
-                        }
-                    }
-
-                    sql.forEach { c -> feed.consume(c.code.toByte()) }
-                    feed.flush()
-                    out.output('.')
-                }
             }
         }
 
@@ -232,8 +185,8 @@ internal class JDBCMCProperties private constructor(
         // in order to catch them when SQLiteConfig.apply is called
         this["password"] = sb.toString()
 
-        // Remove, just in case, as we want PRAGMA key to execute
-        // with the expected format of `pragma key = '<encoded statements'
+        // Remove just in case, as we want PRAGMA key to execute
+        // with the expected format of `pragma key = 'base64.encoded.statements.'`
         // in order to decode the contents.
         remove("hexkey_mode")
 
