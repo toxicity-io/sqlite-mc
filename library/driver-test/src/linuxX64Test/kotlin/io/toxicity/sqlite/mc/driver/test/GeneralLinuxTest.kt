@@ -19,9 +19,9 @@ import kotlinx.coroutines.test.TestResult
 import kotlin.test.Test
 
 /**
- * See [SQLiteMCDriverTest]
+ * See [GeneralTest]
  * */
-class SQLiteMCDriverLinuxTest: SQLiteMCDriverTest() {
+class GeneralLinuxTest: GeneralTest() {
 
     @Test
     fun stub() {}

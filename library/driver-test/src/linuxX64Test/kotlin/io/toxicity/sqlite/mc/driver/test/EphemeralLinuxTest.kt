@@ -15,16 +15,14 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /**
- * See [SQLiteMCDriverRekeyTest]
+ * See [EphemeralTest]
  * */
-class SQLiteMCDriverRekeyJvmTest: SQLiteMCDriverRekeyTest() {
+class EphemeralLinuxTest: EphemeralTest() {
 
     @Test
-    @Ignore("Unused")
     fun stub() {}
 
 }

@@ -13,62 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.toxicity.sqlite.mc.driver.test
+package io.toxicity.sqlite.mc.driver.test.helper
 
 import app.cash.sqldelight.db.use
 import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
-import io.toxicity.sqlite.mc.driver.config.DatabasesDir
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
+import io.toxicity.sqlite.mc.driver.test.TestDatabase
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
-import okio.Path
+import okio.IOException
 import okio.Path.Companion.toPath
 import kotlin.random.Random
 
-internal expect fun Path.deleteDatabase()
+internal expect fun filesystem(): FileSystem
 
-abstract class SQLiteMCDriverTestHelper {
-
-    protected val databasesDir: DatabasesDir = DatabasesDir(
-        FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("mc_driver_test").toString()
-    )
-    protected open val logger: (log: String) -> Unit = { log -> println(log) }
-
-    protected val keyPassphrase = Key.passphrase(value = "password")
-    protected val keyRaw = Key.raw(
-        key = Random.Default.nextBytes(32),
-        salt = null,
-        fillKey = false,
-    )
-    protected val keyRawWithSalt = Key.raw(
-        key = Random.Default.nextBytes(32),
-        salt = Random.Default.nextBytes(16),
-        fillKey = false,
-    )
-
-    protected fun SQLiteMCDriver.toTestDatabase(): TestDatabase = TestDatabase(this)
-    protected fun SQLiteMCDriver.upsert(key: String, value: String) {
-        toTestDatabase().testQueries.upsert(value = value, key = key)
-    }
-    protected fun SQLiteMCDriver.get(key: String): String? {
-        return toTestDatabase().testQueries.get(key).executeAsOneOrNull()
-    }
+abstract class SQLiteMCDriverTestHelper: TestHelperBase() {
 
     protected fun runDriverTest(
         key: Key = this.keyPassphrase,
         // pass null to use in memory db
         filesystem: (FilesystemConfig.Builder.() -> Unit)? = { encryption { chaCha20 { default() } } },
-        testLogger: ((String) -> Unit)? = this.logger,
+        testLogger: ((String) -> Unit)? = this.testLogger,
         block: suspend TestScope.(factory: SQLiteMCDriver.Factory, driver: SQLiteMCDriver) -> Unit
     ): TestResult = runTest {
         val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
 
-        databasesDir.path?.toPath()?.resolve(dbName)?.deleteDatabase()
+        deleteDatabaseFile(dbName)
 
         val factory = SQLiteMCDriver.Factory(
             dbName = dbName,
@@ -89,7 +64,7 @@ abstract class SQLiteMCDriverTestHelper {
         } catch (t: Throwable) {
             error = t
         } finally {
-            databasesDir.path?.toPath()?.resolve(dbName)?.deleteDatabase()
+            deleteDatabaseFile(dbName)
 
             error?.let { ex ->
                 val msg = factory
@@ -99,6 +74,14 @@ abstract class SQLiteMCDriverTestHelper {
 
                 throw IllegalStateException(msg, ex)
             }
+        }
+    }
+
+    private fun deleteDatabaseFile(dbName: String) {
+        databasesDir.path?.toPath()?.resolve(dbName)?.let { path ->
+            try {
+                filesystem().delete(path, mustExist = false)
+            } catch (_: IOException) {}
         }
     }
 }

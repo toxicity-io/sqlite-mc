@@ -15,14 +15,19 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
-import okio.FileSystem
-import okio.IOException
-import okio.Path
+import android.util.Log
+import kotlin.test.Ignore
+import kotlin.test.Test
 
-internal actual fun Path.deleteDatabase() {
-    try {
-        FileSystem.SYSTEM.delete(this, mustExist = false)
-    } catch (_: IOException) {
-        // Windows fails sometimes
-    }
+/**
+ * See [RekeyTest]
+ * */
+class RekeyAndroidTest: RekeyTest() {
+
+    override val testLogger: (log: String) -> Unit = { Log.d("TEST", it)  }
+
+    @Test
+    @Ignore("Unused")
+    fun stub() {}
+
 }
