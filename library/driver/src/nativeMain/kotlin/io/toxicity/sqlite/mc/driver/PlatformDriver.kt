@@ -173,17 +173,17 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
         internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
             val config = DatabaseConfiguration(
                 name = when (opt) {
-                    EphemeralOpt.InMemory -> null
-                    EphemeralOpt.Named -> dbName
-                    EphemeralOpt.Temporary -> ""
+                    EphemeralOpt.IN_MEMORY -> null
+                    EphemeralOpt.NAMED -> dbName
+                    EphemeralOpt.TEMPORARY -> ""
                 },
                 version = schema.versionInt(),
                 create = schema.create(),
                 upgrade = schema.upgrade(afterVersions),
                 inMemory = when (opt) {
-                    EphemeralOpt.InMemory,
-                    EphemeralOpt.Named -> true
-                    EphemeralOpt.Temporary -> false
+                    EphemeralOpt.IN_MEMORY,
+                    EphemeralOpt.NAMED -> true
+                    EphemeralOpt.TEMPORARY -> false
                 },
                 journalMode = JournalMode.WAL, // TODO: Move to FactoryConfig.platformOptions
                 extendedConfig = DatabaseConfiguration.Extended( // TODO: Move to FactoryConfig.platformOptions
@@ -192,9 +192,9 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     pageSize = null,
                     synchronousFlag = null,
                     basePath = when (opt) {
-                        EphemeralOpt.InMemory,
-                        EphemeralOpt.Named -> null
-                        EphemeralOpt.Temporary -> ""
+                        EphemeralOpt.IN_MEMORY,
+                        EphemeralOpt.NAMED -> null
+                        EphemeralOpt.TEMPORARY -> ""
                     },
                     recursiveTriggers = false,
                     lookasideSlotSize = -1,

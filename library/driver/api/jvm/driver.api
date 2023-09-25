@@ -1,7 +1,7 @@
 public final class io/toxicity/sqlite/mc/driver/EphemeralOpt : java/lang/Enum {
-	public static final field InMemory Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
-	public static final field Named Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
-	public static final field Temporary Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
+	public static final field IN_MEMORY Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
+	public static final field NAMED Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
+	public static final field TEMPORARY Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
 	public static fun valueOf (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
 	public static fun values ()[Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
 }

@@ -77,7 +77,7 @@ val factory = SQLiteMCDriver.Factory(dbName = "test.db", schema = TestDatabase.S
         // do something
     }
 
-    // Can omit to simply produce in-memory databases
+    // Can omit to simply go with the default
     filesystem(databasesDir) {        
         encryption {
             // e.g. coming from SQLCipher library
@@ -97,12 +97,14 @@ val driver1: SQLiteMcDriver = factory.createBlocking(Key.passphrase("password"))
 driver1.close()
 ```
 
-Easily spin up an in-memory database for your configuration (no encryption)
+Easily spin up an ephemeral database for your configuration (no encryption)
 ```kotlin
-val inMemoryDriver1 = factory.createBlocking(key = Key.IN_MEMORY)
-val inMemoryDriver2 = factory.createBlocking(key = null)
-inMemoryDriver1.close()
-inMemoryDriver2.close()
+val inMemoryDriver = factory.createBlocking(opt = EphemeralOpt.IN_MEMORY)
+val namedDriver = factory.createBlocking(opt = EphemeralOpt.NAMED)
+val tempDriver = factory.createBlocking(opt = EphemeralOpt.TEMPORARY)
+inMemoryDriver.close()
+namedDriver.close()
+tempDriver.close()
 ```
 
 Easily change `Key`s

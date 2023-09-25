@@ -36,15 +36,15 @@ abstract class EphemeralTest: TestHelperBase() {
     }
 
     private val opts = listOf(
-        EphemeralOpt.InMemory,
-        EphemeralOpt.Named,
-        EphemeralOpt.Temporary,
+        EphemeralOpt.IN_MEMORY,
+        EphemeralOpt.NAMED,
+        EphemeralOpt.TEMPORARY,
     )
 
     @Test
     fun givenEphemeralDriver_whenMultiple_thenAreSeparate() = runTest {
         opts.forEach { opt ->
-            if (opt == EphemeralOpt.Named) return@forEach
+            if (opt == EphemeralOpt.NAMED) return@forEach
 
             val driver1 = factory.createBlocking(opt)
             val expected = "not-shared"
@@ -61,18 +61,18 @@ abstract class EphemeralTest: TestHelperBase() {
 
     @Test
     fun givenEphemeralNamedDriver_whenMultiple_thenAreShared() {
-        val driver1 = factory.createBlocking(EphemeralOpt.Named)
+        val driver1 = factory.createBlocking(EphemeralOpt.NAMED)
         val expected = "shared"
         driver1.upsert("key", expected)
         assertEquals(expected, driver1.get("key"))
 
-        val driver2 = factory.createBlocking(EphemeralOpt.Named)
+        val driver2 = factory.createBlocking(EphemeralOpt.NAMED)
         assertEquals(expected, driver2.get("key"))
         driver1.close()
         assertEquals(expected, driver2.get("key"))
         driver2.close()
 
-        val driver3 = factory.createBlocking(EphemeralOpt.Named)
+        val driver3 = factory.createBlocking(EphemeralOpt.NAMED)
         assertNull(driver3.get("key"))
         driver3.close()
     }

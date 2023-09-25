@@ -22,7 +22,7 @@ public enum class EphemeralOpt {
      * Creates a purely in-memory database using `":memory:"`
      * as the SQLite path.
      * */
-    InMemory,
+    IN_MEMORY,
 
     /**
      * Creates a named in-memory database using
@@ -30,18 +30,19 @@ public enum class EphemeralOpt {
      * SQLite path.
      *
      * NOTE: A named in-memory database will stay open
-     * until **all** connections with it are closed.
+     * until **all** connections with it are closed. It
+     * can be shared between multiple connections.
      * */
-    Named,
+    NAMED,
 
     /**
      * Creates a temporary database using `""` (an empty value)
      * as the SQLite path.
      *
-     * NOTE: A Temporary database differs from [InMemory] in that
+     * NOTE: A Temporary database differs from [IN_MEMORY] in that
      * it remains mostly in-memory, but SQLite will dump data to
      * a temp file when needed. The temp file is deleted upon
      * connection closure.
      * */
-    Temporary,
+    TEMPORARY,
 }

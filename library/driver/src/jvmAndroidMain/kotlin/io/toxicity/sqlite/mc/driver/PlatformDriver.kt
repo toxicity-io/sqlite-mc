@@ -144,9 +144,9 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
 
             val url = JDBCMC.PREFIX
             val properties = when (opt) {
-                EphemeralOpt.InMemory -> ":memory:"
-                EphemeralOpt.Named -> "file:$dbName?mode=memory&cache=shared"
-                EphemeralOpt.Temporary -> ""
+                EphemeralOpt.IN_MEMORY -> ":memory:"
+                EphemeralOpt.NAMED -> "file:$dbName?mode=memory&cache=shared"
+                EphemeralOpt.TEMPORARY -> ""
             }.let { JDBCMCProperties.of(it) }
             // TODO: Add config properties (and remove any "password" pragma that may have been added)
 
