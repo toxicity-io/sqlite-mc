@@ -25,6 +25,16 @@ public sealed class EphemeralOpt {
     public object InMemory: EphemeralOpt()
 
     /**
+     * Creates a named in-memory database using
+     * `file:{dbName}?mode=memory&cache=shared` as the
+     * SQLite path.
+     *
+     * NOTE: A named in-memory database will stay open
+     * until **all** connections with it are closed.
+     * */
+    public object Named: EphemeralOpt()
+
+    /**
      * Creates a temporary database using `""` (an empty value)
      * as the SQLite path.
      *

@@ -18,6 +18,7 @@ package io.toxicity.sqlite.mc.driver.test
 import io.toxicity.sqlite.mc.driver.EphemeralOpt
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.test.helper.TestHelperBase
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -36,14 +37,17 @@ abstract class EphemeralTest: TestHelperBase() {
 
     private val opts = listOf(
         EphemeralOpt.InMemory,
+        EphemeralOpt.Named,
         EphemeralOpt.Temporary,
     )
 
     @Test
-    fun givenEphemeralDriver_whenMultiple_thenAreSeparate() {
+    fun givenEphemeralDriver_whenMultiple_thenAreSeparate() = runTest {
         opts.forEach { opt ->
+            if (opt is EphemeralOpt.Named) return@forEach
+
             val driver1 = factory.createBlocking(opt)
-            val expected = "asdfasdfasdf"
+            val expected = "not-shared"
             driver1.upsert("key", expected)
             assertEquals(expected, driver1.get("key"))
 
@@ -53,6 +57,24 @@ abstract class EphemeralTest: TestHelperBase() {
             driver1.close()
             driver2.close()
         }
+    }
+
+    @Test
+    fun givenEphemeralNamedDriver_whenMultiple_thenAreShared() {
+        val driver1 = factory.createBlocking(EphemeralOpt.Named)
+        val expected = "shared"
+        driver1.upsert("key", expected)
+        assertEquals(expected, driver1.get("key"))
+
+        val driver2 = factory.createBlocking(EphemeralOpt.Named)
+        assertEquals(expected, driver2.get("key"))
+        driver1.close()
+        assertEquals(expected, driver2.get("key"))
+        driver2.close()
+
+        val driver3 = factory.createBlocking(EphemeralOpt.Named)
+        assertNull(driver3.get("key"))
+        driver3.close()
     }
 
     @Test

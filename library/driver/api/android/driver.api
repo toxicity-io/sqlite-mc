@@ -1,12 +1,16 @@
-public abstract class io/toxicity/sqlite/mc/driver/EphemeralOpt {
+public abstract class io/toxicity/sqlite/mc/driver/EphemeralDb {
 }
 
-public final class io/toxicity/sqlite/mc/driver/EphemeralOpt$InMemory : io/toxicity/sqlite/mc/driver/EphemeralOpt {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/EphemeralOpt$InMemory;
+public final class io/toxicity/sqlite/mc/driver/EphemeralDb$InMemory : io/toxicity/sqlite/mc/driver/EphemeralDb {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/EphemeralDb$InMemory;
 }
 
-public final class io/toxicity/sqlite/mc/driver/EphemeralOpt$Temporary : io/toxicity/sqlite/mc/driver/EphemeralOpt {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/EphemeralOpt$Temporary;
+public final class io/toxicity/sqlite/mc/driver/EphemeralDb$Named : io/toxicity/sqlite/mc/driver/EphemeralDb {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/EphemeralDb$Named;
+}
+
+public final class io/toxicity/sqlite/mc/driver/EphemeralDb$Temporary : io/toxicity/sqlite/mc/driver/EphemeralDb {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/EphemeralDb$Temporary;
 }
 
 public abstract interface annotation class io/toxicity/sqlite/mc/driver/MCCipherConfigDsl : java/lang/annotation/Annotation {
@@ -37,7 +41,7 @@ public abstract class io/toxicity/sqlite/mc/driver/PlatformDriver : app/cash/sql
 	public final fun beginTransaction (Ljava/sql/Connection;)V
 	public final fun close ()V
 	public final fun closeConnection (Ljava/sql/Connection;)V
-	public static final synthetic fun create$driver_release (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;Lio/toxicity/sqlite/mc/driver/EphemeralOpt;)Lio/toxicity/sqlite/mc/driver/PlatformDriver$Companion$Args;
+	public static final synthetic fun create$driver_release (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;Lio/toxicity/sqlite/mc/driver/EphemeralDb;)Lio/toxicity/sqlite/mc/driver/PlatformDriver$Companion$Args;
 	public static final synthetic fun create$driver_release (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;Ljava/util/Map;Ljava/util/Map;)Lio/toxicity/sqlite/mc/driver/PlatformDriver$Companion$Args;
 	public final fun currentTransaction ()Lapp/cash/sqldelight/Transacter$Transaction;
 	public final fun endTransaction (Ljava/sql/Connection;)V
@@ -63,10 +67,10 @@ public final class io/toxicity/sqlite/mc/driver/SQLiteMCDriver : io/toxicity/sql
 public final class io/toxicity/sqlite/mc/driver/SQLiteMCDriver$Factory {
 	public final field config Lio/toxicity/sqlite/mc/driver/config/FactoryConfig;
 	public fun <init> (Ljava/lang/String;Lapp/cash/sqldelight/db/SqlSchema;Lkotlin/jvm/functions/Function1;)V
-	public final fun create (Lio/toxicity/sqlite/mc/driver/EphemeralOpt;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun create (Lio/toxicity/sqlite/mc/driver/EphemeralDb;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun create (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun create (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun createBlocking (Lio/toxicity/sqlite/mc/driver/EphemeralOpt;)Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;
+	public final fun createBlocking (Lio/toxicity/sqlite/mc/driver/EphemeralDb;)Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;
 	public final fun createBlocking (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;)Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;
 	public final fun createBlocking (Lio/toxicity/sqlite/mc/driver/config/encryption/Key;Lio/toxicity/sqlite/mc/driver/config/encryption/Key;)Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;
 }

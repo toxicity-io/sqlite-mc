@@ -30,7 +30,6 @@ import io.toxicity.sqlite.mc.driver.internal.JDBCMCProperties
 import io.toxicity.sqlite.mc.driver.internal.JDBCMC
 import java.io.File
 import java.sql.Connection
-import java.util.Properties
 
 public actual sealed class PlatformDriver actual constructor(private val args: Args): JdbcDriver(), SqlDriver {
 
@@ -144,7 +143,11 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
             JDBCMC.initialize
 
             val url = JDBCMC.PREFIX
-            val properties = JDBCMCProperties.of(opt = opt)
+            val properties = when (opt) {
+                is EphemeralOpt.InMemory -> ":memory:"
+                is EphemeralOpt.Named -> "file:$dbName?mode=memory&cache=shared"
+                is EphemeralOpt.Temporary -> ""
+            }.let { JDBCMCProperties.of(it) }
             // TODO: Add config properties (and remove any "password" pragma that may have been added)
 
             val driver = try {

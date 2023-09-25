@@ -71,13 +71,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
 
     actual final override fun close() {
         driver.close()
-
-        try {
-            // If ephemeral, trying to close an
-            // already closed connection will
-            // throw exception. So simply ignore.
-            args.close()
-        } catch (_: Throwable) {}
+        args.close()
     }
     
     protected actual companion object {
@@ -179,15 +173,17 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
         internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
             val config = DatabaseConfiguration(
                 name = when (opt) {
-                    EphemeralOpt.InMemory -> null
-                    EphemeralOpt.Temporary -> ""
+                    is EphemeralOpt.InMemory -> null
+                    is EphemeralOpt.Named -> dbName
+                    is EphemeralOpt.Temporary -> ""
                 },
                 version = schema.versionInt(),
                 create = schema.create(),
                 upgrade = schema.upgrade(afterVersions),
                 inMemory = when (opt) {
-                    EphemeralOpt.InMemory -> true
-                    EphemeralOpt.Temporary -> false
+                    is EphemeralOpt.InMemory,
+                    is EphemeralOpt.Named -> true
+                    is EphemeralOpt.Temporary -> false
                 },
                 journalMode = JournalMode.WAL, // TODO: Move to FactoryConfig.platformOptions
                 extendedConfig = DatabaseConfiguration.Extended( // TODO: Move to FactoryConfig.platformOptions
@@ -196,8 +192,9 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     pageSize = null,
                     synchronousFlag = null,
                     basePath = when (opt) {
-                        EphemeralOpt.InMemory -> null
-                        EphemeralOpt.Temporary -> ""
+                        is EphemeralOpt.InMemory,
+                        is EphemeralOpt.Named -> null
+                        is EphemeralOpt.Temporary -> ""
                     },
                     recursiveTriggers = false,
                     lookasideSlotSize = -1,
@@ -242,7 +239,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
 
             val driver = NativeSqliteDriver(
                 databaseManager = object : DatabaseManager {
-                    // SQLDelight work around as it does not check for temporary databases
+                    // SQLDelight work around
                     //
                     // See https://github.com/cashapp/sqldelight/issues/3241#issuecomment-1732270263
                     override val configuration: DatabaseConfiguration = if (!config.inMemory) {
@@ -257,7 +254,9 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
             )
 
             return Args(driver, logger?.let { LogSqliteDriver(driver, it) }, close = {
-                connection.close()
+                try {
+                    connection.close()
+                } catch (_: Throwable) {}
             })
         }
 
