@@ -52,17 +52,15 @@ public expect sealed class PlatformDriver(args: Args): SqlDriver {
 
     protected companion object {
 
-//        @JvmStatic
-//        @JvmSynthetic
-//        @Throws(IllegalStateException::class)
-//        internal fun FactoryConfig.create(pragmas: Pragmas, isInMemory: Boolean): Args
-
         @JvmStatic
         @JvmSynthetic
         @Throws(IllegalArgumentException::class, IllegalStateException::class)
         internal fun FactoryConfig.create(keyPragma: MutablePragmas, rekeyPragma: MutablePragmas?): Args
 
-        // TODO: internal fun FactoryConfig.create(ephemeral: EphemeralOpts): Args
+        @JvmStatic
+        @JvmSynthetic
+        @Throws(IllegalArgumentException::class, IllegalStateException::class)
+        internal fun FactoryConfig.create(opt: EphemeralOpt): Args
 
         internal class Args
     }

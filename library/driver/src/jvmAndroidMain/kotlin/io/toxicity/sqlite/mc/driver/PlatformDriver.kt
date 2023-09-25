@@ -137,8 +137,34 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
             return Args(properties, driver, logger?.let { LogSqliteDriver(driver, it) })
         }
 
+        @JvmStatic
+        @JvmSynthetic
+        @Throws(IllegalArgumentException::class, IllegalStateException::class)
+        internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
+            JDBCMC.initialize
+
+            val url = JDBCMC.PREFIX
+            val properties = JDBCMCProperties.of(opt = opt)
+            // TODO: Add config properties (and remove any "password" pragma that may have been added)
+
+            val driver = try {
+                JdbcSqliteDriver(
+                    url = url,
+                    properties = properties,
+                    schema = schema,
+                    migrateEmptySchema = false, // TODO: Move to FactoryConfig.platformOptions
+                    callbacks = afterVersions,
+                )
+            } catch (t: Throwable) {
+                if (t is IllegalStateException) throw t
+                throw IllegalStateException("Failed to open ephemeral JDBC connection with $dbName", t)
+            }
+
+            return Args(properties, driver, logger?.let { LogSqliteDriver(driver, it) })
+        }
+
         internal actual class Args(
-            internal val properties: Properties,
+            internal val properties: JDBCMCProperties,
             internal val jdbcDriver: JdbcSqliteDriver,
             internal val logDriver: LogSqliteDriver?,
         )

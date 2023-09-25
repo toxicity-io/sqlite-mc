@@ -17,15 +17,13 @@ package io.toxicity.sqlite.mc.driver
 
 import app.cash.sqldelight.Query
 import app.cash.sqldelight.Transacter
-import app.cash.sqldelight.db.QueryResult
-import app.cash.sqldelight.db.SqlCursor
-import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.db.SqlPreparedStatement
+import app.cash.sqldelight.db.*
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import app.cash.sqldelight.driver.native.wrapConnection
 import app.cash.sqldelight.logs.LogSqliteDriver
 import co.touchlab.sqliter.*
 import co.touchlab.sqliter.interop.Logger
+import co.touchlab.sqliter.interop.SqliteDatabasePointer
 import io.toxicity.sqlite.mc.driver.config.*
 
 public actual sealed class PlatformDriver actual constructor(private val args: Args): SqlDriver {
@@ -72,8 +70,14 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
     }
 
     actual final override fun close() {
-        args.properties.clear()
         driver.close()
+
+        try {
+            // If ephemeral, trying to close an
+            // already closed connection will
+            // throw exception. So simply ignore.
+            args.close()
+        } catch (_: Throwable) {}
     }
     
     protected actual companion object {
@@ -83,19 +87,9 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
 
             val config = DatabaseConfiguration(
                 name = dbName,
-                version = if (schema.version > Int.MAX_VALUE) {
-                    error("Schema version is larger than Int.MAX_VALUE: ${schema.version}.")
-                } else {
-                    schema.version.toInt()
-                },
-                create = { connection ->
-                    wrapConnection(connection) { schema.create(it) }
-                },
-                upgrade = { connection, oldVersion, newVersion ->
-                    wrapConnection(connection) {
-                        schema.migrate(it, oldVersion.toLong(), newVersion.toLong(), callbacks = afterVersions)
-                    }
-                },
+                version = schema.versionInt(),
+                create = schema.create(),
+                upgrade = schema.upgrade(afterVersions),
                 inMemory = false,
                 journalMode = JournalMode.WAL, // TODO: Move to FactoryConfig.platformOptions
                 extendedConfig = DatabaseConfiguration.Extended( // TODO: Move to FactoryConfig.platformOptions
@@ -108,17 +102,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     lookasideSlotSize = -1,
                     lookasideSlotCount = -1,
                 ),
-                loggingConfig = DatabaseConfiguration.Logging(
-                    logger = object : Logger {
-                        override val eActive: Boolean = false
-                        override val vActive: Boolean = false
-
-                        override fun eWrite(message: String, exception: Throwable?) {}
-                        override fun trace(message: String) {}
-                        override fun vWrite(message: String) {}
-                    },
-                    verboseDataCalls = false,
-                ),
+                loggingConfig = NO_LOG,
                 lifecycleConfig = DatabaseConfiguration.Lifecycle(
                     onCreateConnection = { conn ->
                         logger?.invoke("onCreateConnection - START")
@@ -160,7 +144,6 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     },
                     onCloseConnection = {  },
                 ),
-                encryptionConfig = DatabaseConfiguration.Encryption(null, null)
             )
 
             val manager: DatabaseManager = try {
@@ -186,13 +169,134 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 throw IllegalStateException("Failed to create NativeSqliteDriver", t)
             }
 
-            return Args(keyPragma, driver, logger?.let { LogSqliteDriver(driver, it) })
+            return Args(driver, logger?.let { LogSqliteDriver(driver, it) }, close = {
+                keyPragma.clear()
+                rekeyPragma?.clear()
+            })
+        }
+
+        @Throws(IllegalArgumentException::class, IllegalStateException::class)
+        internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
+            val config = DatabaseConfiguration(
+                name = when (opt) {
+                    EphemeralOpt.InMemory -> null
+                    EphemeralOpt.Temporary -> ""
+                },
+                version = schema.versionInt(),
+                create = schema.create(),
+                upgrade = schema.upgrade(afterVersions),
+                inMemory = when (opt) {
+                    EphemeralOpt.InMemory -> true
+                    EphemeralOpt.Temporary -> false
+                },
+                journalMode = JournalMode.WAL, // TODO: Move to FactoryConfig.platformOptions
+                extendedConfig = DatabaseConfiguration.Extended( // TODO: Move to FactoryConfig.platformOptions
+                    foreignKeyConstraints = false,
+                    busyTimeout = 5_000,
+                    pageSize = null,
+                    synchronousFlag = null,
+                    basePath = when (opt) {
+                        EphemeralOpt.InMemory -> null
+                        EphemeralOpt.Temporary -> ""
+                    },
+                    recursiveTriggers = false,
+                    lookasideSlotSize = -1,
+                    lookasideSlotCount = -1,
+                ),
+                loggingConfig = NO_LOG,
+                lifecycleConfig = DatabaseConfiguration.Lifecycle(
+                    onCreateConnection = {},
+                    onCloseConnection = {},
+                ),
+            )
+
+            val manager: DatabaseManager = try {
+                createDatabaseManager(config)
+            } catch (t: Throwable) {
+                if (t is IllegalStateException) throw t
+                throw IllegalStateException("Failed to create DatabaseManager", t)
+            }
+
+            val connection = try {
+                manager.createMultiThreadedConnection()
+            } catch (t: Throwable) {
+                if (t is IllegalStateException) throw t
+                throw IllegalStateException("Failed to create a static connection", t)
+            }
+
+            // SQLDelight has thread pools that will close
+            // the connection if it is a purely in-memory/temporary
+            // database, which is incorrect.
+            //
+            // See https://github.com/cashapp/sqldelight/issues/3241
+            val nonCloseableConnection = object : DatabaseConnection {
+                override val closed: Boolean get() = connection.closed
+                override fun beginTransaction() { connection.beginTransaction() }
+                override fun close() { /* no-op */ }
+                override fun createStatement(sql: String): Statement = connection.createStatement(sql)
+                override fun endTransaction() { connection.endTransaction() }
+                override fun getDbPointer(): SqliteDatabasePointer = connection.getDbPointer()
+                override fun rawExecSql(sql: String) { connection.rawExecSql(sql) }
+                override fun setTransactionSuccessful() { connection.setTransactionSuccessful() }
+            }
+
+            val driver = NativeSqliteDriver(
+                databaseManager = object : DatabaseManager {
+                    // SQLDelight work around as it does not check for temporary databases
+                    //
+                    // See https://github.com/cashapp/sqldelight/issues/3241#issuecomment-1732270263
+                    override val configuration: DatabaseConfiguration = if (!config.inMemory) {
+                        config.copy(inMemory = true)
+                    } else {
+                        config
+                    }
+                    override fun createMultiThreadedConnection(): DatabaseConnection = nonCloseableConnection
+                    override fun createSingleThreadedConnection(): DatabaseConnection = nonCloseableConnection
+                },
+                maxReaderConnections = 1,
+            )
+
+            return Args(driver, logger?.let { LogSqliteDriver(driver, it) }, close = {
+                connection.close()
+            })
         }
 
         internal actual class Args(
-            internal val properties: MutablePragmas,
             internal val nativeDriver: NativeSqliteDriver,
             internal val logDriver: LogSqliteDriver?,
+            internal val close: () -> Unit,
         )
+
+        private val NO_LOG = DatabaseConfiguration.Logging(
+            logger = object : Logger {
+                override val eActive: Boolean = false
+                override val vActive: Boolean = false
+
+                override fun eWrite(message: String, exception: Throwable?) {}
+                override fun trace(message: String) {}
+                override fun vWrite(message: String) {}
+            },
+            verboseDataCalls = false,
+        )
+    }
+}
+
+private fun SqlSchema<QueryResult.Value<Unit>>.versionInt(): Int {
+    return if (version > Int.MAX_VALUE) {
+        error("Schema version is larger than Int.MAX_VALUE: $version.")
+    } else {
+        version.toInt()
+    }
+}
+
+private fun SqlSchema<QueryResult.Value<Unit>>.create(): (DatabaseConnection) -> Unit = { connection ->
+    wrapConnection(connection) { create(it) }
+}
+
+private fun SqlSchema<QueryResult.Value<Unit>>.upgrade(
+    afterVersions: Array<AfterVersion>
+): (DatabaseConnection, Int, Int) -> Unit = { connection, oldVersion, newVersion ->
+    wrapConnection(connection) {
+        migrate(it, oldVersion.toLong(), newVersion.toLong(), callbacks = afterVersions)
     }
 }
