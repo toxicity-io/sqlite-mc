@@ -59,7 +59,7 @@ public expect sealed class PlatformDriver(args: Args): SqlDriver {
 
         @JvmStatic
         @JvmSynthetic
-        @Throws(IllegalArgumentException::class, IllegalStateException::class)
+        @Throws(IllegalStateException::class)
         internal fun FactoryConfig.create(opt: EphemeralOpt): Args
 
         internal class Args

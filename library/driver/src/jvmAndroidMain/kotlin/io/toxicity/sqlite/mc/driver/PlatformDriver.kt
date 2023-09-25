@@ -138,15 +138,15 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
 
         @JvmStatic
         @JvmSynthetic
-        @Throws(IllegalArgumentException::class, IllegalStateException::class)
+        @Throws(IllegalStateException::class)
         internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
             JDBCMC.initialize
 
             val url = JDBCMC.PREFIX
             val properties = when (opt) {
-                is EphemeralOpt.InMemory -> ":memory:"
-                is EphemeralOpt.Named -> "file:$dbName?mode=memory&cache=shared"
-                is EphemeralOpt.Temporary -> ""
+                EphemeralOpt.InMemory -> ":memory:"
+                EphemeralOpt.Named -> "file:$dbName?mode=memory&cache=shared"
+                EphemeralOpt.Temporary -> ""
             }.let { JDBCMCProperties.of(it) }
             // TODO: Add config properties (and remove any "password" pragma that may have been added)
 

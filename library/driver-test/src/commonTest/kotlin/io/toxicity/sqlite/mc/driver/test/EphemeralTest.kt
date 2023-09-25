@@ -44,7 +44,7 @@ abstract class EphemeralTest: TestHelperBase() {
     @Test
     fun givenEphemeralDriver_whenMultiple_thenAreSeparate() = runTest {
         opts.forEach { opt ->
-            if (opt is EphemeralOpt.Named) return@forEach
+            if (opt == EphemeralOpt.Named) return@forEach
 
             val driver1 = factory.createBlocking(opt)
             val expected = "not-shared"

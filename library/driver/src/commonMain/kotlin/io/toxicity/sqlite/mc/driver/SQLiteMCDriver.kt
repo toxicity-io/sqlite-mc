@@ -125,23 +125,14 @@ public class SQLiteMCDriver private constructor(
          * Creates an ephemeral [SQLiteMCDriver] for the given [config] and
          * [EphemeralOpt].
          *
-         * @param [opt] The type of ephemeral database.
+         * @param [opt] The type of ephemeral database to create.
          * @see [EphemeralOpt]
-         * @throws [IllegalArgumentException] reserved exception for more
-         *   [EphemeralOpt] configurations.
          * @throws [IllegalStateException] if a connection failed to be
          *   created.
          * */
-        @Throws(
-            IllegalArgumentException::class,
-            IllegalStateException::class,
-            CancellationException::class,
-        )
+        @Throws(IllegalStateException::class, CancellationException::class)
         public suspend fun create(opt: EphemeralOpt): SQLiteMCDriver {
-            return config.withDispatcher {
-                val args = this.create(opt)
-                SQLiteMCDriver(config, args)
-            }
+            return config.withDispatcher { SQLiteMCDriver(config, create(opt)) }
         }
 
         /**

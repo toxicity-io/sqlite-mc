@@ -169,21 +169,21 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
             })
         }
 
-        @Throws(IllegalArgumentException::class, IllegalStateException::class)
+        @Throws(IllegalStateException::class)
         internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
             val config = DatabaseConfiguration(
                 name = when (opt) {
-                    is EphemeralOpt.InMemory -> null
-                    is EphemeralOpt.Named -> dbName
-                    is EphemeralOpt.Temporary -> ""
+                    EphemeralOpt.InMemory -> null
+                    EphemeralOpt.Named -> dbName
+                    EphemeralOpt.Temporary -> ""
                 },
                 version = schema.versionInt(),
                 create = schema.create(),
                 upgrade = schema.upgrade(afterVersions),
                 inMemory = when (opt) {
-                    is EphemeralOpt.InMemory,
-                    is EphemeralOpt.Named -> true
-                    is EphemeralOpt.Temporary -> false
+                    EphemeralOpt.InMemory,
+                    EphemeralOpt.Named -> true
+                    EphemeralOpt.Temporary -> false
                 },
                 journalMode = JournalMode.WAL, // TODO: Move to FactoryConfig.platformOptions
                 extendedConfig = DatabaseConfiguration.Extended( // TODO: Move to FactoryConfig.platformOptions
@@ -192,9 +192,9 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     pageSize = null,
                     synchronousFlag = null,
                     basePath = when (opt) {
-                        is EphemeralOpt.InMemory,
-                        is EphemeralOpt.Named -> null
-                        is EphemeralOpt.Temporary -> ""
+                        EphemeralOpt.InMemory,
+                        EphemeralOpt.Named -> null
+                        EphemeralOpt.Temporary -> ""
                     },
                     recursiveTriggers = false,
                     lookasideSlotSize = -1,
@@ -280,6 +280,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
     }
 }
 
+@Throws(IllegalStateException::class)
 private fun SqlSchema<QueryResult.Value<Unit>>.versionInt(): Int {
     return if (version > Int.MAX_VALUE) {
         error("Schema version is larger than Int.MAX_VALUE: $version.")

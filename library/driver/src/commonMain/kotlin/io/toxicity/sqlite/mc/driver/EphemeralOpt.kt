@@ -16,23 +16,23 @@
 
 package io.toxicity.sqlite.mc.driver
 
-public sealed class EphemeralOpt {
+public enum class EphemeralOpt {
 
     /**
      * Creates a purely in-memory database using `":memory:"`
      * as the SQLite path.
      * */
-    public object InMemory: EphemeralOpt()
+    InMemory,
 
     /**
      * Creates a named in-memory database using
-     * `file:{dbName}?mode=memory&cache=shared` as the
+     * `"file:{dbName}?mode=memory&cache=shared"` as the
      * SQLite path.
      *
      * NOTE: A named in-memory database will stay open
      * until **all** connections with it are closed.
      * */
-    public object Named: EphemeralOpt()
+    Named,
 
     /**
      * Creates a temporary database using `""` (an empty value)
@@ -43,5 +43,5 @@ public sealed class EphemeralOpt {
      * a temp file when needed. The temp file is deleted upon
      * connection closure.
      * */
-    public object Temporary: EphemeralOpt()
+    Temporary,
 }
