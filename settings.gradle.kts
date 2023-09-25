@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-rootProject.name = "sqlite-mc-driver"
+rootProject.name = "sqlite-mc"
 
 pluginManagement {
     repositories {

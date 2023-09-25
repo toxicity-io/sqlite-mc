@@ -1,4 +1,4 @@
-# sqlite-mc-driver
+# sqlite-mc
 [![badge-license]][url-license]
 [![badge-latest-release]][url-latest-release]
 
@@ -259,7 +259,7 @@ val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Schema) {
 [badge-support-linux-arm]: http://img.shields.io/badge/support-[LinuxArm]-2D3F6C.svg?style=flat
 [badge-support-linux-mips]: http://img.shields.io/badge/support-[LinuxMIPS]-2D3F6C.svg?style=flat
 
-[url-latest-release]: https://github.com/toxicity-io/sqlite-mc-driver/releases/latest
+[url-latest-release]: https://github.com/toxicity-io/sqlite-mc/releases/latest
 [url-license]: https://www.apache.org/licenses/LICENSE-2.0.txt
 
 [url-kotlin]: https://kotlinlang.org
