@@ -28,7 +28,7 @@
 ![badge-support-linux-mips]
 -->
 
-An [SQLDelight][url-sql-delight] driver with a slick DSL that uses [SQLite3MultipleCiphers][url-sql-mc] for 
+An [SQLDelight][url-sql-delight] driver that uses [SQLite3MultipleCiphers][url-sql-mc] for 
 database encryption.
 
 ### Usage
@@ -160,7 +160,7 @@ val factory = SQLiteMCDriver.Factory(dbName = "test.db", schema = TestDatabase.S
 
             // Simply move your old encryption config up to a migration.
             migrationFrom {
-                note = "Migration from SQLCipher library to sqlite-mc-driver"
+                note = "Migration from SQLCipher library to sqlite-mc"
                 sqlCipher { v4() }
             }
         }
@@ -204,7 +204,7 @@ val customChaCha20 = EncryptionConfig.new(other = null) {
 
 val migrationConfig = EncryptionMigrationConfig.new(other = null) {
     migrationFrom {
-        note = "Migration from SQLCipher library to sqlite-mc-driver"
+        note = "Migration from SQLCipher library to sqlite-mc"
         sqlCipher { v4() }
     }
 
