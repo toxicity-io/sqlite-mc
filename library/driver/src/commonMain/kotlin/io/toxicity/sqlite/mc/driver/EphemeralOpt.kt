@@ -41,8 +41,15 @@ public enum class EphemeralOpt {
      *
      * NOTE: A Temporary database differs from [IN_MEMORY] in that
      * it remains mostly in-memory, but SQLite will dump data to
-     * a temp file when needed. The temp file is deleted upon
-     * connection closure.
+     * a temp file when needed.
+     *
+     * NOTE: SQLite3MultipleCiphers is compiled with flag
+     * `SQLITE_TEMP_STORE=2` which treats this exactly like
+     * [IN_MEMORY]. If you wish to use the disk caching
+     * behavior, you **must** execute `PRAGMA temp_store = 1;`
+     * when the connection is initially created.
+     *
+     * // TODO: or add the Pragma FactoryConfig (Issue #3)
      * */
     TEMPORARY,
 }

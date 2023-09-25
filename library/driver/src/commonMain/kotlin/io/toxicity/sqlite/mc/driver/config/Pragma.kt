@@ -208,12 +208,42 @@ internal fun MutablePragmas.toMCSQLStatements(): List<String> {
     val isRekey = containsKey(Pragma.MC.RE_KEY)
     require(isRekey || containsKey(Pragma.MC.KEY)) { "key or rekey is a required parameter" }
 
+    // If performing a rekey, this will also build
+    // and add the non-transient key statements to be
+    // executed **after** rekeying. It is only really
+    // necessary if the cipher type is changing, but
+    // including them doesn't hurt and ensures that
+    // everything is executing the same every the time.
+    val rekeyNonTransient = mutableListOf<String>()
+
     return buildList {
+        if (isRekey) {
+            // Must be executed before rekey statements
+            // to ensure the database is decrypted.
+            add("SELECT 1 FROM sqlite_schema;")
+
+            // Cannot rekey when db is in journal_mode
+            // WAL, so always set to the default so that
+            // any properties passed with the setting
+            // will reset it to the desired value after
+            // rekeying.
+            add("PRAGMA journal_mode = DELETE;")
+        }
+
         for (mcPragma in Pragma.MC.ALL) {
             val value = get(mcPragma) ?: continue
 
             val sql = when (mcPragma) {
                 is Pragma.MC.CIPHER -> {
+                    if (isRekey) {
+                        // e.g. SELECT sqlite3mc_config('default:cipher', 'chacha20');
+                        mcPragma.name.buildMCConfigSQL(
+                            transient = false,
+                            arg2 = value,
+                            arg3 = null
+                        ).let { rekeyNonTransient.add(it) }
+                    }
+
                     // e.g. SELECT sqlite3mc_config('cipher', 'chacha20');
                     mcPragma.name.buildMCConfigSQL(
                         transient = isRekey,
@@ -224,20 +254,36 @@ internal fun MutablePragmas.toMCSQLStatements(): List<String> {
 
                 is Pragma.MC.KEY,
                 is Pragma.MC.RE_KEY -> {
+                    if (isRekey) {
+                        "PRAGMA ${Pragma.MC.KEY.name} = $value;".let { rekeyNonTransient.add(it) }
+                    }
                     "PRAGMA ${mcPragma.name} = $value;"
                 }
                 else -> {
+                    val arg3 = value.toIntOrNull()
+                        ?: throw IllegalArgumentException("wtf???")
+
+                    if (isRekey) {
+                        // e.g. SELECT sqlite3mc_config('chacha20', 'default:kdf_iter', 200_000);
+                        cipher.name.buildMCConfigSQL(
+                            transient = false,
+                            arg2 = mcPragma.name,
+                            arg3 = arg3
+                        ).let { rekeyNonTransient.add(it) }
+                    }
+
                     // e.g. SELECT sqlite3mc_config('chacha20', 'kdf_iter', 200_000);
                     cipher.name.buildMCConfigSQL(
                         transient = isRekey,
                         arg2 = mcPragma.name,
-                        arg3 = value.toIntOrNull()
-                            ?: throw IllegalArgumentException("wtf??")
+                        arg3 = arg3
                     )
                 }
             }
 
             add(sql)
         }
+
+        addAll(rekeyNonTransient)
     }
 }

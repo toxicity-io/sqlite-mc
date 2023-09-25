@@ -85,7 +85,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 create = schema.create(),
                 upgrade = schema.upgrade(afterVersions),
                 inMemory = false,
-                journalMode = JournalMode.WAL, // TODO: Move to FactoryConfig.platformOptions
+                journalMode = JournalMode.DELETE,
                 extendedConfig = DatabaseConfiguration.Extended( // TODO: Move to FactoryConfig.platformOptions
                     foreignKeyConstraints = false,
                     busyTimeout = 5_000,
@@ -106,21 +106,12 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                             conn.rawExecSql(statement)
                         }
 
-                        // Have to check if the key actually worked before going further
-                        // with rekeying to new config
-                        val verify = "SELECT 1 FROM sqlite_schema;"
-                        logger?.invoke("EXECUTE\n $verify")
-                        conn.rawExecSql(verify)
-
                         if (!rekeyPragma.isNullOrEmpty()) {
 
                             rekeyPragma.toMCSQLStatements().forEach { statement ->
                                 logger?.invoke("EXECUTE\n $statement")
                                 conn.rawExecSql(statement)
                             }
-
-                            logger?.invoke("EXECUTE\n $verify")
-                            conn.rawExecSql(verify)
 
                             // rekey successful, swap out old for new
                             keyPragma.clear()
@@ -134,7 +125,8 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                             rekeyPragma.clear()
                         }
 
-                        logger?.invoke("onCreateConnection - FINISH")
+                        logger?.invoke("EXECUTE\n SELECT 1 FROM sqlite_schema;")
+                        conn.rawExecSql("SELECT 1 FROM sqlite_schema;")
                     },
                     onCloseConnection = {  },
                 ),
@@ -149,8 +141,6 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 throw IllegalStateException("Failed to create DatabaseManager", t)
             }
 
-            val driver = NativeSqliteDriver(manager, maxReaderConnections = 1) // TODO: Move to FactoryConfig.platformOptions
-
             try {
                 // Try opening first connection to
                 // ensure key + rekey succeeds.
@@ -158,10 +148,13 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
             } catch (t: Throwable) {
                 keyPragma.clear()
                 rekeyPragma?.clear()
-                driver.close()
+                // TODO: Remove
+                t.printStackTrace()
                 if (t is IllegalStateException) throw t
                 throw IllegalStateException("Failed to create NativeSqliteDriver", t)
             }
+
+            val driver = NativeSqliteDriver(manager, maxReaderConnections = 1) // TODO: Move to FactoryConfig.platformOptions
 
             return Args(driver, logger?.let { LogSqliteDriver(driver, it) }, close = {
                 keyPragma.clear()
@@ -185,7 +178,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     EphemeralOpt.NAMED -> true
                     EphemeralOpt.TEMPORARY -> false
                 },
-                journalMode = JournalMode.WAL, // TODO: Move to FactoryConfig.platformOptions
+                journalMode = JournalMode.DELETE,
                 extendedConfig = DatabaseConfiguration.Extended( // TODO: Move to FactoryConfig.platformOptions
                     foreignKeyConstraints = false,
                     busyTimeout = 5_000,

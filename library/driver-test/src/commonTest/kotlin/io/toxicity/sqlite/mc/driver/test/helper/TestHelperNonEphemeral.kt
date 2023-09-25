@@ -43,7 +43,7 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
     ): TestResult = runTest {
         val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
 
-        deleteDatabaseFile(dbName)
+        deleteDatabaseFiles(dbName)
 
         val factory = SQLiteMCDriver.Factory(
             dbName = dbName,
@@ -64,7 +64,7 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
         } catch (t: Throwable) {
             error = t
         } finally {
-            deleteDatabaseFile(dbName)
+            deleteDatabaseFiles(dbName)
 
             error?.let { ex ->
                 val msg = factory
@@ -77,10 +77,16 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
         }
     }
 
-    private fun deleteDatabaseFile(dbName: String) {
-        databasesDir.path?.toPath()?.resolve(dbName)?.let { path ->
+    private fun deleteDatabaseFiles(dbName: String) {
+        val db = databasesDir.path?.toPath()?.resolve(dbName) ?: return
+        val journal = ("$db-journal").toPath()
+        val shm = ("$db-shm").toPath()
+        val wal = ("$db-wal").toPath()
+
+        val fs = filesystem()
+        listOf(db, journal, shm, wal).forEach { path ->
             try {
-                filesystem().delete(path, mustExist = false)
+                fs.delete(path, mustExist = false)
             } catch (_: IOException) {}
         }
     }

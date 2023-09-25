@@ -59,7 +59,7 @@ kmpConfiguration {
             extensions.configure<SqlDelightExtension>("sqldelight") {
                 linkSqlite.set(false)
 
-                // TODO: Issue #18
+                // TODO: Gradle Plugin (Issue #18)
                 afterEvaluate {
                     targets
                         .filterIsInstance<KotlinNativeTarget>()
