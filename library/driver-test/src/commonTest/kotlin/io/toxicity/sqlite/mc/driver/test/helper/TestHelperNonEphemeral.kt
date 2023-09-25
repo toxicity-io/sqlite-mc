@@ -32,7 +32,7 @@ import kotlin.random.Random
 
 internal expect fun filesystem(): FileSystem
 
-abstract class SQLiteMCDriverTestHelper: TestHelperBase() {
+abstract class TestHelperNonEphemeral: TestHelperBase() {
 
     protected fun runDriverTest(
         key: Key = this.keyPassphrase,

@@ -19,10 +19,10 @@ import app.cash.sqldelight.db.use
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
-import io.toxicity.sqlite.mc.driver.test.helper.SQLiteMCDriverTestHelper
+import io.toxicity.sqlite.mc.driver.test.helper.TestHelperNonEphemeral
 import kotlin.test.*
 
-abstract class GeneralTest: SQLiteMCDriverTestHelper() {
+abstract class GeneralTest: TestHelperNonEphemeral() {
 
     @Test
     open fun givenDriver_whenOpened_thenIsSuccessful() = runDriverTest { _, driver ->

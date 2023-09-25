@@ -19,13 +19,13 @@ import app.cash.sqldelight.db.use
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
-import io.toxicity.sqlite.mc.driver.test.helper.SQLiteMCDriverTestHelper
+import io.toxicity.sqlite.mc.driver.test.helper.TestHelperNonEphemeral
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-abstract class RekeyTest: SQLiteMCDriverTestHelper() {
+abstract class RekeyTest: TestHelperNonEphemeral() {
 
     @Test
     open fun givenDriver_whenReKey_thenIsSuccessful() = runBlocking {
