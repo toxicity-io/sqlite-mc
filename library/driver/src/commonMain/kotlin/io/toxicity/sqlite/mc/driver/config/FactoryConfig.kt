@@ -41,7 +41,7 @@ public class FactoryConfig private constructor(
     @JvmField
     public val schema: SqlSchema<QueryResult.Value<Unit>>,
     @JvmField
-    public val filesystemConfig: FilesystemConfig?,
+    public val filesystemConfig: FilesystemConfig,
 
     @JvmSynthetic
     internal val dispatcher: CoroutineDispatcher,
@@ -75,6 +75,9 @@ public class FactoryConfig private constructor(
             }
             require(!dbName.contains('/') && !dbName.contains('\\')) {
                 "Invalid dbName. Cannot contain file system separator characters / or \\"
+            }
+            require(!dbName.contains('?')) {
+                "Invalid dbName. Cannot contain question marks '?'"
             }
         }
 
@@ -118,8 +121,10 @@ public class FactoryConfig private constructor(
         /**
          * Create a new [FilesystemConfig].
          *
-         * If a [FilesystemConfig] is omitted, calls to
-         * [SQLiteMCDriver.Factory.create] will generate in memory databases.
+         * If [FilesystemConfig] is not configured, [FilesystemConfig.Default]
+         * will be used.
+         *
+         * @see [FilesystemConfig.Default]
          * */
         @MCConfigDsl
         @JvmOverloads
@@ -134,10 +139,11 @@ public class FactoryConfig private constructor(
          * Inherit all settings from another [FilesystemConfig] and
          * (optionally) modify it further.
          *
-         * If a [FilesystemConfig] is omitted, calls to
-         * [SQLiteMCDriver.Factory.create] will generate in memory databases.
+         * If [FilesystemConfig] is not configured, [FilesystemConfig.Default]
+         * will be used.
          *
          * @see [FilesystemConfig.new]
+         * @see [FilesystemConfig.Default]
          * */
         @MCConfigDsl
         @JvmOverloads
@@ -149,45 +155,43 @@ public class FactoryConfig private constructor(
         }
 
         @JvmSynthetic
-        internal fun build(): FactoryConfig {
-            val dispatcher = dispatcher
-            val logger = logger
-            val redactLogs = redactLogs
-
-            return FactoryConfig(
-                dbName = dbName,
-                schema = schema,
-                filesystemConfig = filesystemConfig,
-                dispatcher = if (dispatcher == Dispatchers.IO) {
+        internal fun build(): FactoryConfig = FactoryConfig(
+            dbName = dbName,
+            schema = schema,
+            filesystemConfig = filesystemConfig ?: FilesystemConfig.Default,
+            dispatcher = dispatcher.let { dispatcher ->
+                if (dispatcher == Dispatchers.IO) {
                     @OptIn(ExperimentalCoroutinesApi::class)
                     dispatcher.limitedParallelism(parallelism = 1)
                 } else {
                     dispatcher
-                },
-                afterVersions = afterVersions.toTypedArray(),
-                logger = if (logger != null) {
-                    { log ->
-                        val cleansed = if(
-                            redactLogs
-                            && log.startsWith("EXECUTE\n PRAGMA", ignoreCase = true)
-                            && (
-                                   log.contains("${Pragma.MC.RE_KEY.name} =", ignoreCase = true)
-                                   || log.contains("${Pragma.MC.KEY.name} =", ignoreCase = true)
-                               )
-                        ) {
-                            log.replaceAfter("=", "") + " [REDACTED];"
-                        } else {
-                            log
-                        }
+                }
+            },
+            afterVersions = afterVersions.toTypedArray(),
+            logger = logger.toRedactedLoggerOrNull(redactLogs, dbName),
+        )
+    }
+}
 
-                        try {
-                            logger("$dbName: $cleansed")
-                        } catch (_: Throwable) {}
-                    }
-                } else {
-                    null
-                },
-            )
+private fun ((String) -> Unit)?.toRedactedLoggerOrNull(redactLogs: Boolean, dbName: String): ((String) -> Unit)? {
+    val logger = this ?: return null
+
+    return { log ->
+        val cleansed = if(
+            redactLogs
+            && log.startsWith("EXECUTE\n PRAGMA", ignoreCase = true)
+            && (
+                   log.contains("${Pragma.MC.RE_KEY.name} =", ignoreCase = true)
+                   || log.contains("${Pragma.MC.KEY.name} =", ignoreCase = true)
+               )
+        ) {
+            log.replaceAfter("=", "") + " [REDACTED];"
+        } else {
+            log
         }
+
+        try {
+            logger("$dbName: $cleansed")
+        } catch (_: Throwable) {}
     }
 }

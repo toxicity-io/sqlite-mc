@@ -27,15 +27,6 @@ import kotlin.test.assertFailsWith
 abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
 
     @Test
-    fun givenDriver_whenInMemory_thenRekeyFails() = runDriverTest(filesystem = null) { factory, driver ->
-        driver.close()
-
-        assertFailsWith<IllegalStateException> {
-            factory.create(keyPassphrase, keyRaw)
-        }
-    }
-
-    @Test
     open fun givenDriver_whenReKey_thenIsSuccessful() = runBlocking {
         var i = 0
         listOf<Triple<Key, Key, FilesystemConfig.Builder.() -> Unit>>(
@@ -150,33 +141,6 @@ abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
             }
         }
 
-        // Open DB with nothing (failure)
-        // Open DB with sqlcipher:default (should succeed) << remove encryption
-        // Never should make it to chacha20:default b/c factory3 rekeyed
-        val factory4 = SQLiteMCDriver.Factory(dbName, TestDatabase.Schema) {
-            logger = migrationAttemptsLogger()
-            redactLogs = false
-
-            filesystem(databasesDir) {
-                encryptionMigrations {
-                    migrationFrom {
-                        note = "Migration from chacha20:sqleet >> chacha20:default"
-                        chaCha20 { sqleet() }
-                    }
-                    migrationFrom {
-                        note = "Migration from chacha20:default >> sqlcipher:default"
-                        chaCha20 { default() }
-                    }
-                    migrationFrom {
-                        note = "Migration from sqlcipher:default >> none"
-                        sqlCipher { default() }
-                    }
-                }
-
-                encryption { /* nothing */ }
-            }
-        }
-
         factory2.create(keyPassphrase).use { driver2 ->
             assertEquals(expected, driver2.get("key"))
         }
@@ -193,28 +157,30 @@ abstract class SQLiteMCDriverRekeyTest: SQLiteMCDriverTestHelper() {
         }
         assertEquals(2, migrationAttempts)
 
-        factory3.create(keyPassphrase).close()
+        // Factory 3 has already successfully opened.
+        // Bad password should not attempt any migrations
+        assertFailsWith<IllegalStateException> {
+            factory3.create(keyRawWithSalt)
+        }
         assertEquals(2, migrationAttempts)
 
+        // Should open with correct password
+        factory3.create(keyPassphrase).close()
+
+        // Should fail, factory2 uses an old encryption scheme
         assertFailsWith<IllegalStateException> {
             factory2.create(keyPassphrase)
         }
 
-        factory4.create(keyPassphrase).use { driver4 ->
-            assertEquals(expected, driver4.get("key"))
-        }
-        factory4.create(Key.EMPTY).use { driver4 ->
-            assertEquals(expected, driver4.get("key"))
-        }
-        factory4.create(keyPassphrase).use { driver4 ->
-            assertEquals(expected, driver4.get("key"))
-        }
-
-        // Empty Key Should also work with factory that
-        // has an encryption config defined.
-        factory3.create(Key.EMPTY).use { driver3 ->
+        // Should succeed first try w/o migration attempts
+        factory3.create(keyPassphrase).use { driver3 ->
             assertEquals(expected, driver3.get("key"))
         }
+
+        // Any further openings using factory 2 or 3 should not
+        // have attempted any migrations, as there was already
+        // a successful first open for that factory.
+        assertEquals(2, migrationAttempts)
     }
 
 }

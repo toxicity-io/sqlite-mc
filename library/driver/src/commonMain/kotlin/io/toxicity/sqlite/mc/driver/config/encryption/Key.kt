@@ -34,8 +34,7 @@ import kotlin.jvm.JvmSynthetic
  *
  * @see [passphrase]
  * @see [raw]
- * @see [EMPTY]
- * @see [IN_MEMORY]
+ * @see [Empty]
  * */
 public class Key private constructor(
     private val value: String,
@@ -51,14 +50,7 @@ public class Key private constructor(
          * Removing encryption from a database via a rekey.
          * */
         @JvmField
-        public val EMPTY: Key = Key(value = "", isRaw = false)
-
-        /**
-         * A null key to use for creating in memory databases, whether
-         * the factory has a FilesystemConfig declared or not.
-         * */
-        @JvmField
-        public val IN_MEMORY: Key? = null
+        public val Empty: Key = Key(value = "", isRaw = false)
 
         /**
          * A Passphrase to encrypt/decrypt the database file with.

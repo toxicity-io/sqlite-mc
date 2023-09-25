@@ -23,65 +23,18 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlPreparedStatement
 import app.cash.sqldelight.driver.jdbc.ConnectionManager
 import app.cash.sqldelight.driver.jdbc.JdbcDriver
-import app.cash.sqldelight.driver.jdbc.JdbcPreparedStatement
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import app.cash.sqldelight.logs.LogSqliteDriver
 import io.toxicity.sqlite.mc.driver.config.*
-import io.toxicity.sqlite.mc.driver.config.encryption.EncryptionConfig
-import io.toxicity.sqlite.mc.driver.config.encryption.Key
+import io.toxicity.sqlite.mc.driver.internal.JDBCMCProperties
 import io.toxicity.sqlite.mc.driver.internal.JDBCMC
 import java.io.File
 import java.sql.Connection
-import java.sql.SQLException
 import java.util.Properties
 
-public actual sealed class RekeyDriver actual constructor(args: Args): JdbcDriver(), SqlDriver {
+public actual sealed class PlatformDriver actual constructor(private val args: Args): JdbcDriver(), SqlDriver {
 
-    private val url: String = args.url
-    private val logger: ((String) -> Unit)? = args.logger
-    private val properties: Properties = args.properties
-    private val jdbcDriver: JdbcSqliteDriver = args.jdbcDriver
-    private val logDriver: LogSqliteDriver? = if (logger != null) LogSqliteDriver(jdbcDriver, logger) else null
-
-    private val driver: SqlDriver get() = logDriver ?: jdbcDriver
-
-    @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    protected actual fun rekey(key: Key, config: EncryptionConfig) {
-        val (pragmas, sqlStatements) = config.createRekeyParameters(
-            key = key,
-            isInMemory = url == JdbcSqliteDriver.IN_MEMORY
-        )
-
-        val (connection, onClose) = try {
-            connectionAndClose()
-        } catch (e: SQLException) {
-            pragmas.clear()
-            throw IllegalStateException("Failed to open a connection with JDBC", e)
-        }
-
-        try {
-            sqlStatements.forEach { sql ->
-                val result = connection.prepareStatement(sql).use { jdbcStatement ->
-                    JdbcPreparedStatement(jdbcStatement).execute()
-                }
-                if (result != 0L) throw SQLException()
-
-                // Fake it till we make it
-                logger?.invoke("EXECUTE\n $sql")
-            }
-
-            // Remove and replace cipher parameters
-            with(properties) {
-                Pragma.MC.ALL.forEach { remove(it.name) }
-                pragmas.forEach { put(it.key.name, it.value) }
-            }
-        } catch (e: SQLException) {
-            throw IllegalStateException("Failed to rekey the database", e)
-        } finally {
-            pragmas.clear()
-            onClose()
-        }
-    }
+    private val driver: SqlDriver get() = args.logDriver ?: args.jdbcDriver
 
     actual final override fun addListener(vararg queryKeys: String, listener: Query.Listener) {
         driver.addListener(queryKeys = queryKeys, listener = listener)
@@ -123,7 +76,7 @@ public actual sealed class RekeyDriver actual constructor(args: Args): JdbcDrive
     }
 
     actual final override fun close() {
-        properties.clear()
+        args.properties.clear()
         driver.close()
     }
 
@@ -132,39 +85,40 @@ public actual sealed class RekeyDriver actual constructor(args: Args): JdbcDrive
     //////////////////////////////////////////////
 
     final override fun getConnection(): Connection {
-        return jdbcDriver.getConnection()
+        return args.jdbcDriver.getConnection()
     }
 
     final override fun closeConnection(connection: Connection) {
-        jdbcDriver.closeConnection(connection)
+        args.jdbcDriver.closeConnection(connection)
     }
 
     final override var transaction: ConnectionManager.Transaction?
-        get() = jdbcDriver.transaction
-        set(value) { jdbcDriver.transaction = value }
+        get() = args.jdbcDriver.transaction
+        set(value) { args.jdbcDriver.transaction = value }
 
     final override fun Connection.beginTransaction() {
-        with(jdbcDriver) { beginTransaction() }
+        with(args.jdbcDriver) { beginTransaction() }
     }
 
     final override fun Connection.endTransaction() {
-        with(jdbcDriver) { endTransaction() }
+        with(args.jdbcDriver) { endTransaction() }
     }
 
     final override fun Connection.rollbackTransaction() {
-        with(jdbcDriver) { rollbackTransaction() }
+        with(args.jdbcDriver) { rollbackTransaction() }
     }
 
     protected actual companion object {
 
         @JvmStatic
         @JvmSynthetic
-        @Throws(IllegalStateException::class)
-        internal actual fun FactoryConfig.create(pragmas: Pragmas, isInMemory: Boolean): Args {
+        @Throws(IllegalArgumentException::class, IllegalStateException::class)
+        internal actual fun FactoryConfig.create(keyPragma: MutablePragmas, rekeyPragma: MutablePragmas?): Args {
             JDBCMC.initialize
 
-            val url = filesystemConfig.toJDBCUrl(dbName, isInMemory)
-            val properties = pragmas.toProperties()
+            val url = JDBCMC.PREFIX + filesystemConfig.databasesDir.resolve(dbName)
+            val properties = JDBCMCProperties.of(keyPragma = keyPragma, rekeyPragma = rekeyPragma)
+            // TODO: Add config properties (and remove any "password" pragma that may have been added)
 
             val driver = try {
                 JdbcSqliteDriver(
@@ -180,34 +134,19 @@ public actual sealed class RekeyDriver actual constructor(args: Args): JdbcDrive
                 throw IllegalStateException("Failed to open JDBC connection with $dbName", t)
             }
 
-            return Args(url, logger, properties, driver)
+            return Args(properties, driver, logger?.let { LogSqliteDriver(driver, it) })
         }
 
         internal actual class Args(
-            internal val url: String,
-            internal val logger: ((String) -> Unit)?,
             internal val properties: Properties,
             internal val jdbcDriver: JdbcSqliteDriver,
+            internal val logDriver: LogSqliteDriver?,
         )
     }
 }
 
 @Throws(IllegalStateException::class)
-private fun FilesystemConfig?.toJDBCUrl(dbName: String, isInMemory: Boolean): String {
-    // TODO: Resource database
-    if (this == null || isInMemory) return JDBCMC.PREFIX
-
-    return JDBCMC.PREFIX + databasesDir.resolve().resolve(dbName)
-}
-
-private fun Pragmas.toProperties(): Properties {
-    val properties = Properties()
-    forEach { entry -> properties[entry.key.name] = entry.value }
-    return properties
-}
-
-@Throws(IllegalStateException::class)
-private fun DatabasesDir.resolve(): File {
+private fun DatabasesDir.resolve(dbName: String): File {
     val directory = path?.let { File(it) } ?: throw IllegalStateException("Failed to resolve DatabasesDir")
     val exists = directory.exists()
 
@@ -219,5 +158,5 @@ private fun DatabasesDir.resolve(): File {
         throw IllegalStateException("Failed to create databases directory >> $this")
     }
 
-    return directory
+    return directory.resolve(dbName)
 }

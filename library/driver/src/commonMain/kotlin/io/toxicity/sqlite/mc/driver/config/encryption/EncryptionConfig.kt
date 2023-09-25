@@ -65,6 +65,13 @@ public class EncryptionConfig private constructor(
     public companion object {
 
         /**
+         * A default encryption config that utilizes [MCChaCha20Config.Default]
+         * as its encryption scheme.
+         * */
+        @JvmField
+        public val Default: EncryptionConfig = new(null) { chaCha20(MCChaCha20Config.Default) }
+
+        /**
          * Helper for creating a new configuration to share
          * across different [SQLiteMCDriver.Factory] or [FilesystemConfig]
          *
@@ -347,8 +354,12 @@ public class EncryptionConfig private constructor(
 
     @JvmSynthetic
     @Throws(IllegalArgumentException::class)
-    internal fun applyKeyPragma(pragmas: MutablePragmas, key: Key): EncryptionConfig {
-        Pragma.MC.KEY.put(pragmas, Pair(key, cipherConfig.cipher))
+    internal fun applyKeyPragma(pragmas: MutablePragmas, key: Key, isRekey: Boolean): EncryptionConfig {
+        if (isRekey) {
+            Pragma.MC.RE_KEY.put(pragmas, Pair(key, cipherConfig.cipher))
+        } else {
+            Pragma.MC.KEY.put(pragmas, Pair(key, cipherConfig.cipher))
+        }
         return this
     }
 }

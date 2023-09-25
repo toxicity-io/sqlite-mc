@@ -18,10 +18,8 @@ package io.toxicity.sqlite.mc.driver
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlSchema
 import io.toxicity.sqlite.mc.driver.config.*
-import io.toxicity.sqlite.mc.driver.config.MutablePragmas
 import io.toxicity.sqlite.mc.driver.config.encryption.*
 import io.toxicity.sqlite.mc.driver.config.mutablePragmas
-import io.toxicity.sqlite.mc.driver.config.removeMCPragmas
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlin.contracts.ExperimentalContracts
@@ -42,10 +40,8 @@ import kotlin.jvm.JvmField
 public class SQLiteMCDriver private constructor(
     @JvmField
     public val config: FactoryConfig,
-    @JvmField
-    public val isInMemory: Boolean,
     args: Companion.Args
-): RekeyDriver(args) {
+): PlatformDriver(args) {
 
     /**
      * Primary entry point to create new [SQLiteMCDriver] instances.
@@ -86,68 +82,27 @@ public class SQLiteMCDriver private constructor(
         /**
          * Creates a new [SQLiteMCDriver] for the given [config].
          *
-         * @param [key] The encryption [Key] to decrypt the database
-         *   with. If null, an in memory database will be opened.
+         * @param [key] The encryption [Key] to decrypt the database with.
          * @see [Key]
          * @see [createBlocking]
          * @throws [IllegalArgumentException] if [key] is inappropriate
          *   for the configured [MCCipherConfig] (see [Key.raw] for
          *   more details).
          * @throws [IllegalStateException] if the database failed
-         *   to open (e.g. an incorrect [Key.passphrase]).
+         *   to open (e.g. an incorrect [Key]).
          * */
         @Throws(
             IllegalArgumentException::class,
             IllegalStateException::class,
             CancellationException::class,
         )
-        public suspend fun create(key: Key?): SQLiteMCDriver {
-            val isInMemory = key == null || config.filesystemConfig == null
-
-            return config.withDispatcher {
-
-                val pragmas = mutablePragmas()
-
-                if (key != null) {
-                    filesystemConfig?.encryptionConfig
-                        ?.applyPragmas(pragmas)
-                        ?.applyKeyPragma(pragmas, key)
-                }
-
-                // will be null if there is no migration
-                var migrationKey: Key? = null
-
-                val args = try {
-                    create(pragmas, isInMemory)
-                } catch (e: IllegalStateException) {
-
-                    val migrations = filesystemConfig?.encryptionMigrationConfig
-                    if (key != null && migrations != null && !hasOpened) {
-                        migrationKey = key
-                        migrations.attemptOpening(key, pragmas)
-                    } else {
-                        throw e
-                    }
-                } finally {
-                    pragmas.removeMCPragmas()
-                }
-
-                val driver = SQLiteMCDriver(config, isInMemory, args)
-
-                if (migrationKey != null) {
-                    driver.rekey(migrationKey)
-                }
-
-                hasOpened = true
-                driver
-            }
-        }
+        public suspend fun create(key: Key): SQLiteMCDriver = createActual(key, null)
 
         /**
          * Creates a new [SQLiteMCDriver] for the given [config] and changes
          * the encryption [Key] to [rekey].
          *
-         * Encryption can be removed by passing [Key.EMPTY] for [rekey].
+         * Encryption can be removed by passing [Key.Empty] for [rekey].
          *
          * @param [key] The encryption [Key] to decrypt the database with.
          * @param [rekey] The encryption [Key] to rekey the database to.
@@ -164,11 +119,7 @@ public class SQLiteMCDriver private constructor(
             IllegalStateException::class,
             CancellationException::class,
         )
-        public suspend fun create(key: Key, rekey: Key): SQLiteMCDriver {
-            val driver = create(key)
-            driver.rekey(rekey)
-            return driver
-        }
+        public suspend fun create(key: Key, rekey: Key): SQLiteMCDriver = createActual(key, rekey)
 
         /**
          * Blocking call for [create]
@@ -178,7 +129,7 @@ public class SQLiteMCDriver private constructor(
             IllegalStateException::class,
             CancellationException::class,
         )
-        public fun createBlocking(key: Key?): SQLiteMCDriver = runBlocking { create(key) }
+        public fun createBlocking(key: Key): SQLiteMCDriver = runBlocking { create(key) }
 
         /**
          * Blocking call for [create]
@@ -190,16 +141,52 @@ public class SQLiteMCDriver private constructor(
         )
         public fun createBlocking(key: Key, rekey: Key): SQLiteMCDriver = runBlocking { create(key, rekey) }
 
+        private suspend fun createActual(key: Key, rekey: Key?): SQLiteMCDriver {
+            return config.withDispatcher {
+
+                val args = try {
+                    val keyPragma = mutablePragmas().apply {
+                        filesystemConfig.encryptionConfig
+                            .applyPragmas(this)
+                            .applyKeyPragma(this, key, isRekey = false)
+                    }
+
+                    val rekeyPragma = if (rekey != null) {
+                        mutablePragmas().apply {
+                            filesystemConfig.encryptionConfig
+                                .applyPragmas(this)
+                                .applyKeyPragma(this, rekey, isRekey = true)
+                        }
+                    } else {
+                        null
+                    }
+
+                    create(keyPragma, rekeyPragma)
+                } catch (e: IllegalStateException) {
+
+                    val migrations = filesystemConfig.encryptionMigrationConfig
+                    if (migrations != null && !hasOpened) {
+                        // if rekey is null, use same key when migrating from old
+                        // migration encryption config, to current encryption config.
+                        migrations.attemptUpgrade(key = key, rekey = rekey ?: key)
+                    } else {
+                        throw e
+                    }
+                }
+
+                val driver = SQLiteMCDriver(config, args)
+
+                hasOpened = true
+                driver
+            }
+        }
+
         @Throws(IllegalStateException::class)
-        private fun EncryptionMigrationConfig.attemptOpening(
-            key: Key,
-            pragmas: MutablePragmas,
-        ): Companion.Args {
+        private fun EncryptionMigrationConfig.attemptUpgrade(key: Key, rekey: Key): Companion.Args {
             var lastError: Throwable? = null
 
             var i = migrations.size
             for (migration in migrations.reversed()) {
-                pragmas.removeMCPragmas()
 
                 try {
                     val cipher = migration.encryptionConfig.cipherConfig.cipher
@@ -207,44 +194,31 @@ public class SQLiteMCDriver private constructor(
 
                     config.logger?.invoke("Attempting EncryptionMigration (${i--}) - $cipher: legacy = $legacy")
 
-                    migration.encryptionConfig
-                        .applyPragmas(pragmas)
-                        .applyKeyPragma(pragmas, key)
+                    val migrationPragma = mutablePragmas().apply {
+                        migration.encryptionConfig
+                            .applyPragmas(this)
+                            .applyKeyPragma(this, key, isRekey = false)
+                    }
 
-                    val args = config.create(pragmas, isInMemory = false)
+                    val currentPragma = mutablePragmas().apply {
+                        config.filesystemConfig.encryptionConfig
+                            .applyPragmas(this)
+                            .applyKeyPragma(this, rekey, isRekey = true)
+                    }
 
-                    config.logger?.invoke("Successful open. Performing a rekey to new EncryptionConfig")
+                    val args = config.create(keyPragma = migrationPragma, rekeyPragma = currentPragma)
+
+                    val cCipher = config.filesystemConfig.encryptionConfig.cipherConfig.cipher
+                    val cLegacy = config.filesystemConfig.encryptionConfig.cipherConfig.legacy
+                    config.logger?.invoke("Successful rekey to $cCipher: legacy = $cLegacy")
+
                     return args
                 } catch (t: Throwable) {
                     lastError = t
                 }
             }
 
-            throw IllegalStateException("Failed to open database. All migrations failed.", lastError)
-        }
-    }
-
-    @Throws(
-        IllegalArgumentException::class,
-        IllegalArgumentException::class,
-        CancellationException::class,
-    )
-    private suspend fun rekey(key: Key) {
-        var rekey = key
-
-        val encryptionConfig = config
-            .filesystemConfig
-            ?.encryptionConfig
-            ?: EncryptionConfig.new(null) {
-                // Config was null, need to select anything and rekey
-                // to empty key value in order to remove encryption
-                config.logger?.invoke("No EncryptionConfig. Removing encryption.")
-                rekey = Key.EMPTY
-                chaCha20(MCChaCha20Config.Default)
-            }
-
-        config.withDispatcher {
-            rekey(rekey, encryptionConfig)
+            throw IllegalStateException("Failed to open database. All migration attempts failed.", lastError)
         }
     }
 }

@@ -40,7 +40,7 @@ public class FilesystemConfig private constructor(
     @JvmField
     public val databasesDir: DatabasesDir,
     @JvmField
-    public val encryptionConfig: EncryptionConfig?,
+    public val encryptionConfig: EncryptionConfig,
     @JvmField
     public val encryptionMigrationConfig: EncryptionMigrationConfig?,
 ) {
@@ -50,6 +50,13 @@ public class FilesystemConfig private constructor(
     ): FilesystemConfig = Builder(other = this).apply(block).build()
 
     public companion object {
+
+        /**
+         * A default filesystem config that utilizes [EncryptionConfig.Default]
+         * for its encryption scheme, and the system default [DatabasesDir].
+         * */
+        @JvmField
+        public val Default: FilesystemConfig = new(DatabasesDir()) {}
 
         /**
          * Helper for creating a new configuration to share
@@ -140,7 +147,7 @@ public class FilesystemConfig private constructor(
         @JvmSynthetic
         internal fun build(): FilesystemConfig = FilesystemConfig(
             databasesDir = databasesDir,
-            encryptionConfig = encryptionConfig,
+            encryptionConfig = encryptionConfig ?: EncryptionConfig.Default,
             encryptionMigrationConfig = encryptionMigrationConfig,
         )
     }
@@ -167,13 +174,9 @@ public class FilesystemConfig private constructor(
             appendIndent("databasesDir: ")
             appendLine(databasesDir.path.toString())
 
-            appendIndent("encryptionConfig: ")
-            if (encryptionConfig == null) {
-                appendLine("null")
-            } else {
-                appendLine('[')
-                val lines = encryptionConfig.toString().lines()
-
+            appendIndent("encryptionConfig: [")
+            appendLine()
+            encryptionConfig.toString().lines().let { lines ->
                 for (i in 1..lines.lastIndex) {
                     appendIndent(lines[i])
                     appendLine()
@@ -185,11 +188,11 @@ public class FilesystemConfig private constructor(
                 appendLine("null")
             } else {
                 appendLine('[')
-                val lines = encryptionMigrationConfig.toString().lines()
-
-                for (i in 1..lines.lastIndex) {
-                    appendIndent(lines[i])
-                    appendLine()
+                encryptionMigrationConfig.toString().lines().let { lines ->
+                    for (i in 1..lines.lastIndex) {
+                        appendIndent(lines[i])
+                        appendLine()
+                    }
                 }
             }
 

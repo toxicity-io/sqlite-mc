@@ -88,7 +88,7 @@ public actual class DatabasesDir public actual constructor(path: String?) {
             if (defaultDir == null) {
                 defaultDir = System.getProperty("user.home")
                     ?.ifBlank { null }
-                    ?.let { File(it).resolve(".databases") }
+                    ?.let { home -> File(home).resolve(".databases") }
             }
 
             defaultDir?.absolutePath
