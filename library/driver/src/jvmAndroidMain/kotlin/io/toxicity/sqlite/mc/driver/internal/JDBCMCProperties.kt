@@ -19,6 +19,7 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import io.matthewnelson.encoding.base64.Base64
 import io.matthewnelson.encoding.core.use
 import io.matthewnelson.encoding.core.util.LineBreakOutFeed
+import io.toxicity.sqlite.mc.driver.EphemeralOpt
 import io.toxicity.sqlite.mc.driver.config.MutablePragmas
 import io.toxicity.sqlite.mc.driver.config.Pragma
 import io.toxicity.sqlite.mc.driver.config.toMCSQLStatements
@@ -266,9 +267,12 @@ internal class JDBCMCProperties private constructor(
         @JvmStatic
         @JvmSynthetic
         internal fun of(
-            ephemeralUrlSuffix: String
+            opt: EphemeralOpt
         ): JDBCMCProperties = JDBCMCProperties(
-            ephemeralUrlSuffix = ephemeralUrlSuffix,
+            ephemeralUrlSuffix = when (opt) {
+                EphemeralOpt.InMemory -> ":memory:"
+                EphemeralOpt.Temporary -> ""
+            },
             keyPragma = null,
             rekeyPragma = null,
         )
