@@ -22,10 +22,13 @@ import io.toxicity.sqlite.mc.driver.test.TestDatabase
 import okio.FileSystem
 import kotlin.random.Random
 
+// iOS/tvOS/watchOS do not like the temporary directory
+internal expect val USE_TEMPORARY_DIR: Boolean
+
 abstract class TestHelperBase {
 
     protected val databasesDir: DatabasesDir = DatabasesDir(
-        FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("mc_driver_test").toString()
+        if (USE_TEMPORARY_DIR) FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("mc_driver_test").toString() else ""
     )
     protected open val testLogger: (log: String) -> Unit = { log -> println(log) }
 

@@ -31,15 +31,15 @@ fun KmpConfigurationExtension.configureShared(
             compileTargetCompatibility = JavaVersion.VERSION_1_8
         }
 
-//        iosArm64()
-//        iosX64()
-//        iosSimulatorArm64()
+        iosArm64()
+        iosX64()
+        iosSimulatorArm64()
 
         linuxX64()
         macosArm64()
         macosX64()
         mingwX64()
-//
+
 //        tvosArm64()
 //        tvosX64()
 //        tvosSimulatorArm64()
