@@ -16,6 +16,7 @@
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.konan.target.Architecture
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -102,30 +103,51 @@ kmpConfiguration {
 }
 
 fun KotlinNativeTarget.sqlite3mcInterop() {
-    val libsDir = rootDir
-        .resolve("external")
-        .resolve("native")
-        .resolve("libs")
-        .resolve(konanTarget.name.substringBefore('_'))
-        .resolve(konanTarget.name.substringAfter('_'))
-
-    val staticLib = libsDir.resolve(
-        konanTarget.family.staticPrefix
-        + "sqlite3mc."
-        + konanTarget.family.staticSuffix
-    )
-
-    // TODO: Remove once all build targets have static lib compilations
-    if (!staticLib.exists()) return
+    val libs = projectDir.resolve("libs")
 
     compilations["main"].apply {
-        kotlinOptions {
-            freeCompilerArgs += listOf("-include-binary", staticLib.path)
-            freeCompilerArgs += listOf("-linker-options", "-L$libsDir -lsqlite3mc")
-        }
+        cinterops.create("sqlite3mc") {
+            defFile(libs.resolve("sqlite3mc.def"))
 
-        cinterops.create("sqlite3mc").apply {
-            includeDirs(libsDir.resolve("include").path)
+            compilerOpts += "-O3"
+
+            when (konanTarget.architecture) {
+                Architecture.X64,
+                Architecture.X86 -> compilerOpts("-msse4.2", "-maes")
+                else -> {}
+            }
+
+            compilerOpts(
+                "-I${libs.resolve("include")}",
+                "-DSQLITE_HAVE_ISNAN=1",
+                "-DHAVE_USLEEP=1",
+                "-DSQLITE_ENABLE_COLUMN_METADATA=1",
+                "-DSQLITE_CORE=1",
+                "-DSQLITE_ENABLE_FTS3=1",
+                "-DSQLITE_ENABLE_FTS3_PARENTHESIS=1",
+                "-DSQLITE_ENABLE_FTS5=1",
+                "-DSQLITE_ENABLE_RTREE=1",
+                "-DSQLITE_ENABLE_STAT4=1",
+                "-DSQLITE_ENABLE_DBSTAT_VTAB=1",
+                "-DSQLITE_ENABLE_MATH_FUNCTIONS=1",
+                "-DSQLITE_THREADSAFE=1",
+                "-DSQLITE_DEFAULT_MEMSTATUS=0",
+                "-DSQLITE_DEFAULT_FILE_PERMISSIONS=0666",
+                "-DSQLITE_MAX_VARIABLE_NUMBER=250000",
+                "-DSQLITE_MAX_MMAP_SIZE=1099511627776",
+                "-DSQLITE_MAX_LENGTH=2147483647",
+                "-DSQLITE_MAX_COLUMN=32767",
+                "-DSQLITE_MAX_SQL_LENGTH=1073741824",
+                "-DSQLITE_MAX_FUNCTION_ARG=127",
+                "-DSQLITE_MAX_ATTACHED=125",
+                "-DSQLITE_MAX_PAGE_COUNT=4294967294",
+                "-DSQLITE_DQS=0",
+                "-DCODEC_TYPE=CODEC_TYPE_CHACHA20",
+                "-DSQLITE_ENABLE_EXTFUNC=1",
+                "-DSQLITE_ENABLE_REGEXP=1",
+                "-DSQLITE_TEMP_STORE=2",
+                "-DSQLITE_USE_URI=1",
+            )
         }
     }
 }
