@@ -36,8 +36,8 @@ fun KmpConfigurationExtension.configureShared(
 //        iosSimulatorArm64()
 
         linuxX64()
-//        macosArm64()
-//        macosX64()
+        macosArm64()
+        macosX64()
         mingwX64()
 //
 //        tvosArm64()
