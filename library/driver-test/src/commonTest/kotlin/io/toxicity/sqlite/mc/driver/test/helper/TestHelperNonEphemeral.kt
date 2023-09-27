@@ -69,6 +69,12 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
         if (error != null) {
 //            throw error
             error.printStackTrace()
+            var cause = error.cause
+            while (true) {
+                val msg = cause?.message ?: break
+                cause = cause.cause
+                println(msg)
+            }
         }
     }
 
