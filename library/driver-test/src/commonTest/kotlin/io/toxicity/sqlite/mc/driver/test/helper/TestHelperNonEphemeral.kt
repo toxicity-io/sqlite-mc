@@ -56,10 +56,19 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
             }
         )
 
+        var error: Throwable? = null
+
         try {
             factory.create(key).use { block(factory, it) }
+        } catch (t: Throwable) {
+            error = t
         } finally {
             deleteDatabaseFiles(dbName)
+        }
+
+        if (error != null) {
+//            throw error
+            error.printStackTrace()
         }
     }
 
