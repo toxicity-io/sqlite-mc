@@ -67,14 +67,10 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
         }
 
         if (error != null) {
-//            throw error
+            // Native terminal output for stack traces is awful.
+            // Simply printing it helps.
             error.printStackTrace()
-            var cause = error.cause
-            while (true) {
-                val msg = cause?.message ?: break
-                cause = cause.cause
-                println(msg)
-            }
+            throw error
         }
     }
 
