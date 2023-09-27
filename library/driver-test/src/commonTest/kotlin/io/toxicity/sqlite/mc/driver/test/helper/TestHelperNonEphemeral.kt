@@ -41,21 +41,27 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
         testLogger: ((String) -> Unit)? = this.testLogger,
         block: suspend TestScope.(factory: SQLiteMCDriver.Factory, driver: SQLiteMCDriver) -> Unit
     ): TestResult = runTest {
-        val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
+        val (dbName, factory) = try {
+            val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
 
-        deleteDatabaseFiles(dbName)
+            deleteDatabaseFiles(dbName)
 
-        val factory = SQLiteMCDriver.Factory(
-            dbName = dbName,
-            schema = TestDatabase.Schema,
-            block = {
-                logger = testLogger
-                redactLogs = false
+            val factory = SQLiteMCDriver.Factory(
+                dbName = dbName,
+                schema = TestDatabase.Schema,
+                block = {
+                    logger = testLogger
+                    redactLogs = false
 
-                if (filesystem == null) return@Factory
-                filesystem(databasesDir, filesystem)
-            }
-        )
+                    filesystem(databasesDir, filesystem ?: {})
+                }
+            )
+
+            Pair(dbName, factory)
+        } catch (t: Throwable) {
+            t.printStackTrace()
+            throw t
+        }
 
         var error: Throwable? = null
 
@@ -65,15 +71,11 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
             error = t
         } finally {
             deleteDatabaseFiles(dbName)
+        }
 
-            error?.let { ex ->
-                val msg = factory
-                    .config
-                    .filesystemConfig
-                    .toString()
-
-                throw IllegalStateException(msg, ex)
-            }
+        if (error != null) {
+            error.printStackTrace()
+            throw error
         }
     }
 
