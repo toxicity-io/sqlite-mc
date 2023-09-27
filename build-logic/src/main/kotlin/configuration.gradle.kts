@@ -17,6 +17,8 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR
+import org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT
 import org.gradle.api.tasks.testing.logging.TestLogEvent.STARTED
 
 plugins {
@@ -26,7 +28,7 @@ plugins {
 tasks.withType<AbstractTestTask> {
     testLogging {
         exceptionFormat = TestExceptionFormat.FULL
-        events(STARTED, PASSED, SKIPPED, FAILED)
+        events(STARTED, PASSED, SKIPPED, FAILED, STANDARD_ERROR, STANDARD_OUT)
         showStandardStreams = true
         showStackTraces = true
     }
