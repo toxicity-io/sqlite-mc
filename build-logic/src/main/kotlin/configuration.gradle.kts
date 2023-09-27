@@ -23,10 +23,11 @@ plugins {
     id("io.matthewnelson.kmp.configuration")
 }
 
-tasks.withType<Test> {
+tasks.withType<AbstractTestTask> {
     testLogging {
         exceptionFormat = TestExceptionFormat.FULL
         events(STARTED, PASSED, SKIPPED, FAILED)
         showStandardStreams = true
+        showStackTraces = true
     }
 }
