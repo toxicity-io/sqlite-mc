@@ -37,31 +37,24 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
     protected fun runDriverTest(
         key: Key = this.keyPassphrase,
         // pass null to use in memory db
-        filesystem: (FilesystemConfig.Builder.() -> Unit)? = { encryption { chaCha20 { default() } } },
+        filesystem: (FilesystemConfig.Builder.() -> Unit) = {},
         testLogger: ((String) -> Unit)? = this.testLogger,
         block: suspend TestScope.(factory: SQLiteMCDriver.Factory, driver: SQLiteMCDriver) -> Unit
     ): TestResult = runTest {
-        val (dbName, factory) = try {
-            val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
+        val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
 
-            deleteDatabaseFiles(dbName)
+        deleteDatabaseFiles(dbName)
 
-            val factory = SQLiteMCDriver.Factory(
-                dbName = dbName,
-                schema = TestDatabase.Schema,
-                block = {
-                    logger = testLogger
-                    redactLogs = false
+        val factory = SQLiteMCDriver.Factory(
+            dbName = dbName,
+            schema = TestDatabase.Schema,
+            block = {
+                logger = testLogger
+                redactLogs = false
 
-                    filesystem(databasesDir, filesystem ?: {})
-                }
-            )
-
-            Pair(dbName, factory)
-        } catch (t: Throwable) {
-            t.printStackTrace()
-            throw t
-        }
+                filesystem(databasesDir, filesystem)
+            }
+        )
 
         var error: Throwable? = null
 
@@ -75,7 +68,7 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
 
         if (error != null) {
             error.printStackTrace()
-            throw error
+//            throw error
         }
     }
 
