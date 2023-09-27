@@ -23,6 +23,7 @@ import app.cash.sqldelight.driver.native.wrapConnection
 import app.cash.sqldelight.logs.LogSqliteDriver
 import co.touchlab.sqliter.*
 import co.touchlab.sqliter.interop.Logger
+import co.touchlab.sqliter.interop.SQLiteException
 import co.touchlab.sqliter.interop.SqliteDatabasePointer
 import io.toxicity.sqlite.mc.driver.config.*
 
@@ -79,6 +80,8 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
         @Throws(IllegalArgumentException::class, IllegalStateException::class)
         internal actual fun FactoryConfig.create(keyPragma: MutablePragmas, rekeyPragma: MutablePragmas?): Args {
 
+            var onConnectionError: Throwable? = null
+
             val config = DatabaseConfiguration(
                 name = dbName,
                 version = schema.versionInt(),
@@ -99,35 +102,40 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 loggingConfig = NO_LOG,
                 lifecycleConfig = DatabaseConfiguration.Lifecycle(
                     onCreateConnection = { conn ->
-                        logger?.invoke("onCreateConnection - START")
+                        try {
+                            logger?.invoke("onCreateConnection - START")
 
-                        keyPragma.toMCSQLStatements().forEach { statement ->
-                            logger?.invoke("EXECUTE\n $statement")
-                            conn.rawExecSql(statement)
-                        }
-
-                        if (!rekeyPragma.isNullOrEmpty()) {
-
-                            rekeyPragma.toMCSQLStatements().forEach { statement ->
+                            keyPragma.toMCSQLStatements().forEach { statement ->
                                 logger?.invoke("EXECUTE\n $statement")
                                 conn.rawExecSql(statement)
                             }
 
-                            // rekey successful, swap out old for new
-                            keyPragma.clear()
-                            rekeyPragma.forEach { entry ->
-                                if (entry.key is Pragma.MC.RE_KEY) {
-                                    keyPragma[Pragma.MC.KEY] = entry.value
-                                } else {
-                                    keyPragma[entry.key] = entry.value
-                                }
-                            }
-                            rekeyPragma.clear()
-                        }
+                            if (!rekeyPragma.isNullOrEmpty()) {
 
-                        logger?.invoke("EXECUTE\n SELECT 1 FROM sqlite_schema;")
-                        conn.rawExecSql("SELECT 1 FROM sqlite_schema;")
-                        logger?.invoke("onCreateConnection - FINISH")
+                                rekeyPragma.toMCSQLStatements().forEach { statement ->
+                                    logger?.invoke("EXECUTE\n $statement")
+                                    conn.rawExecSql(statement)
+                                }
+
+                                // rekey successful, swap out old for new
+                                keyPragma.clear()
+                                rekeyPragma.forEach { entry ->
+                                    if (entry.key is Pragma.MC.RE_KEY) {
+                                        keyPragma[Pragma.MC.KEY] = entry.value
+                                    } else {
+                                        keyPragma[entry.key] = entry.value
+                                    }
+                                }
+                                rekeyPragma.clear()
+                            }
+
+                            logger?.invoke("EXECUTE\n SELECT 1 FROM sqlite_schema;")
+                            conn.rawExecSql("SELECT 1 FROM sqlite_schema;")
+                            logger?.invoke("onCreateConnection - FINISH")
+                        } catch (t: Throwable) {
+                            onConnectionError = t
+                            throw t
+                        }
                     },
                     onCloseConnection = {  },
                 ),
@@ -143,7 +151,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 keyPragma.clear()
                 rekeyPragma?.clear()
                 if (t is IllegalStateException) throw t
-                throw IllegalStateException("Failed to create DatabaseManager", t)
+                throw IllegalStateException("Failed to create DatabaseManager", onConnectionError ?: t)
             }
 
             val driver = NativeSqliteDriver(manager, maxReaderConnections = 1) // TODO: Move to FactoryConfig.platformOptions
