@@ -134,23 +134,16 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
             )
 
             val manager: DatabaseManager = try {
-                createDatabaseManager(config)
+                val m = createDatabaseManager(config)
+                // Try opening first connection to ensure the key
+                // is correct and/or rekey works.
+                m.withConnection {}
+                m
             } catch (t: Throwable) {
                 keyPragma.clear()
                 rekeyPragma?.clear()
                 if (t is IllegalStateException) throw t
                 throw IllegalStateException("Failed to create DatabaseManager", t)
-            }
-
-            try {
-                // Try opening first connection to
-                // ensure key + rekey succeeds.
-                manager.withConnection {}
-            } catch (t: Throwable) {
-                keyPragma.clear()
-                rekeyPragma?.clear()
-                if (t is IllegalStateException) throw t
-                throw IllegalStateException("Failed to create NativeSqliteDriver", t)
             }
 
             val driver = NativeSqliteDriver(manager, maxReaderConnections = 1) // TODO: Move to FactoryConfig.platformOptions
