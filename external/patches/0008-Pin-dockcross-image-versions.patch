@@ -1,6 +1,6 @@
-From 17686908f2bc39f8db8d96ee127b38f47d51fe81 Mon Sep 17 00:00:00 2001
+From 7512d0bac400405b345149c111e5b7564f890694 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Sat, 16 Sep 2023 06:33:07 -0400
+Date: Sat, 30 Sep 2023 15:03:40 -0400
 Subject: [PATCH 08/10] Pin dockcross image versions
 
 ---

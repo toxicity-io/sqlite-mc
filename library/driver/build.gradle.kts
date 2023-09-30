@@ -184,7 +184,7 @@ kmpConfiguration {
                             // D.Richard Hipp (SQLite architect) suggests for non-macos:
                             // "The SQLITE_ENABLE_LOCKING_STYLE thing is an apple-only
                             // extension that boosts performance when SQLite is used
-                            // on a network filesystem. This is important on MacOS because
+                            // on a network filesystem. This is important on macOS because
                             // some users think it is a good idea to put their home
                             // directory on a network filesystem.
                             //
@@ -196,11 +196,10 @@ kmpConfiguration {
 
                     if (kt.family.isAppleFamily) {
                         // Options that SQLite is compiled with on
-                        // Darwin devices. macOS 10.11.6, iOS 9.3.5
+                        // Darwin devices. macOS 10.11.6+, iOS 9.3.5+
                         listOf(
                             "-DSQLITE_ENABLE_API_ARMOR",
                             "-DOMIT_AUTORESET",
-                            "-DOMIT_LOAD_EXTENSION", // TODO: Add to JVM
                         ).let { compilerArgs.addAll(it) }
                     }
 
@@ -235,6 +234,11 @@ kmpConfiguration {
                         "-DSQLITE_MAX_ATTACHED=125",
                         "-DSQLITE_MAX_PAGE_COUNT=4294967294",
                         "-DSQLITE_DQS=0",
+
+                        // This is a default setting on Darwin, but was also
+                        // added to the compilation for Jvm as a precautionary
+                        // measure. So, it is utilized by all platforms.
+                        "-DOMIT_LOAD_EXTENSION",
 
                         "-DCODEC_TYPE=CODEC_TYPE_CHACHA20",
                         "-DSQLITE_ENABLE_EXTFUNC=1",
