@@ -23,7 +23,6 @@ import app.cash.sqldelight.driver.native.wrapConnection
 import app.cash.sqldelight.logs.LogSqliteDriver
 import co.touchlab.sqliter.*
 import co.touchlab.sqliter.interop.Logger
-import co.touchlab.sqliter.interop.SqliteDatabasePointer
 import io.toxicity.sqlite.mc.driver.config.*
 
 public actual sealed class PlatformDriver actual constructor(private val args: Args): SqlDriver {
@@ -71,7 +70,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
 
     actual final override fun close() {
         driver.close()
-        args.close()
+        args.properties?.clear()
     }
     
     protected actual companion object {
@@ -99,17 +98,17 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 loggingConfig = NO_LOG,
                 lifecycleConfig = DatabaseConfiguration.Lifecycle(
                     onCreateConnection = { conn ->
-                        logger?.invoke("onCreateConnection - START")
+//                        logger?.invoke("onCreateConnection - START")
 
                         keyPragma.toMCSQLStatements().forEach { statement ->
-                            logger?.invoke("EXECUTE\n $statement")
+//                            logger?.invoke("EXECUTE\n $statement")
                             conn.rawExecSql(statement)
                         }
 
                         if (!rekeyPragma.isNullOrEmpty()) {
 
                             rekeyPragma.toMCSQLStatements().forEach { statement ->
-                                logger?.invoke("EXECUTE\n $statement")
+//                                logger?.invoke("EXECUTE\n $statement")
                                 conn.rawExecSql(statement)
                             }
 
@@ -125,15 +124,21 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                             rekeyPragma.clear()
                         }
 
-                        logger?.invoke("EXECUTE\n SELECT 1 FROM sqlite_schema;")
+//                        logger?.invoke("EXECUTE\n SELECT 1 FROM sqlite_schema;")
                         conn.rawExecSql("SELECT 1 FROM sqlite_schema;")
+
+//                        logger?.invoke("onCreateConnection - FINISH")
                     },
                     onCloseConnection = {  },
                 ),
             )
 
             val manager: DatabaseManager = try {
-                createDatabaseManager(config)
+                val m = createDatabaseManager(config)
+                // Try opening first connection to ensure the key
+                // is correct and/or rekey works.
+                m.withConnection {}
+                m
             } catch (t: Throwable) {
                 keyPragma.clear()
                 rekeyPragma?.clear()
@@ -141,25 +146,9 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 throw IllegalStateException("Failed to create DatabaseManager", t)
             }
 
-            try {
-                // Try opening first connection to
-                // ensure key + rekey succeeds.
-                manager.withConnection {}
-            } catch (t: Throwable) {
-                keyPragma.clear()
-                rekeyPragma?.clear()
-                // TODO: Remove
-                t.printStackTrace()
-                if (t is IllegalStateException) throw t
-                throw IllegalStateException("Failed to create NativeSqliteDriver", t)
-            }
-
             val driver = NativeSqliteDriver(manager, maxReaderConnections = 1) // TODO: Move to FactoryConfig.platformOptions
 
-            return Args(driver, logger?.let { LogSqliteDriver(driver, it) }, close = {
-                keyPragma.clear()
-                rekeyPragma?.clear()
-            })
+            return Args(keyPragma, driver, logger?.let { LogSqliteDriver(driver, it) })
         }
 
         @Throws(IllegalStateException::class)
@@ -207,56 +196,33 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 throw IllegalStateException("Failed to create DatabaseManager", t)
             }
 
-            val connection = try {
-                manager.createMultiThreadedConnection()
-            } catch (t: Throwable) {
-                if (t is IllegalStateException) throw t
-                throw IllegalStateException("Failed to create a static connection", t)
-            }
-
-            // SQLDelight has thread pools that will close
-            // the connection if it is a purely in-memory/temporary
-            // database, which is incorrect.
-            //
-            // See https://github.com/cashapp/sqldelight/issues/3241
-            val nonCloseableConnection = object : DatabaseConnection {
-                override val closed: Boolean get() = connection.closed
-                override fun beginTransaction() { connection.beginTransaction() }
-                override fun close() { /* no-op */ }
-                override fun createStatement(sql: String): Statement = connection.createStatement(sql)
-                override fun endTransaction() { connection.endTransaction() }
-                override fun getDbPointer(): SqliteDatabasePointer = connection.getDbPointer()
-                override fun rawExecSql(sql: String) { connection.rawExecSql(sql) }
-                override fun setTransactionSuccessful() { connection.setTransactionSuccessful() }
-            }
-
             val driver = NativeSqliteDriver(
-                databaseManager = object : DatabaseManager {
+                databaseManager = if (!config.inMemory) {
                     // SQLDelight work around
                     //
-                    // See https://github.com/cashapp/sqldelight/issues/3241#issuecomment-1732270263
-                    override val configuration: DatabaseConfiguration = if (!config.inMemory) {
-                        config.copy(inMemory = true)
-                    } else {
-                        config
+                    // See https://github.com/cashapp/sqldelight/pull/4662
+                    val copy = config.copy(inMemory = true)
+
+                    object : DatabaseManager {
+                        override val configuration: DatabaseConfiguration = copy
+                        override fun createMultiThreadedConnection(): DatabaseConnection =
+                            manager.createMultiThreadedConnection()
+                        override fun createSingleThreadedConnection(): DatabaseConnection =
+                            manager.createSingleThreadedConnection()
                     }
-                    override fun createMultiThreadedConnection(): DatabaseConnection = nonCloseableConnection
-                    override fun createSingleThreadedConnection(): DatabaseConnection = nonCloseableConnection
+                } else {
+                    manager
                 },
                 maxReaderConnections = 1,
             )
 
-            return Args(driver, logger?.let { LogSqliteDriver(driver, it) }, close = {
-                try {
-                    connection.close()
-                } catch (_: Throwable) {}
-            })
+            return Args(null, driver, logger?.let { LogSqliteDriver(driver, it) })
         }
 
         internal actual class Args(
+            internal val properties: MutablePragmas?,
             internal val nativeDriver: NativeSqliteDriver,
             internal val logDriver: LogSqliteDriver?,
-            internal val close: () -> Unit,
         )
 
         private val NO_LOG = DatabaseConfiguration.Logging(

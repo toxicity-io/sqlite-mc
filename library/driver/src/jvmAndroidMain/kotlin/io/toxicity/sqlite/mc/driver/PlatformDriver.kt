@@ -75,8 +75,8 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
     }
 
     actual final override fun close() {
-        args.properties.clear()
         driver.close()
+        args.properties.clear()
     }
 
     //////////////////////////////////////////////

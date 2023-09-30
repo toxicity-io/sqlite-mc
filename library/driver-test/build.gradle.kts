@@ -14,7 +14,6 @@
  * limitations under the License.
  **/
 import app.cash.sqldelight.gradle.SqlDelightExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     id("configuration")
@@ -58,32 +57,6 @@ kmpConfiguration {
         kotlin {
             extensions.configure<SqlDelightExtension>("sqldelight") {
                 linkSqlite.set(false)
-
-                // TODO: Gradle Plugin (Issue #18)
-                afterEvaluate {
-                    targets
-                        .filterIsInstance<KotlinNativeTarget>()
-                        .forEach { target ->
-                            val libsDir = rootDir
-                                .resolve("external")
-                                .resolve("native")
-                                .resolve("libs")
-                                .resolve(target.konanTarget.name.substringBefore('_'))
-                                .resolve(target.konanTarget.name.substringAfter('_'))
-
-                            val staticLib = libsDir.resolve(
-                                target.konanTarget.family.staticPrefix
-                                + "sqlite3mc."
-                                + target.konanTarget.family.staticSuffix
-                            )
-
-                            if (!staticLib.exists()) return@forEach
-
-                            target.binaries.forEach { compilationUnit ->
-                                compilationUnit.linkerOpts("-L$libsDir -lsqlite3mc")
-                            }
-                        }
-                }
 
                 databases {
                     create("TestDatabase") {

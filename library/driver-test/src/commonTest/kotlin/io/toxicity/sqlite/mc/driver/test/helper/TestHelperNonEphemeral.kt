@@ -37,7 +37,7 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
     protected fun runDriverTest(
         key: Key = this.keyPassphrase,
         // pass null to use in memory db
-        filesystem: (FilesystemConfig.Builder.() -> Unit)? = { encryption { chaCha20 { default() } } },
+        filesystem: (FilesystemConfig.Builder.() -> Unit) = {},
         testLogger: ((String) -> Unit)? = this.testLogger,
         block: suspend TestScope.(factory: SQLiteMCDriver.Factory, driver: SQLiteMCDriver) -> Unit
     ): TestResult = runTest {
@@ -52,7 +52,6 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
                 logger = testLogger
                 redactLogs = false
 
-                if (filesystem == null) return@Factory
                 filesystem(databasesDir, filesystem)
             }
         )
@@ -65,15 +64,13 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
             error = t
         } finally {
             deleteDatabaseFiles(dbName)
+        }
 
-            error?.let { ex ->
-                val msg = factory
-                    .config
-                    .filesystemConfig
-                    .toString()
-
-                throw IllegalStateException(msg, ex)
-            }
+        if (error != null) {
+            // Native terminal output for stack traces is awful.
+            // Simply printing it helps.
+            error.printStackTrace()
+            throw error
         }
     }
 

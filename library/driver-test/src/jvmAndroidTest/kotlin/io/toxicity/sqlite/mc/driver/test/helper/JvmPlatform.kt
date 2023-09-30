@@ -18,3 +18,5 @@ package io.toxicity.sqlite.mc.driver.test.helper
 import okio.FileSystem
 
 internal actual fun filesystem(): FileSystem = FileSystem.SYSTEM
+
+internal actual val USE_TEMPORARY_DIR: Boolean = true

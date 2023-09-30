@@ -35,19 +35,26 @@ fun KmpConfigurationExtension.configureShared(
         iosX64()
         iosSimulatorArm64()
 
-        linuxX64()
-        macosArm64()
-        macosX64()
-        mingwX64()
+        // Just use JVM. Not dealing with native desktop
+        // b/c it's a shit-show.
+//        linuxX64()
+//        macosArm64()
+//        macosX64()
+//        mingwX64()
 
-        tvosArm64()
-        tvosX64()
-        tvosSimulatorArm64()
-
-        watchosX64()
-        watchosArm32()
-        watchosArm64()
-        watchosSimulatorArm64()
+        // tvOS/watchOS cannot be enabled currently.
+        // SQLite3MultipleCiphers getrandom functionality
+        // does not account for them and will use syscall
+        // to obtain securely random bytes, which is unavailable
+        // at runtime.
+//        tvosArm64()
+//        tvosX64()
+//        tvosSimulatorArm64()
+//
+//        watchosX64()
+//        watchosArm32()
+//        watchosArm64()
+//        watchosSimulatorArm64()
 
         common {
             sourceSetTest {

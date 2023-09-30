@@ -200,7 +200,7 @@ internal fun MutablePragmas.removeMCPragmas() {
 
 @JvmSynthetic
 @Throws(IllegalArgumentException::class)
-internal fun MutablePragmas.toMCSQLStatements(): List<String> {
+internal fun Pragmas.toMCSQLStatements(): List<String> {
 
     val cipher = get(Pragma.MC.CIPHER)?.let { Cipher.valueOf(it) }
         ?: throw IllegalArgumentException("cipher is a required parameter")
