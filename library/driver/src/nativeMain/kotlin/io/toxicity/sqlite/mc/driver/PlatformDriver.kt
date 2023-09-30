@@ -98,17 +98,17 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 loggingConfig = NO_LOG,
                 lifecycleConfig = DatabaseConfiguration.Lifecycle(
                     onCreateConnection = { conn ->
-                        logger?.invoke("onCreateConnection - START")
+//                        logger?.invoke("onCreateConnection - START")
 
                         keyPragma.toMCSQLStatements().forEach { statement ->
-                            logger?.invoke("EXECUTE\n $statement")
+//                            logger?.invoke("EXECUTE\n $statement")
                             conn.rawExecSql(statement)
                         }
 
                         if (!rekeyPragma.isNullOrEmpty()) {
 
                             rekeyPragma.toMCSQLStatements().forEach { statement ->
-                                logger?.invoke("EXECUTE\n $statement")
+//                                logger?.invoke("EXECUTE\n $statement")
                                 conn.rawExecSql(statement)
                             }
 
@@ -124,9 +124,10 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                             rekeyPragma.clear()
                         }
 
-                        logger?.invoke("EXECUTE\n SELECT 1 FROM sqlite_schema;")
+//                        logger?.invoke("EXECUTE\n SELECT 1 FROM sqlite_schema;")
                         conn.rawExecSql("SELECT 1 FROM sqlite_schema;")
-                        logger?.invoke("onCreateConnection - FINISH")
+
+//                        logger?.invoke("onCreateConnection - FINISH")
                     },
                     onCloseConnection = {  },
                 ),
