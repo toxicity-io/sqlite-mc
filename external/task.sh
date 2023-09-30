@@ -47,11 +47,11 @@ function build { ## Build sqlite-jdbc native libs and package .jar file
   mkdir -p "$DIR_UNSIGNED"
 
   ${DOCKER} build \
-    -f "$DIR_SCRIPT/../docker/Dockerfile.ubuntu16-linux-x86" \
+    -f "$DIR_SCRIPT/docker/Dockerfile.ubuntu16-linux-x86" \
     -t toxicity-io/ubuntu16-linux-x86 \
     .
   ${DOCKER} build \
-    -f "$DIR_SCRIPT/../docker/Dockerfile.ubuntu16-linux-x86_64" \
+    -f "$DIR_SCRIPT/docker/Dockerfile.ubuntu16-linux-x86_64" \
     -t toxicity-io/ubuntu16-linux-x86_64 \
     .
   ${MAKE} native-all package test
@@ -66,7 +66,7 @@ function build { ## Build sqlite-jdbc native libs and package .jar file
   done
 
   # Also copy over amalgamations to library/driver so everything is in sync version wise
-  local dir_sqlite3mc="$DIR_SCRIPT/../../library/driver/sqlite3mc"
+  local dir_sqlite3mc="$DIR_SCRIPT/../library/driver/sqlite3mc"
   rm -rf "$dir_sqlite3mc"
   mkdir -p "$dir_sqlite3mc"
 
@@ -237,7 +237,7 @@ elif ! grep -qE "^function $1 {" "$0"; then
   "
   help
 else
-  # Ensure always start in the external/jni directory
+  # Ensure always start in the external directory
   cd "$DIR_SCRIPT"
   TIMEFORMAT="Task '$1' completed in %3lR"
   time "$@"

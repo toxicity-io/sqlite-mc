@@ -339,7 +339,6 @@ private class JdbcRepack {
 
         private val libsSQLiteJDBCJar: File = rootDir
             .resolve("external")
-            .resolve("jni")
             .resolve("libs")
             .resolve(depSQLiteJDBC.toJarFileName())
 
@@ -403,7 +402,6 @@ private class JdbcRepack {
 
             val signedLibsDir: File = rootDir
                 .resolve("external")
-                .resolve("jni")
                 .resolve("libs")
                 .resolve("signed")
 
@@ -455,7 +453,7 @@ private class JdbcRepack {
                                 .resolve("sqlitejdbc.dll")
                         }
 
-                        // All other native libs within the jni/libs .jar
+                        // All other native libs within the external/libs .jar
                         // file (that are not codesigned), extract them
                         // to android-unit-test module's resource directory
                         entry.name.startsWith("org/sqlite/native") -> {
@@ -467,7 +465,7 @@ private class JdbcRepack {
 
                     if (signedLib != null) {
                         // Instead of repackaging the unsigned lib
-                        // that the external/jni/libs/sqlite-jdbc-{version}.jar
+                        // that the external/libs/sqlite-jdbc-{version}.jar
                         // file contains, hot swap the codesigned lib into the
                         // repackaged .jar file
                         oStream.putNextEntry(entry)
