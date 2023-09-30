@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+import co.touchlab.cklib.gradle.CompileToBitcode.Language.C
+import co.touchlab.cklib.gradle.CompileToBitcodeExtension
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.Architecture.*
+import org.jetbrains.kotlin.konan.target.Family.*
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -67,6 +72,11 @@ kmpConfiguration {
         common {
             pluginIds("publication")
 
+            // cklib cannot be applied on windows
+            if (!HostManager.hostIsMingw) {
+                pluginIds(libs.plugins.cklib.get().pluginId)
+            }
+
             sourceSetMain {
                 dependencies {
                     api(libs.sql.delight.runtime)
@@ -97,57 +107,148 @@ kmpConfiguration {
                 }
             }
 
-            targets.filterIsInstance<KotlinNativeTarget>().forEach { it.sqlite3mcInterop() }
-        }
-    }
-}
+            // Only configure if cklib is applied (i.e. not Windows)
+            if (!plugins.hasPlugin(libs.plugins.cklib.get().pluginId)) return@kotlin
 
-fun KotlinNativeTarget.sqlite3mcInterop() {
-    val libs = projectDir.resolve("libs")
+            extensions.configure<CompileToBitcodeExtension>("cklib") {
+                config.kotlinVersion = libs.versions.gradle.kotlin.get()
+                create("sqlite3mc") {
+                    language = C
+                    srcDirs = project.files(file("sqlite3mc"))
 
-    compilations["main"].apply {
-        cinterops.create("sqlite3mc") {
-            defFile(libs.resolve("sqlite3mc.def"))
+                    val kt = KonanTarget.predefinedTargets[target]!!
 
-            compilerOpts += "-O3"
+                    // -O3 set automatically for C language
 
-            when (konanTarget.architecture) {
-                Architecture.X64,
-                Architecture.X86 -> compilerOpts("-msse4.2", "-maes")
-                else -> {}
+                    listOf(
+                        "-fembed-bitcode",
+                        "-fvisibility=hidden",
+                    ).let { compilerArgs.addAll(it) }
+
+                    // Architecture specific flags
+                    when (kt) {
+                        IOS_X64,
+                        IOS_SIMULATOR_ARM64,
+                        TVOS_X64,
+                        TVOS_SIMULATOR_ARM64,
+                        WATCHOS_X64,
+                        WATCHOS_SIMULATOR_ARM64 -> listOf(
+                            "-arch x86_64",
+                            "-msse4.2",
+                            "-maes",
+                        )
+                        IOS_ARM64,
+                        TVOS_ARM64,
+                        WATCHOS_ARM64,
+                        WATCHOS_DEVICE_ARM64 -> listOf(
+                            "-arch arm64",
+                        )
+                        else -> {
+                            if (kt.architecture == X64 || kt.architecture == X86) {
+                                listOf(
+                                    "-msse4.2",
+                                    "-maes",
+                                )
+                            } else {
+                                null
+                            }
+                        }
+                    }?.let { compilerArgs.addAll(it) }
+
+                    // Warning/Error suppression flags
+                    listOf(
+                        "-Wno-missing-braces",
+                        "-Wno-missing-field-initializers",
+                        "-Wno-sign-compare",
+                        "-Wno-unused-command-line-argument",
+                        "-Wno-unused-function",
+                        "-Wno-unused-parameter",
+                        "-Wno-unused-variable",
+
+                        // disable warning about gethostuuid being deprecated on darwin
+                        "-Wno-#warnings",
+                    ).let { compilerArgs.addAll(it) }
+
+                    // TODO: linuxX64
+                    // TODO: macosArm64
+                    // TODO: macosX64
+                    // TODO: mingwX64
+
+                    // SQLITE flags
+                    when (kt.family) {
+                        IOS,
+                        TVOS,
+                        WATCHOS -> listOf(
+                            // gethostuuid is deprecated
+                            //
+                            // D.Richard Hipp (SQLite architect) suggests for non-macos:
+                            // "The SQLITE_ENABLE_LOCKING_STYLE thing is an apple-only
+                            // extension that boosts performance when SQLite is used
+                            // on a network filesystem. This is important on MacOS because
+                            // some users think it is a good idea to put their home
+                            // directory on a network filesystem.
+                            //
+                            // I'm guessing this is not really a factor on iOS."
+                            "-DSQLITE_ENABLE_LOCKING_STYLE=0",
+                        )
+                        else -> null
+                    }?.let { compilerArgs.addAll(it) }
+
+                    if (kt.family.isAppleFamily) {
+                        // Options that SQLite is compiled with on
+                        // Darwin devices. macOS 10.11.6, iOS 9.3.5
+                        listOf(
+                            "-DSQLITE_ENABLE_API_ARMOR",
+                            "-DOMIT_AUTORESET",
+                            "-DOMIT_LOAD_EXTENSION", // TODO: Add to JVM
+                        ).let { compilerArgs.addAll(it) }
+                    }
+
+                    listOf(
+                        // 2 (Multi-Threaded) is the default for Darwin
+                        // targets, but on JVM it is using 1 (Serialized).
+                        //
+                        // SQLDelight's NativeSqliteDriver utilizes thread pools
+                        // and nerfs any benefit that Serialized would offer, so.
+                        "-DSQLITE_THREADSAFE=2",
+
+                        // Remaining flags are what JVM is compiled with
+                        "-DSQLITE_HAVE_ISNAN=1",
+                        "-DHAVE_USLEEP=1",
+                        "-DSQLITE_ENABLE_COLUMN_METADATA=1",
+                        "-DSQLITE_CORE=1",
+                        "-DSQLITE_ENABLE_FTS3=1",
+                        "-DSQLITE_ENABLE_FTS3_PARENTHESIS=1",
+                        "-DSQLITE_ENABLE_FTS5=1",
+                        "-DSQLITE_ENABLE_RTREE=1",
+                        "-DSQLITE_ENABLE_STAT4=1",
+                        "-DSQLITE_ENABLE_DBSTAT_VTAB=1",
+                        "-DSQLITE_ENABLE_MATH_FUNCTIONS=1",
+                        "-DSQLITE_DEFAULT_MEMSTATUS=0",
+                        "-DSQLITE_DEFAULT_FILE_PERMISSIONS=0666",
+                        "-DSQLITE_MAX_VARIABLE_NUMBER=250000",
+                        "-DSQLITE_MAX_MMAP_SIZE=1099511627776",
+                        "-DSQLITE_MAX_LENGTH=2147483647",
+                        "-DSQLITE_MAX_COLUMN=32767",
+                        "-DSQLITE_MAX_SQL_LENGTH=1073741824",
+                        "-DSQLITE_MAX_FUNCTION_ARG=127",
+                        "-DSQLITE_MAX_ATTACHED=125",
+                        "-DSQLITE_MAX_PAGE_COUNT=4294967294",
+                        "-DSQLITE_DQS=0",
+
+                        "-DCODEC_TYPE=CODEC_TYPE_CHACHA20",
+                        "-DSQLITE_ENABLE_EXTFUNC=1",
+                        "-DSQLITE_ENABLE_REGEXP=1",
+                        "-DSQLITE_TEMP_STORE=2",
+                        "-DSQLITE_USE_URI=1",
+                    ).let { compilerArgs.addAll(it) }
+
+                    // Linker (llvm-link) options
+                    listOf(
+                        "--only-needed",
+                    ).let { linkerArgs.addAll(it) }
+                }
             }
-
-            compilerOpts(
-                "-I${libs.resolve("include")}",
-                "-DSQLITE_HAVE_ISNAN=1",
-                "-DHAVE_USLEEP=1",
-                "-DSQLITE_ENABLE_COLUMN_METADATA=1",
-                "-DSQLITE_CORE=1",
-                "-DSQLITE_ENABLE_FTS3=1",
-                "-DSQLITE_ENABLE_FTS3_PARENTHESIS=1",
-                "-DSQLITE_ENABLE_FTS5=1",
-                "-DSQLITE_ENABLE_RTREE=1",
-                "-DSQLITE_ENABLE_STAT4=1",
-                "-DSQLITE_ENABLE_DBSTAT_VTAB=1",
-                "-DSQLITE_ENABLE_MATH_FUNCTIONS=1",
-                "-DSQLITE_THREADSAFE=1",
-                "-DSQLITE_DEFAULT_MEMSTATUS=0",
-                "-DSQLITE_DEFAULT_FILE_PERMISSIONS=0666",
-                "-DSQLITE_MAX_VARIABLE_NUMBER=250000",
-                "-DSQLITE_MAX_MMAP_SIZE=1099511627776",
-                "-DSQLITE_MAX_LENGTH=2147483647",
-                "-DSQLITE_MAX_COLUMN=32767",
-                "-DSQLITE_MAX_SQL_LENGTH=1073741824",
-                "-DSQLITE_MAX_FUNCTION_ARG=127",
-                "-DSQLITE_MAX_ATTACHED=125",
-                "-DSQLITE_MAX_PAGE_COUNT=4294967294",
-                "-DSQLITE_DQS=0",
-                "-DCODEC_TYPE=CODEC_TYPE_CHACHA20",
-                "-DSQLITE_ENABLE_EXTFUNC=1",
-                "-DSQLITE_ENABLE_REGEXP=1",
-                "-DSQLITE_TEMP_STORE=2",
-                "-DSQLITE_USE_URI=1",
-            )
         }
     }
 }
