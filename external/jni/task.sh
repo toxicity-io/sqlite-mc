@@ -59,10 +59,22 @@ function build { ## Build sqlite-jdbc native libs and package .jar file
   cp -Rv "$DIR_JDBC/src/main/resources/org/sqlite/native/Mac/" "$DIR_UNSIGNED/"
   cp -Rv "$DIR_JDBC/src/main/resources/org/sqlite/native/Windows/" "$DIR_UNSIGNED/"
 
-  local jar_file=
+  local jar_jdbc=
   # shellcheck disable=SC2154
-  for jar_file in "$DIR_JDBC/target/sqlite-jdbc-${version}"*.jar; do
-    cp -v "$jar_file" "$DIR_LIBS"
+  for jar_jdbc in "$DIR_JDBC/target/sqlite-jdbc-${version}"*.jar; do
+    cp -v "$jar_jdbc" "$DIR_LIBS"
+  done
+
+  # Also copy over amalgamations to library/driver so everything is in sync version wise
+  local dir_sqlite3mc="$DIR_SCRIPT/../../library/driver/sqlite3mc"
+  rm -rf "$dir_sqlite3mc"
+  mkdir -p "$dir_sqlite3mc"
+
+  local dir_amal=
+  for dir_amal in "$DIR_JDBC/target/sqlite-amalgamation-"*; do
+    cp -v "$dir_amal/sqlite3mc_amalgamation.c" "$dir_sqlite3mc/sqlite3mc.c"
+    cp -v "$dir_amal/sqlite3mc_amalgamation.h" "$dir_sqlite3mc/sqlite3mc.h"
+    break
   done
 }
 
