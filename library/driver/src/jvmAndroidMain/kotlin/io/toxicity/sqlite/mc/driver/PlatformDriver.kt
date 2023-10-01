@@ -26,6 +26,7 @@ import app.cash.sqldelight.driver.jdbc.JdbcDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import app.cash.sqldelight.logs.LogSqliteDriver
 import io.toxicity.sqlite.mc.driver.config.*
+import io.toxicity.sqlite.mc.driver.config.pragma.MutablePragmas
 import io.toxicity.sqlite.mc.driver.internal.JDBCMCProperties
 import io.toxicity.sqlite.mc.driver.internal.JDBCMC
 import java.io.File

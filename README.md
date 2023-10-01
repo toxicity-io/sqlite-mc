@@ -3,243 +3,293 @@
 [![badge-latest-release]][url-latest-release]
 
 [![badge-kotlin]][url-kotlin]
+[![badge-sqlite]][url-sqlite]
 [![badge-coroutines]][url-coroutines]
 [![badge-encoding]][url-encoding]
-[![badge-sql-delight]][url-sql-delight]
-[![badge-sql-mc]][url-sql-mc]
-[![badge-sql-jdbc]][url-sql-jdbc]
+[![badge-sqldelight]][url-sqldelight]
+[![badge-sqlitemc]][url-sqlitemc]
+[![badge-sqliter]][url-sqliter]
+[![badge-sqlitejdbc]][url-sqlitejdbc]
 
 ![badge-platform-android]
 ![badge-platform-jvm]
+![badge-platform-ios]
+![badge-support-apple-silicon]
 <!--
 ![badge-platform-js]
 ![badge-platform-js-node]
 ![badge-platform-linux]
 ![badge-platform-macos]
-![badge-platform-ios]
 ![badge-platform-tvos]
 ![badge-platform-watchos]
 ![badge-platform-wasm]
 ![badge-platform-windows]
 ![badge-support-android-native]
-![badge-support-apple-silicon]
 ![badge-support-js-ir]
 ![badge-support-linux-arm]
-![badge-support-linux-mips]
 -->
 
-An [SQLDelight][url-sql-delight] driver that uses [SQLite3MultipleCiphers][url-sql-mc] for 
+An [SQLDelight][url-sqldelight] driver that uses [SQLite3MultipleCiphers][url-sqlitemc] for 
 database encryption.
+
+
 
 ### Usage
 
-Define `DatabasesDir`
+- Define `DatabasesDir`
 
-**Common:**
-```kotlin
-// Use system default location for the given platform
-val databasesDir = DatabasesDir()
-val databasesDir = DatabasesDir(null) // null
-val databasesDir = DatabasesDir("     ") // blank
+  **Common (available for all targets):**
+  ```kotlin
+  // Use system default location for the given platform
+  val databasesDir = DatabasesDir()
+  val databasesDir = DatabasesDir(null) // null
+  val databasesDir = DatabasesDir("     ") // blank
 
-// Specify a path
-val databasesDir = DatabasesDir("/path/to/databases")
-```
+  // Specify a path string
+  val databasesDir = DatabasesDir("/path/to/databases")
+  ```
 
-**Android:**
-```kotlin
-val databasesDir = context.databasesDir()
-```
+  **Android:**
+  ```kotlin
+  val databasesDir = context.databasesDir()
+  ```
 
-**Jvm or Android:**
-```kotlin
-val databasesDir = DatabasesDir(File("/path/to/databases"))
-val databasesDir = DatabasesDir(Path.of("/path/to/databases"))
-```
+  **Jvm or Android:**
+  ```kotlin
+  val databasesDir = DatabasesDir(File("/path/to/databases"))
+  val databasesDir = DatabasesDir(Path.of("/path/to/databases"))
+  ```
 
-Define your `SQLiteMCDriver.Factory` configuration in `commonMain`
+- Define your `SQLiteMCDriver.Factory` configuration in `commonMain`
 
-**NOTE:** Realistically, your favorite singleton pattern or dependency injection
-should be utilized here.
+  **NOTE:** Realistically, your favorite singleton pattern or dependency injection 
+  should be utilized here.
 
-```kotlin
-// TLDR; 1 factory for each database file (will become evident later)
-val factory = SQLiteMCDriver.Factory(dbName = "test.db", schema = TestDatabase.Schema) {
-    logger = { log -> println(log) }
-    // Will redact key/rekey values, disable for debugging or playing (default: true)
-    redactLogs = true
+  ```kotlin
+  // TLDR; 1 factory for each database file (will become evident later)
+  val factory = SQLiteMCDriver.Factory(dbName = "test.db", schema = TestDatabase.Schema) {
+      logger = { log -> println(log) }
+      // Will redact key/rekey values, disable for debugging or playing (default: true)
+      redactLogs = true
+  
+      // SqlDelight AfterVersion migration hooks
+      afterVersions.add(AfterVersion(afterVersion = 2) { driver ->
+          // do something
+      })
+      afterVersion(of = 2) { driver ->
+          // do something
+      }
 
-    // SqlDelight AfterVersion migration hooks
-    afterVersions.add(AfterVersion(afterVersion = 2) { driver ->
-        // do something
-    })
-    afterVersion(of = 2) { driver ->
-        // do something
-    }
+      // Can omit to simply go with the default DatabasesDir and
+      // EncryptionConfig (ChaCha20)
+      filesystem(databasesDir) {        
+          encryption {
+              // e.g. coming from SQLCipher library
+              sqlCipher {
+                  // v1()
+                  // v2()
+                  // v3()
+                  v4()
+                  // default()
+              }
+          }
+      }
+  }
 
-    // Can omit to simply go with the default
-    filesystem(databasesDir) {        
-        encryption {
-            // e.g. coming from SQLCipher library
-            sqlCipher {
-                // v1()
-                // v2()
-                // v3()
-                v4()
-                // default()
-            }
-        }
-    }
-}
+  // NOTE: Suspension function "create" alternative available
+  val driver1: SQLiteMcDriver = factory.createBlocking(Key.passphrase("password"))
+  driver1.close()
+  ```
 
-// NOTE: Suspension function "create" alternative available
-val driver1: SQLiteMcDriver = factory.createBlocking(Key.passphrase("password"))
-driver1.close()
-```
+- Easily spin up an ephemeral database for your configuration (no encryption)
+  ```kotlin
+  val inMemoryDriver = factory.createBlocking(opt = EphemeralOpt.IN_MEMORY)
+  val namedDriver = factory.createBlocking(opt = EphemeralOpt.NAMED)
+  val tempDriver = factory.createBlocking(opt = EphemeralOpt.TEMPORARY)
+  inMemoryDriver.close()
+  namedDriver.close()
+  tempDriver.close()
+  ```
 
-Easily spin up an ephemeral database for your configuration (no encryption)
-```kotlin
-val inMemoryDriver = factory.createBlocking(opt = EphemeralOpt.IN_MEMORY)
-val namedDriver = factory.createBlocking(opt = EphemeralOpt.NAMED)
-val tempDriver = factory.createBlocking(opt = EphemeralOpt.TEMPORARY)
-inMemoryDriver.close()
-namedDriver.close()
-tempDriver.close()
-```
+- Easily change `Key`s
+  ```kotlin
+  // NOTE: Suspension function "create" alternative available
+  val driver2 = factory.createBlocking(
+      key = Key.passphrase("password"),
+      rekey = Key.passphrase("new password"),
+  )
+  driver2.close()
 
-Easily change `Key`s
-```kotlin
-// NOTE: Suspension function "create" alternative available
-val driver2 = factory.createBlocking(
-    key = Key.passphrase("password"),
-    rekey = Key.passphrase("new password"),
-)
-driver2.close()
+  // Also supports use of RAW (already derived) keys and/or salt storage for SQLCipher & ChaCha20
+  val (derivedKey, salt) = deriveMy32ByteKeyAnd16ByteSalt("secret password") // however you want to do it
+  val rawKey = Key.raw(key = derivedKey, salt = salt, fillKey = true)
 
-// Also supports use of RAW (already derived) keys and/or salt storage for SQLCipher & ChaCha20
-val (derivedKey, salt) = deriveMy32ByteKeyAnd16ByteSalt("secret password") // however you want to do it
-val rawKey = Key.raw(key = derivedKey, salt = salt, fillKey = true)
+  val driver3 = factory.createBlocking(key = Key.passphrase("new password"), rekey = rawKey)
+  ```
 
-val driver3 = factory.createBlocking(key = Key.passphrase("new password"), rekey = rawKey)
-```
+- Easily migrate encryption configurations between software releases by defining a migrations block
+  ```kotlin
+  val factory = SQLiteMCDriver.Factory(dbName = "test.db", schema = TestDatabase.Schema) {
+      logger = { log -> println(log) }
+      redactLogs = false
 
-Interact with the `SQLite3MultipleCiphers` interface via queries
-```kotlin
-val mcQueries = MCConfigQueries.from(driver3)
+      filesystem(databasesDir) {
+          // NOTE: Never modify migrations, just leave them
+          // for users who haven't opened your app in 5 years.
+          encryptionMigrations {
 
-// Whether you use a Key.passphrase or Key.raw, after encrypting
-// the database it's always a good idea to retrieve the
-// salt and store elsewhere, in case it is needed to recover
-// data or something. Without it, you are 100% screwed even
-// if you know the passphrase.
-val salt: String? = mcQueries.cipherSalt()
-// 32 character string (16 bytes encoded in base 16 (hex))
-
-// Checkout some of the SQLite3MultipleCipher current settings
-// for each of it's supported ciphers
-val rc4PageSize: Int? = mcQueries.cipherParam(Cipher.RC4, Pragma.MC.LEGACY_PAGE_SIZE)
-val sqlCipherHmacPngo: HmacPngo? = mcQueries.cipherParam(Cipher.SQLCIPHER, Pragma.MC.HMAC_PNGO)
-val chaCha20KdfIter: Int? = mcQueries.cipherParam(Cipher.CHACHA20, Pragma.MC.KDF_ITER)
-val aes128PageSize: Int? = mcQueries.cipherParam(Cipher.AES128CBC, Pragma.MC.LEGACY_PAGE_SIZE)
-val aes256KdfIter: Int? = mcQueries.cipherParam(Cipher.AES256CBC, Pragma.MC.KDF_ITER)
-
-// more functions, checkout the code.
-```
-
-Easily migrate encryption configurations between software releases by simply defining a migrations block 
-
-```kotlin
-val factory = SQLiteMCDriver.Factory(dbName = "test.db", schema = TestDatabase.Schema) {
-    logger = { log -> println(log) }
-    redactLogs = false
-
-    filesystem(databasesDir) {
-        // NOTE: Never modify migrations, just leave them
-        // for users who haven't opened your app in 5 years.
-        encryptionMigrations {
-
-            // Simply move your old encryption config up to a migration.
-            migrationFrom {
-                note = "Migration from SQLCipher library to sqlite-mc"
-                sqlCipher { v4() }
-            }
-        }
+              // Simply move your old encryption config up to a migration.
+              //
+              // Do note that if you _are_ migrating from SQLCipher library,
+              // the version of SQLCipher used the first time your app was
+              // published with it. You will _also_ need to define migrations
+              // all the way back for each possible version (v1, v2, v3),
+              // so that users who have not opened your app in a long time
+              // can migrate from those versions as well.
+              migrationFrom {
+                  note = "Migration from SQLCipher library to sqlite-mc"
+                  sqlCipher { v4() }
+              }
+          }
         
-        encryption {
-            sqlCipher { default() }
-        }
-    }
-}
+          encryption {
+              sqlCipher { default() }
+          }
+      }
+  }
 
-// Will try to open SQLCipher Default (legacy: 0).
-// 
-// On failure, Will try to open using migrations in reverse order of
-// what is expressed (i.e. SQLCipher-v4 (legacy: 4)).
-//
-// Once opened, will automatically migrate to SQLCipher Default (legacy: 0)
-// using the same Key that it opened with.
-val driverMigrate = factory.createBlocking(Key.passphrase("password"))
-driverMigrate.close()
-```
+  // Will try to open SQLCipher Default (legacy: 0).
+  // 
+  // On failure, Will try to open using migrations in reverse order of
+  // what is expressed (i.e. SQLCipher-v4 (legacy: 4)).
+  //
+  // Once opened, will automatically migrate to SQLCipher Default (legacy: 0)
+  // using the same Key that it opened with.
+  val driverMigrate = factory.createBlocking(Key.passphrase("password"))
+  driverMigrate.close()
+  ```
 
-Share configurations between multiple factories
-
-```kotlin
-val customChaCha20 = EncryptionConfig.new(other = null) {
-    chaCha20 {
-        default {
-            // Define some non-default parameters if you wish
-            kdfIter(250_000)
-        }
-    }
+- Share configurations between multiple factories
+  ```kotlin
+  val customChaCha20 = EncryptionConfig.new(other = null) {
+      chaCha20 {
+          default {
+              // Define some non-default parameters if you wish
+              kdfIter(250_000)
+          }
+      }
     
-    // Other cipher choices that shouldn't be utilized for
-    // new databases, but are there for migration purposes.
-    //
-    // rc4 { default() }
-    // wxAES128 { default() }
-    // wxAES256 { default() }
+      // Other cipher choices that shouldn't be utilized for
+      // new databases, but are there for migration purposes.
+      //
+      // rc4 { default() }
+      // wxAES128 { default() }
+      // wxAES256 { default() }
     
-}
+  }
 
-val migrationConfig = EncryptionMigrationConfig.new(other = null) {
-    migrationFrom {
-        note = "Migration from SQLCipher library to sqlite-mc"
-        sqlCipher { v4() }
-    }
+  val migrationConfig = EncryptionMigrationConfig.new(other = null) {
+      migrationFrom {
+          note = "Migration from SQLCipher library to sqlite-mc"
+          sqlCipher { v4() }
+      }
 
-    migrationFrom {
-        note = "Migration from SQLCipher:default to ChaCha20"
-        sqlCipher { default() }
-    }
-}
+      migrationFrom {
+          note = "Migration from SQLCipher:default to ChaCha20"
+          sqlCipher { default() }
+      }
+  }
 
-val sharedConfig = FilesystemConfig.new(databasesDir) {
-    encryptionMigrations(migrationConfig)
-    encryption(customChaCha20)
-}
+  val sharedConfig = FilesystemConfig.new(databasesDir) {
+      encryptionMigrations(migrationConfig)
+      encryption(customChaCha20)
+  }
 
-val factory1 = SQLiteMCDriver.Factory("first.db", DatabaseFirst.Schema) {
-    filesystem(sharedConfig)
-}
-val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Schema) {
-    filesystem(sharedConfig)
-}
-```
+  val factory1 = SQLiteMCDriver.Factory("first.db", DatabaseFirst.Schema) {
+      filesystem(sharedConfig)
+  }
+  val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Schema) {
+      filesystem(sharedConfig)
+  }
+  ```
+
+### Jvm Supported Operating Systems
+
+|              | x86 | x86_64 | armv5 | armv6 | armv7 | arm64 | ppc64 |
+|--------------|-----|--------|-------|-------|-------|-------|-------|
+| Windows      | ✔   | ✔      |       |       |       |       |       |
+| macOS        |     | ✔      |       |       |       | ✔     |       |
+| Linux (libc) | ✔   | ✔      | ✔     | ✔     | ✔     | ✔     | ✔     |
+| Linux (musl) | ✔   | ✔      |       |       |       | ✔     |       |
+| FreeBSD      |     |        |       |       |       |       |       |
+
+### Library Versioning
+
+Versioning follows the following pattern of `SQLDelight` - `SQLite3MultipleCiphers` - `sqlite-mc sub version`
+
+- `a.b.c` - `x.y.z` - `s`
+- The `s` is a single digit to allow for bug fixes and the like
+- An `s` of `0` indicates a "first release" for that pairing of `SQLDelight` and `SQLite3MultipleCiphers`
+- Examples:
+    - `2.0.0` - `1.6.4` - `0`
+    - `2.0.0` - `1.6.4` - `1` (an update with `sqlite-mc` for `2.0.0-1.6.4`)
+    - `2.0.1` - `1.6.4` - `0` (a minor version update with `SQLDelight`)
+    - `2.0.1` - `1.6.5` - `0` (a minor version update with `SQLite3MultipleCiphers`)
+    - `2.0.1` - `1.6.5` - `1` (an update with `sqlite-mc` for `2.0.1-1.6.5`)
 
 ### Get Started
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-0.1.0--alpha01-blue.svg?style=flat
+
+Currently, this library is still under heavy construction.
+
+A `-SNAPSHOT` will be released in order to hone the API while
+integrating it into some other projects I am building this for,
+after which an `-alpha01` release will follow.
+
+<!--
+**Set `linkSqlite` to false**
+```kotlin
+sqldelight {
+    linkSqlite.set(false) // <<--- must be false if using native
+
+    databases {
+        // ...
+    }
+}
+```
+
+**Add dependencies**
+```kotlin
+dependencies {
+    val sqliteMC = "2.0.0-1.6.4-0-SNAPSHOT"
+
+    // NOTE: Remove dependencies on the following if you have them
+    //  - "app.cash.sqldelight:sqlite-driver"
+    //  - "app.cash.sqldelight:native-driver"
+
+    implementation("io.toxicity.sqlite-mc:driver:$sqliteMC")
+
+    // For android unit tests (NOT instrumented)
+    // This is simply the desktop binary resources needed for JDBC
+    testImplementation("io.toxicity.sqlite-mc:android-unit-test:$sqliteMC")
+}
+```
+-->
+
+<!-- TAG_VERSION -->
+[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.0--1.6.4--0--SNAPSHOT-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
-[badge-kotlin]: https://img.shields.io/badge/kotlin-1.8.22-blue.svg?logo=kotlin
+[badge-kotlin]: https://img.shields.io/badge/kotlin-1.9.10-blue.svg?logo=kotlin
 [badge-coroutines]: https://img.shields.io/badge/coroutines-1.7.3-blue.svg?logo=kotlin
 [badge-encoding]: https://img.shields.io/badge/encoding-2.0.0-blue.svg?style=flat
-[badge-sql-delight]: https://img.shields.io/badge/SQLDelight-2.0.0-blue.svg?style=flat
-[badge-sql-mc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.6.4-blue.svg?style=flat
-[badge-sql-jdbc]: https://img.shields.io/badge/sqlite--jdbc-3.43.0.0-blue.svg?style=flat
+[badge-sqldelight]: https://img.shields.io/badge/SQLDelight-2.0.0-blue.svg?style=flat
+[badge-sqlite]: https://img.shields.io/badge/SQLite3-3.43.0-blue.svg?style=flat
+[badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.6.4-blue.svg?style=flat
+[badge-sqliter]: https://img.shields.io/badge/SQLiter-1.2.3-blue.svg?style=flat
+[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.43.0.0-blue.svg?style=flat
 
 <!-- TAG_PLATFORMS -->
 [badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2023]-6EDB8D.svg?style=flat
@@ -257,7 +307,6 @@ val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Schema) {
 [badge-support-apple-silicon]: http://img.shields.io/badge/support-[AppleSilicon]-43BBFF.svg?style=flat
 [badge-support-js-ir]: https://img.shields.io/badge/support-[js--IR]-AAC4E0.svg?style=flat
 [badge-support-linux-arm]: http://img.shields.io/badge/support-[LinuxArm]-2D3F6C.svg?style=flat
-[badge-support-linux-mips]: http://img.shields.io/badge/support-[LinuxMIPS]-2D3F6C.svg?style=flat
 
 [url-latest-release]: https://github.com/toxicity-io/sqlite-mc/releases/latest
 [url-license]: https://www.apache.org/licenses/LICENSE-2.0.txt
@@ -265,7 +314,9 @@ val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Schema) {
 [url-kotlin]: https://kotlinlang.org
 [url-coroutines]: https://github.com/Kotlin/kotlinx.coroutines
 [url-encoding]: https://github.com/05nelsonm/encoding
-[url-sql-delight]: https://github.com/cashapp/sqldelight
-[url-sql-mc]: https://github.com/utelle/SQLite3MultipleCiphers
-[url-sql-jdbc]: https://github.com/xerial/sqlite-jdbc
+[url-sqldelight]: https://github.com/cashapp/sqldelight
+[url-sqlite]: https://sqlite.org
+[url-sqlitemc]: https://github.com/utelle/SQLite3MultipleCiphers
+[url-sqliter]: https://github.com/touchlab/SQLiter
+[url-sqlitejdbc]: https://github.com/xerial/sqlite-jdbc
 

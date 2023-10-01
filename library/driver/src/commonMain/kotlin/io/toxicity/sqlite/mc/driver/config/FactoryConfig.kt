@@ -22,6 +22,7 @@ import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.logs.LogSqliteDriver
 import io.toxicity.sqlite.mc.driver.MCConfigDsl
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
+import io.toxicity.sqlite.mc.driver.config.pragma.Pragma
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

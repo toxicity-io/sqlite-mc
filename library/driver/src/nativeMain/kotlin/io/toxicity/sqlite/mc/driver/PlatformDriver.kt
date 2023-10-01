@@ -24,6 +24,9 @@ import app.cash.sqldelight.logs.LogSqliteDriver
 import co.touchlab.sqliter.*
 import co.touchlab.sqliter.interop.Logger
 import io.toxicity.sqlite.mc.driver.config.*
+import io.toxicity.sqlite.mc.driver.config.pragma.MutablePragmas
+import io.toxicity.sqlite.mc.driver.config.pragma.Pragma
+import io.toxicity.sqlite.mc.driver.config.pragma.toMCSQLStatements
 
 public actual sealed class PlatformDriver actual constructor(private val args: Args): SqlDriver {
 
