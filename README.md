@@ -139,6 +139,13 @@ database encryption.
           encryptionMigrations {
 
               // Simply move your old encryption config up to a migration.
+              //
+              // Do note that if you _are_ migrating from SQLCipher library,
+              // the version of SQLCipher used the first time your app was
+              // published with it. You will _also_ need to define migrations
+              // all the way back for each possible version (v1, v2, v3),
+              // so that users who have not opened your app in a long time
+              // can migrate from those versions as well.
               migrationFrom {
                   note = "Migration from SQLCipher library to sqlite-mc"
                   sqlCipher { v4() }
