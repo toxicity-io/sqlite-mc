@@ -36,7 +36,7 @@ fun KmpConfigurationExtension.configureShared(
         iosSimulatorArm64()
 
         // Just use JVM. Not dealing with native desktop
-        // b/c it's a shit-show.
+        // b/c it's a shit-show (especially Linux)
 //        linuxX64()
 //        macosArm64()
 //        macosX64()
@@ -45,8 +45,10 @@ fun KmpConfigurationExtension.configureShared(
         // tvOS/watchOS cannot be enabled currently.
         // SQLite3MultipleCiphers getrandom functionality
         // does not account for them and will use syscall
-        // to obtain securely random bytes, which is unavailable
+        // to obtain securely random bytes which is unavailable
         // at runtime.
+        //
+        // See: https://github.com/utelle/SQLite3MultipleCiphers/issues/118
 //        tvosArm64()
 //        tvosX64()
 //        tvosSimulatorArm64()

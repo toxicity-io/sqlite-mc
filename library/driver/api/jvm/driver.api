@@ -2,6 +2,7 @@ public final class io/toxicity/sqlite/mc/driver/EphemeralOpt : java/lang/Enum {
 	public static final field IN_MEMORY Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
 	public static final field NAMED Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
 	public static final field TEMPORARY Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
 	public static fun values ()[Lio/toxicity/sqlite/mc/driver/EphemeralOpt;
 }
@@ -307,6 +308,7 @@ public final class io/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm 
 	public static final field SHA1 Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
 	public static final field SHA256 Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
 	public static final field SHA512 Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
 	public static fun values ()[Lio/toxicity/sqlite/mc/driver/config/encryption/HmacAlgorithm;
 }
@@ -315,6 +317,7 @@ public final class io/toxicity/sqlite/mc/driver/config/encryption/HmacPngo : jav
 	public static final field BIG_ENDIAN Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
 	public static final field LITTLE_ENDIAN Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
 	public static final field NATIVE Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
 	public static fun values ()[Lio/toxicity/sqlite/mc/driver/config/encryption/HmacPngo;
 }
@@ -323,6 +326,7 @@ public final class io/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm :
 	public static final field SHA1 Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
 	public static final field SHA256 Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
 	public static final field SHA512 Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
 	public static fun values ()[Lio/toxicity/sqlite/mc/driver/config/encryption/KdfAlgorithm;
 }
