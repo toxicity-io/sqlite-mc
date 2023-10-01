@@ -29,31 +29,32 @@ import kotlin.jvm.JvmStatic
 /**
  * [SQLite3MultipleCiphers SQL Functions](https://utelle.github.io/SQLite3MultipleCiphers/docs/configuration/config_sql_functions/)
  *
+ * TODO: Make available. Need to also check functionality with ephemeral dbs.. might throw exceptions
  * @see [from]
  * */
-public interface MCConfigQueries {
+internal interface MCConfigQueries {
     // TODO: documentation & tests
-    public fun cipher(transient: Boolean): Cipher
+    fun cipher(transient: Boolean): Cipher
 
     // TODO: documentation & tests
-    public fun hmacCheck(transient: Boolean): Boolean
+    fun hmacCheck(transient: Boolean): Boolean
 
     // TODO: documentation & tests
-    public fun mcLegacyWAL(transient: Boolean): Boolean
+    fun mcLegacyWAL(transient: Boolean): Boolean
 
     // TODO: documentation & tests
-    public fun <T: Any> cipherParam(cipher: Cipher, param: Pragma.MC<T>): T?
+    fun <T: Any> cipherParam(cipher: Cipher, param: Pragma.MC<T>): T?
 
     // TODO: documentation & tests
-    public fun cipherSalt(schemaName: String?): String?
+    fun cipherSalt(schemaName: String?): String?
 
     // TODO: documentation & tests
-    public fun cipherSaltRaw(schemaName: String?): ByteArray?
+    fun cipherSaltRaw(schemaName: String?): ByteArray?
 
-    public companion object {
+    companion object {
 
         @JvmStatic
-        public fun from(
+        fun from(
             driver: SQLiteMCDriver
         ): MCConfigQueries = MCConfigQueriesImpl(driver)
     }

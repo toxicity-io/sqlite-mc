@@ -13,21 +13,6 @@ public abstract interface annotation class io/toxicity/sqlite/mc/driver/MCCipher
 public abstract interface annotation class io/toxicity/sqlite/mc/driver/MCConfigDsl : java/lang/annotation/Annotation {
 }
 
-public abstract interface class io/toxicity/sqlite/mc/driver/MCConfigQueries {
-	public static final field Companion Lio/toxicity/sqlite/mc/driver/MCConfigQueries$Companion;
-	public abstract fun cipher (Z)Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;
-	public abstract fun cipherParam (Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher;Lio/toxicity/sqlite/mc/driver/config/Pragma$MC;)Ljava/lang/Object;
-	public abstract fun cipherSalt (Ljava/lang/String;)Ljava/lang/String;
-	public abstract fun cipherSaltRaw (Ljava/lang/String;)[B
-	public static fun from (Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;)Lio/toxicity/sqlite/mc/driver/MCConfigQueries;
-	public abstract fun hmacCheck (Z)Z
-	public abstract fun mcLegacyWAL (Z)Z
-}
-
-public final class io/toxicity/sqlite/mc/driver/MCConfigQueries$Companion {
-	public final fun from (Lio/toxicity/sqlite/mc/driver/SQLiteMCDriver;)Lio/toxicity/sqlite/mc/driver/MCConfigQueries;
-}
-
 public abstract class io/toxicity/sqlite/mc/driver/PlatformDriver : app/cash/sqldelight/driver/jdbc/JdbcDriver, app/cash/sqldelight/db/SqlDriver {
 	protected static final field Companion Lio/toxicity/sqlite/mc/driver/PlatformDriver$Companion;
 	public synthetic fun <init> (Lio/toxicity/sqlite/mc/driver/PlatformDriver$Companion$Args;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
