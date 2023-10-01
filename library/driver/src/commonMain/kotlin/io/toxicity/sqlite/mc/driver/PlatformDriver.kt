@@ -22,6 +22,7 @@ import app.cash.sqldelight.db.SqlCursor
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlPreparedStatement
 import io.toxicity.sqlite.mc.driver.config.*
+import io.toxicity.sqlite.mc.driver.config.pragma.MutablePragmas
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 

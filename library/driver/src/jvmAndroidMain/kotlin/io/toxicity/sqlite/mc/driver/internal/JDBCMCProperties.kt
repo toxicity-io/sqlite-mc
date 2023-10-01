@@ -19,9 +19,9 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import io.matthewnelson.encoding.base64.Base64
 import io.matthewnelson.encoding.core.use
 import io.matthewnelson.encoding.core.util.LineBreakOutFeed
-import io.toxicity.sqlite.mc.driver.config.MutablePragmas
-import io.toxicity.sqlite.mc.driver.config.Pragma
-import io.toxicity.sqlite.mc.driver.config.toMCSQLStatements
+import io.toxicity.sqlite.mc.driver.config.pragma.MutablePragmas
+import io.toxicity.sqlite.mc.driver.config.pragma.Pragma
+import io.toxicity.sqlite.mc.driver.config.pragma.toMCSQLStatements
 import java.sql.SQLException
 import java.util.Properties
 

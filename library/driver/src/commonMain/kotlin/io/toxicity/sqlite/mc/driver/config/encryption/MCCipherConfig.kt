@@ -18,8 +18,8 @@
 package io.toxicity.sqlite.mc.driver.config.encryption
 
 import io.toxicity.sqlite.mc.driver.internal.ext.appendIndent
-import io.toxicity.sqlite.mc.driver.config.Pragma
-import io.toxicity.sqlite.mc.driver.config.MutablePragmas
+import io.toxicity.sqlite.mc.driver.config.pragma.Pragma
+import io.toxicity.sqlite.mc.driver.config.pragma.MutablePragmas
 import io.toxicity.sqlite.mc.driver.internal.ext.appendColon
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
