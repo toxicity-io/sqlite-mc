@@ -303,7 +303,7 @@ private class JdbcRepack {
     private fun MinimalExternalModuleDependency.toJarFileName(): String = "$name-$version.jar"
 
     init {
-        val repackDir = buildDir
+        val repackDir = layout.buildDirectory.asFile.get()
             .resolve("jdbc-repack")
         jarSQLDelightDriver = repackDir
             .resolve(depSQLDelightDriver.toJarFileName())
