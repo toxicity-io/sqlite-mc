@@ -128,20 +128,20 @@ kmpConfiguration {
                     // Architecture specific flags
                     when (kt) {
                         IOS_X64,
-                        IOS_SIMULATOR_ARM64,
                         TVOS_X64,
-                        TVOS_SIMULATOR_ARM64,
-                        WATCHOS_X64,
-                        WATCHOS_SIMULATOR_ARM64 -> listOf(
+                        WATCHOS_X64 -> listOf(
                             "-arch",
                             "x86_64",
                             "-msse4.2",
                             "-maes",
                         )
                         IOS_ARM64,
+                        IOS_SIMULATOR_ARM64,
                         TVOS_ARM64,
+                        TVOS_SIMULATOR_ARM64,
                         WATCHOS_ARM64,
-                        WATCHOS_DEVICE_ARM64 -> listOf(
+                        WATCHOS_DEVICE_ARM64,
+                        WATCHOS_SIMULATOR_ARM64 -> listOf(
                             "-arch",
                             "arm64",
                         )
