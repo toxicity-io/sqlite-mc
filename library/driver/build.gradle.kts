@@ -134,8 +134,7 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
 
         // Architecture specific flags
         when (kt.architecture) {
-            X64,
-            X86 -> listOf(
+            X64, X86 -> listOf(
                 "-msse4.2",
                 "-maes",
             )
@@ -143,28 +142,18 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
         }?.let { compilerArgs.addAll(it) }
 
         when (kt) {
-            IOS_X64,
-            TVOS_X64,
-            WATCHOS_X64 -> listOf(
-                "-arch",
-                "x86_64",
-            )
-            IOS_ARM64,
-            IOS_SIMULATOR_ARM64,
-            TVOS_ARM64,
-            TVOS_SIMULATOR_ARM64,
-            WATCHOS_ARM64,
-            WATCHOS_DEVICE_ARM64,
-            WATCHOS_SIMULATOR_ARM64 -> listOf(
-                "-arch",
-                "arm64",
-            )
             WATCHOS_ARM32 -> listOf(
                 "-arch",
                 "armv7k",
             )
+            WATCHOS_ARM64 -> listOf(
+                "-arch",
+                "arm64",
+            )
             else -> null
         }?.let { compilerArgs.addAll(it) }
+
+        // TODO: Specify min versions for darwin targets
 
         // Warning/Error suppression flags
         listOf(
@@ -182,19 +171,12 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             compilerArgs.add("-Wno-#warnings")
         }
 
-        // TODO: linuxX64
-        // TODO: macosArm64
-        // TODO: macosX64
-        // TODO: mingwX64
-
         // SQLITE flags
         when (kt.family) {
-            IOS,
-            TVOS,
-            WATCHOS -> listOf(
+            IOS, TVOS, WATCHOS -> listOf(
                 // gethostuuid is deprecated
                 //
-                // D.Richard Hipp (SQLite architect) suggests for non-macos:
+                // D.Richard Hipp (SQLite architect) suggests for non-macOS:
                 // "The SQLITE_ENABLE_LOCKING_STYLE thing is an apple-only
                 // extension that boosts performance when SQLite is used
                 // on a network filesystem. This is important on macOS because
@@ -222,6 +204,9 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             //
             // SQLDelight's NativeSqliteDriver utilizes thread pools
             // and nerfs any benefit that Serialized would offer, so.
+            //
+            // This *might* change in the future if migrating away from
+            // SQLDelight's NativeSqliteDriver and SQLiter
             "-DSQLITE_THREADSAFE=2",
 
             // Remaining flags are what JVM is compiled with
@@ -239,6 +224,9 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             "-DSQLITE_DEFAULT_MEMSTATUS=0",
             "-DSQLITE_DEFAULT_FILE_PERMISSIONS=0666",
             "-DSQLITE_MAX_VARIABLE_NUMBER=250000",
+
+            // On Darwin, this is 0. This was altered to match what
+            // Jvm is being compiled with.
             "-DSQLITE_MAX_MMAP_SIZE=1099511627776",
             "-DSQLITE_MAX_LENGTH=2147483647",
             "-DSQLITE_MAX_COLUMN=32767",
