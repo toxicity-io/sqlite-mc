@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.Xcode
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -119,6 +120,13 @@ kmpConfiguration {
 }
 
 fun CompileToBitcodeExtension.createSqlite3mc() {
+    val xcode = try {
+        Xcode.findCurrent()
+    } catch (t: Throwable) {
+        if (HostManager.hostIsMac) throw t
+        null
+    }
+
     create("sqlite3mc") {
         language = C
         srcDirs = project.files(file("sqlite3mc"))
@@ -153,29 +161,79 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             else -> null
         }?.let { compilerArgs.addAll(it) }
 
-        when (kt) {
-            // arbitrary values, can be played with
-            IOS_ARM64 ->               "-mios-version-min=9.0"
-            IOS_SIMULATOR_ARM64 ->     "-mios-simulator-version-min=9.0"
-            IOS_X64 ->                 "-mios-version-min=9.0"
+        if (kt.family.isAppleFamily && xcode != null) {
+            when (kt) {
+                IOS_ARM64 -> listOf(
+                    "-mios-version-min=9.0",
+                    "-isysroot",
+                    xcode.iphoneosSdk,
+                )
+                IOS_SIMULATOR_ARM64 -> listOf(
+                    "-mios-simulator-version-min=9.0",
+                    "-isysroot",
+                    xcode.iphonesimulatorSdk,
+                )
+                IOS_X64 -> listOf(
+                    "-mios-version-min=9.0",
+                    "-isysroot",
+                    xcode.iphoneosSdk,
+                )
 
-            // SecRandomCopyBytes availability, and to be in-line with Jvm
-            MACOS_ARM64 ->             "-mmacosx-version-min=10.9"
-            MACOS_X64 ->               "-mmacosx-version-min=10.7"
+                MACOS_ARM64 -> listOf(
+                    "-mmacosx-version-min=10.9",
+                    "-isysroot",
+                    xcode.macosxSdk,
+                )
+                MACOS_X64 -> listOf(
+                    "-mmacosx-version-min=10.7",
+                    "-isysroot",
+                    xcode.macosxSdk,
+                )
 
-            // SecRandomCopyBytes availability
-            TVOS_ARM64 ->              "-mtvos-version-min=9.0"
-            TVOS_SIMULATOR_ARM64 ->    "-mtvos-simulator-version-min=9.0"
-            TVOS_X64 ->                "-mtvos-version-min=9.0"
+                TVOS_ARM64 -> listOf(
+                    "-mtvos-version-min=9.0",
+                    "-isysroot",
+                    xcode.appletvosSdk,
+                )
+                TVOS_SIMULATOR_ARM64 -> listOf(
+                    "-mtvos-simulator-version-min=9.0",
+                    "-isysroot",
+                    xcode.appletvsimulatorSdk,
+                )
+                TVOS_X64 -> listOf(
+                    "-mtvos-version-min=9.0",
+                    "-isysroot",
+                    xcode.appletvosSdk,
+                )
 
-            // arbitrary values, can be played with
-            WATCHOS_ARM32 ->           "-mwatchos-version-min=3.0"
-            WATCHOS_ARM64 ->           "-mwatchos-version-min=3.0"
-            WATCHOS_DEVICE_ARM64 ->    "-mwatchos-version-min=3.0"
-            WATCHOS_SIMULATOR_ARM64 -> "-mwatchos-simulator-version-min=3.0"
-            WATCHOS_X64 ->             "-mwatchos-version-min=3.0"
-            else ->                    null
-        }?.let { compilerArgs.add(it) }
+                WATCHOS_ARM32 -> listOf(
+                    "-mwatchos-version-min=3.0",
+                    "-isysroot",
+                    xcode.watchosSdk,
+                )
+                WATCHOS_ARM64 -> listOf(
+                    "-mwatchos-version-min=3.0",
+                    "-isysroot",
+                    xcode.watchosSdk,
+                )
+                WATCHOS_DEVICE_ARM64 -> listOf(
+                    "-mwatchos-version-min=3.0",
+                    "-isysroot",
+                    xcode.watchosSdk,
+                )
+                WATCHOS_SIMULATOR_ARM64 -> listOf(
+                    "-mwatchos-simulator-version-min=3.0",
+                    "-isysroot",
+                    xcode.watchsimulatorSdk,
+                )
+                WATCHOS_X64 -> listOf(
+                    "-mwatchos-version-min=3.0",
+                    "-isysroot",
+                    xcode.watchosSdk,
+                )
+                else -> null
+            }?.let { compilerArgs.addAll(it) }
+        }
 
         // Warning/Error suppression flags
         listOf(
