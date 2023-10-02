@@ -1,7 +1,7 @@
 From df46ca3834d4a7961c4274c349b838fc5553008b Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Sat, 30 Sep 2023 15:03:00 -0400
-Subject: [PATCH 06/10] Disable win-arm/freebsd targets for make:native-all
+Subject: [PATCH 06/11] Disable win-arm/freebsd targets for make:native-all
 
 ---
  Makefile | 2 +-
