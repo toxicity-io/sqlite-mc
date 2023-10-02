@@ -153,7 +153,29 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             else -> null
         }?.let { compilerArgs.addAll(it) }
 
-        // TODO: Specify min versions for darwin targets
+        when (kt) {
+            // arbitrary values, can be played with
+            IOS_ARM64 ->               "-mios-version-min=9.0"
+            IOS_SIMULATOR_ARM64 ->     "-mios-simulator-version-min=9.0"
+            IOS_X64 ->                 "-mios-version-min=9.0"
+
+            // SecRandomCopyBytes availability, and to be in-line with Jvm
+            MACOS_ARM64 ->             "-mmacosx-version-min=10.9"
+            MACOS_X64 ->               "-mmacosx-version-min=10.7"
+
+            // SecRandomCopyBytes availability
+            TVOS_ARM64 ->              "-mtvos-version-min=9.0"
+            TVOS_SIMULATOR_ARM64 ->    "-mtvos-simulator-version-min=9.0"
+            TVOS_X64 ->                "-mtvos-version-min=9.0"
+
+            // arbitrary values, can be played with
+            WATCHOS_ARM32 ->           "-mwatchos-version-min=3.0"
+            WATCHOS_ARM64 ->           "-mwatchos-version-min=3.0"
+            WATCHOS_DEVICE_ARM64 ->    "-mwatchos-version-min=3.0"
+            WATCHOS_SIMULATOR_ARM64 -> "-mwatchos-simulator-version-min=3.0"
+            WATCHOS_X64 ->             "-mwatchos-version-min=3.0"
+            else ->                    null
+        }?.let { compilerArgs.add(it) }
 
         // Warning/Error suppression flags
         listOf(
@@ -167,6 +189,9 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
         ).let { compilerArgs.addAll(it) }
 
         if (kt.family.isAppleFamily) {
+            // disable warning about version-min overriding version expressed in --target
+            compilerArgs.add("-Wno-overriding-t-option")
+
             // disable warning about gethostuuid being deprecated on darwin
             compilerArgs.add("-Wno-#warnings")
         }
