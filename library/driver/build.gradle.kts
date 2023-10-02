@@ -133,7 +133,8 @@ kmpConfiguration {
                         TVOS_SIMULATOR_ARM64,
                         WATCHOS_X64,
                         WATCHOS_SIMULATOR_ARM64 -> listOf(
-                            "-arch x86_64",
+                            "-arch",
+                            "x86_64",
                             "-msse4.2",
                             "-maes",
                         )
@@ -141,7 +142,8 @@ kmpConfiguration {
                         TVOS_ARM64,
                         WATCHOS_ARM64,
                         WATCHOS_DEVICE_ARM64 -> listOf(
-                            "-arch arm64",
+                            "-arch",
+                            "arm64",
                         )
                         else -> {
                             if (kt.architecture == X64 || kt.architecture == X86) {
