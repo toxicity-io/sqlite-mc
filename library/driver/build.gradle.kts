@@ -170,10 +170,12 @@ kmpConfiguration {
                         "-Wno-unused-function",
                         "-Wno-unused-parameter",
                         "-Wno-unused-variable",
-
-                        // disable warning about gethostuuid being deprecated on darwin
-                        "-Wno-#warnings",
                     ).let { compilerArgs.addAll(it) }
+
+                    if (kt.family.isAppleFamily) {
+                        // disable warning about gethostuuid being deprecated on darwin
+                        compilerArgs.add("-Wno-#warnings")
+                    }
 
                     // TODO: linuxX64
                     // TODO: macosArm64
