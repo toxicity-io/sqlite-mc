@@ -126,14 +126,21 @@ kmpConfiguration {
                     ).let { compilerArgs.addAll(it) }
 
                     // Architecture specific flags
+                    when (kt.architecture) {
+                        X64,
+                        X86 -> listOf(
+                            "-msse4.2",
+                            "-maes",
+                        )
+                        else -> null
+                    }?.let { compilerArgs.addAll(it) }
+
                     when (kt) {
                         IOS_X64,
                         TVOS_X64,
                         WATCHOS_X64 -> listOf(
                             "-arch",
                             "x86_64",
-                            "-msse4.2",
-                            "-maes",
                         )
                         IOS_ARM64,
                         IOS_SIMULATOR_ARM64,
@@ -149,16 +156,7 @@ kmpConfiguration {
                             "-arch",
                             "armv7k",
                         )
-                        else -> {
-                            if (kt.architecture == X64 || kt.architecture == X86) {
-                                listOf(
-                                    "-msse4.2",
-                                    "-maes",
-                                )
-                            } else {
-                                null
-                            }
-                        }
+                        else -> null
                     }?.let { compilerArgs.addAll(it) }
 
                     // Warning/Error suppression flags
