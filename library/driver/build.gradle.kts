@@ -145,6 +145,10 @@ kmpConfiguration {
                             "-arch",
                             "arm64",
                         )
+                        WATCHOS_ARM32 -> listOf(
+                            "-arch",
+                            "armv7k",
+                        )
                         else -> {
                             if (kt.architecture == X64 || kt.architecture == X86) {
                                 listOf(
