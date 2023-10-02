@@ -161,7 +161,7 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             else -> null
         }?.let { compilerArgs.addAll(it) }
 
-        if (kt.family.isAppleFamily && xcode != null) {
+        if (xcode != null) {
             when (kt) {
                 IOS_ARM64 -> listOf(
                     "-mios-version-min=9.0",

@@ -14,6 +14,7 @@
  * limitations under the License.
  **/
 import app.cash.sqldelight.gradle.SqlDelightExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     id("configuration")
@@ -57,6 +58,14 @@ kmpConfiguration {
         kotlin {
             extensions.configure<SqlDelightExtension>("sqldelight") {
                 linkSqlite.set(false)
+
+                // TODO: Gradle Plugin (Issue #18)
+                targets.filterIsInstance<KotlinNativeTarget>()
+                    .filter { it.konanTarget.family.isAppleFamily }
+                    .flatMap { it.binaries }
+                    .forEach { compilationUnit ->
+                        compilationUnit.linkerOpts("-framework", "Security")
+                    }
 
                 databases {
                     create("TestDatabase") {
