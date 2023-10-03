@@ -29,6 +29,7 @@ gradle-android = { module = "com.android.tools.build:gradle", version.ref = "gra
 gradle-kmp-configuration = { module = "io.matthewnelson:gradle-kmp-configuration-plugin", version.ref = "gradle-kmp-configuration" }
 gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "gradle-kotlin" }
 gradle-maven-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradle-maven-publish" }
+gradle-sql-delight = { module = "app.cash.sqldelight:gradle-plugin", version.ref = "sql-delight" }
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
@@ -45,5 +46,7 @@ sql-jdbc-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "sql-jdbc-x
 android-library = { id = "com.android.library", version.ref = "gradle-android" }
 binary-compat = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "gradle-binary-compat" }
 cklib = { id = "co.touchlab.cklib", version.ref = "gradle-cklib" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "gradle-kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "gradle-kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "gradle-kotlin" }
 sql-delight = { id = "app.cash.sqldelight", version.ref = "sql-delight" }

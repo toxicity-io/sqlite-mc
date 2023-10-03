@@ -24,3 +24,17 @@ if (!version.toString().endsWith("-SNAPSHOT")) {
         useGpgCmd()
     }
 }
+
+publishing {
+    repositories {
+        maven {
+            name = "installLocally"
+            url = rootProject.layout.buildDirectory.asFile.get().resolve("localMaven").toURI()
+        }
+    }
+}
+
+tasks.withType<AbstractArchiveTask>().configureEach {
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
+}

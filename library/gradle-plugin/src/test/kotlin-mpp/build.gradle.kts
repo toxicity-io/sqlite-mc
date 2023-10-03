@@ -13,31 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-rootProject.name = "sqlite-mc"
+import org.jetbrains.kotlin.konan.target.HostManager
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        google()
-        gradlePluginPortal()
+plugins {
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.sqlitemc)
+}
+
+sqliteMC {
+    databases {
+        create("Database") {
+            packageName.set("com.sample")
+        }
     }
 }
 
-includeBuild("build-logic")
+kotlin {
+    jvm { }
 
-@Suppress("PrivatePropertyName")
-private val CHECK_PUBLICATION: String? by settings
-
-if (CHECK_PUBLICATION != null) {
-    include(":tools:check-publication")
-} else {
-// :library
-    listOf(
-        "android-unit-test",
-        "driver",
-        "driver-test",
-        "gradle-plugin",
-    ).forEach { core ->
-        include(":library:$core")
+    if (HostManager.hostIsMac) {
+        iosX64 { }
+        watchosArm64 { }
     }
 }

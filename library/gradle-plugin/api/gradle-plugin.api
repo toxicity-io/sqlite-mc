@@ -1,0 +1,10 @@
+public abstract class io/toxicity/sqlite/mc/gradle/SQLiteMCExtension {
+	public abstract fun getAddDriverAndLink ()Lorg/gradle/api/provider/Property;
+	public final fun getDatabases ()Lorg/gradle/api/NamedDomainObjectContainer;
+}
+
+public abstract class io/toxicity/sqlite/mc/gradle/SQLiteMCPlugin : app/cash/sqldelight/gradle/SqlDelightPlugin {
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public final fun apply (Lorg/gradle/api/Project;)V
+}
+

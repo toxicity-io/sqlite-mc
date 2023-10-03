@@ -13,31 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-rootProject.name = "sqlite-mc"
-
-pluginManagement {
+dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        google()
-        gradlePluginPortal()
     }
 }
 
-includeBuild("build-logic")
-
-@Suppress("PrivatePropertyName")
-private val CHECK_PUBLICATION: String? by settings
-
-if (CHECK_PUBLICATION != null) {
-    include(":tools:check-publication")
-} else {
-// :library
-    listOf(
-        "android-unit-test",
-        "driver",
-        "driver-test",
-        "gradle-plugin",
-    ).forEach { core ->
-        include(":library:$core")
-    }
-}
+rootProject.name = "build-logic-tests"
