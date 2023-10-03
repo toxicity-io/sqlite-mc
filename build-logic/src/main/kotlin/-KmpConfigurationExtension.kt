@@ -42,21 +42,14 @@ fun KmpConfigurationExtension.configureShared(
 //        macosX64()
 //        mingwX64()
 
-        // tvOS/watchOS cannot be enabled currently.
-        // SQLite3MultipleCiphers getrandom functionality
-        // does not account for them and will use syscall
-        // to obtain securely random bytes which is unavailable
-        // at runtime.
-        //
-        // See: https://github.com/utelle/SQLite3MultipleCiphers/issues/118
-//        tvosArm64()
-//        tvosX64()
-//        tvosSimulatorArm64()
-//
-//        watchosX64()
-//        watchosArm32()
-//        watchosArm64()
-//        watchosSimulatorArm64()
+        tvosArm64()
+        tvosX64()
+        tvosSimulatorArm64()
+
+        watchosX64()
+        watchosArm32()
+        watchosArm64()
+        watchosSimulatorArm64()
 
         common {
             sourceSetTest {

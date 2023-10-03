@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.Xcode
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -119,6 +120,12 @@ kmpConfiguration {
 }
 
 fun CompileToBitcodeExtension.createSqlite3mc() {
+    val xcode = if (HostManager.hostIsMac) {
+        Xcode.findCurrent()
+    } else {
+        null
+    }
+
     create("sqlite3mc") {
         language = C
         srcDirs = project.files(file("sqlite3mc"))
@@ -153,7 +160,79 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             else -> null
         }?.let { compilerArgs.addAll(it) }
 
-        // TODO: Specify min versions for darwin targets
+        if (xcode != null) {
+            when (kt) {
+                IOS_ARM64 -> listOf(
+                    "-mios-version-min=9.0",
+                    "-isysroot",
+                    xcode.iphoneosSdk,
+                )
+                IOS_SIMULATOR_ARM64 -> listOf(
+                    "-mios-simulator-version-min=9.0",
+                    "-isysroot",
+                    xcode.iphonesimulatorSdk,
+                )
+                IOS_X64 -> listOf(
+                    "-mios-version-min=9.0",
+                    "-isysroot",
+                    xcode.iphoneosSdk,
+                )
+
+                MACOS_ARM64 -> listOf(
+                    "-mmacosx-version-min=10.9",
+                    "-isysroot",
+                    xcode.macosxSdk,
+                )
+                MACOS_X64 -> listOf(
+                    "-mmacosx-version-min=10.7",
+                    "-isysroot",
+                    xcode.macosxSdk,
+                )
+
+                TVOS_ARM64 -> listOf(
+                    "-mtvos-version-min=9.0",
+                    "-isysroot",
+                    xcode.appletvosSdk,
+                )
+                TVOS_SIMULATOR_ARM64 -> listOf(
+                    "-mtvos-simulator-version-min=9.0",
+                    "-isysroot",
+                    xcode.appletvsimulatorSdk,
+                )
+                TVOS_X64 -> listOf(
+                    "-mtvos-version-min=9.0",
+                    "-isysroot",
+                    xcode.appletvosSdk,
+                )
+
+                WATCHOS_ARM32 -> listOf(
+                    "-mwatchos-version-min=3.0",
+                    "-isysroot",
+                    xcode.watchosSdk,
+                )
+                WATCHOS_ARM64 -> listOf(
+                    "-mwatchos-version-min=3.0",
+                    "-isysroot",
+                    xcode.watchosSdk,
+                )
+                WATCHOS_DEVICE_ARM64 -> listOf(
+                    "-mwatchos-version-min=3.0",
+                    "-isysroot",
+                    xcode.watchosSdk,
+                )
+                WATCHOS_SIMULATOR_ARM64 -> listOf(
+                    "-mwatchos-simulator-version-min=3.0",
+                    "-isysroot",
+                    xcode.watchsimulatorSdk,
+                )
+                WATCHOS_X64 -> listOf(
+                    "-mwatchos-version-min=3.0",
+                    "-isysroot",
+                    xcode.watchosSdk,
+                )
+                else -> null
+            }?.let { compilerArgs.addAll(it) }
+        }
 
         // Warning/Error suppression flags
         listOf(
@@ -167,6 +246,9 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
         ).let { compilerArgs.addAll(it) }
 
         if (kt.family.isAppleFamily) {
+            // disable warning about version-min overriding version expressed in --target
+            compilerArgs.add("-Wno-overriding-t-option")
+
             // disable warning about gethostuuid being deprecated on darwin
             compilerArgs.add("-Wno-#warnings")
         }

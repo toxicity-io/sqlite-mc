@@ -1,7 +1,7 @@
 From d345ab34a140e2723c17348fcb98cae2be7684da Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Sat, 30 Sep 2023 15:04:06 -0400
-Subject: [PATCH 09/10] Use Ubuntu 16.04 to build linux32/64
+Subject: [PATCH 09/11] Use Ubuntu 16.04 to build linux32/64
 
 ---
  Makefile | 4 ++--

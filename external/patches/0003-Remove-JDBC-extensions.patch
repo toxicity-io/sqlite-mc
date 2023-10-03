@@ -1,7 +1,7 @@
 From 6bca68bba88e182cac3fe0318d11c0dceee260b0 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Sat, 30 Sep 2023 15:01:51 -0400
-Subject: [PATCH 03/10] Remove JDBC extensions
+Subject: [PATCH 03/11] Remove JDBC extensions
 
 ---
  Makefile | 12 +-----------

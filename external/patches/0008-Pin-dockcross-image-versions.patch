@@ -1,7 +1,7 @@
 From 7512d0bac400405b345149c111e5b7564f890694 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Sat, 30 Sep 2023 15:03:40 -0400
-Subject: [PATCH 08/10] Pin dockcross image versions
+Subject: [PATCH 08/11] Pin dockcross image versions
 
 ---
  docker/dockcross-android-arm    | 2 +-
