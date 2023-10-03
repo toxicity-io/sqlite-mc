@@ -237,6 +237,101 @@ Versioning follows the following pattern of `SQLDelight` - `SQLite3MultipleCiphe
     - `2.0.1` - `1.6.5` - `0` (a minor version update with `SQLite3MultipleCiphers`)
     - `2.0.1` - `1.6.5` - `1` (an update with `sqlite-mc` for `2.0.1-1.6.5`)
 
+### SQLite3MultipleCiphers Flags
+
+[SQLite3MultipleCiphers][url-sqlitemc] is compiled with the following flags
+
+**Jvm & Native:**
+
+`SQLITE_HAVE_ISNAN=1`  
+`HAVE_USLEEP=1`  
+`SQLITE_ENABLE_COLUMN_METADATA=1`  
+`SQLITE_CORE=1`  
+`SQLITE_ENABLE_FTS3=1`  
+`SQLITE_ENABLE_FTS3_PARENTHESIS=1`  
+`SQLITE_ENABLE_FTS5=1`  
+`SQLITE_ENABLE_RTREE=1`  
+`SQLITE_ENABLE_STAT4=1`  
+`SQLITE_ENABLE_DBSTAT_VTAB=1`  
+`SQLITE_ENABLE_MATH_FUNCTIONS=1`  
+`SQLITE_DEFAULT_MEMSTATUS=0`  
+`SQLITE_DEFAULT_FILE_PERMISSIONS=0666`  
+`SQLITE_MAX_VARIABLE_NUMBER=250000`  
+`SQLITE_MAX_MMAP_SIZE=1099511627776`  
+`SQLITE_MAX_LENGTH=2147483647`  
+`SQLITE_MAX_COLUMN=32767`  
+`SQLITE_MAX_SQL_LENGTH=1073741824`  
+`SQLITE_MAX_FUNCTION_ARG=127`  
+`SQLITE_MAX_ATTACHED=125`  
+`SQLITE_MAX_PAGE_COUNT=4294967294`  
+`SQLITE_DQS=0`  
+`OMIT_LOAD_EXTENSION`  
+`CODEC_TYPE=CODEC_TYPE_CHACHA20`  
+`SQLITE_ENABLE_EXTFUNC=1`  
+`SQLITE_ENABLE_REGEXP=1`  
+`SQLITE_TEMP_STORE=2`  
+`SQLITE_USE_URI=1`  
+
+**Jvm**
+
+`SQLITE_THREADSAFE=1`  
+
+**Native:**
+
+`SQLITE_THREADSAFE=2`  
+
+<details>
+    <summary>Reason</summary>
+
+```
+2 (Multi-Threaded) is the default for Darwin
+targets, but on JVM it is using 1 (Serialized).
+
+SQLDelight's NativeSqliteDriver utilizes thread pools
+and nerfs any benefit that Serialized would offer, so.
+
+This *might* change in the future if migrating away from
+SQLDelight's NativeSqliteDriver and SQLiter
+```
+
+</details>
+
+**Darwin:**
+
+`SQLITE_ENABLE_API_ARMOR`  
+`OMIT_AUTORESET`  
+
+<details>
+    <summary>Reason</summary>
+
+```
+Options that SQLite is compiled with on
+Darwin devices. macOS 10.11.6+, iOS 9.3.5+
+```
+
+</details>
+
+**iOS, tvOS, watchOS:**
+
+`SQLITE_ENABLE_LOCKING_STYLE=0`  
+
+<details>
+    <summary>Reason</summary>
+
+```
+D.Richard Hipp (SQLite architect) suggests for non-macOS: 
+
+"The SQLITE_ENABLE_LOCKING_STYLE thing is an apple-only 
+extension that boosts performance when SQLite is used 
+on a network filesystem. This is important on macOS because 
+some users think it is a good idea to put their home 
+directory on a network filesystem.
+
+I'm guessing this is not really a factor on iOS."
+```
+
+</details>
+
 ### Get Started
 
 <!-- TAG_VERSION -->
