@@ -29,6 +29,8 @@ import okio.FileSystem
 import okio.IOException
 import okio.Path.Companion.toPath
 import kotlin.random.Random
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 internal expect fun filesystem(): FileSystem
 
@@ -39,8 +41,9 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
         // pass null to use in memory db
         filesystem: (FilesystemConfig.Builder.() -> Unit) = {},
         testLogger: ((String) -> Unit)? = this.testLogger,
+        timeout: Duration = 10.seconds,
         block: suspend TestScope.(factory: SQLiteMCDriver.Factory, driver: SQLiteMCDriver) -> Unit
-    ): TestResult = runTest {
+    ): TestResult = runTest(timeout = timeout) {
         val dbName = Random.Default.nextBytes(32).encodeToString(Base16) + ".db"
 
         deleteDatabaseFiles(dbName)

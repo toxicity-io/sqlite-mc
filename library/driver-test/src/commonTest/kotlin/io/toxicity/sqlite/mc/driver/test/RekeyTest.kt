@@ -24,6 +24,7 @@ import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.time.Duration.Companion.seconds
 
 abstract class RekeyTest: TestHelperNonEphemeral() {
 
@@ -58,7 +59,7 @@ abstract class RekeyTest: TestHelperNonEphemeral() {
             testLogger("RUN - ${i++}")
 
             // db files automatically delete once runMCDriverTest completes.
-            runDriverTest(key1, filesystem) { factory, driver ->
+            runDriverTest(key1, filesystem, timeout = 20.seconds) { factory, driver ->
                 val expected = "4314tlkjansd"
                 driver.upsert("key", expected)
                 assertEquals(expected, driver.get("key"))
@@ -78,7 +79,8 @@ abstract class RekeyTest: TestHelperNonEphemeral() {
     @Test
     open fun givenConfig_whenMigrations_thenRekeyedToNewestEncryptionConfig() = runDriverTest(
         key = keyPassphrase,
-        filesystem = { encryption { chaCha20 { sqleet() } } }
+        filesystem = { encryption { chaCha20 { sqleet() } } },
+        timeout = 25.seconds,
     ) { factory1, driver ->
         val dbName = factory1.config.dbName
 

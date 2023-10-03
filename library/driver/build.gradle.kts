@@ -120,10 +120,9 @@ kmpConfiguration {
 }
 
 fun CompileToBitcodeExtension.createSqlite3mc() {
-    val xcode = try {
+    val xcode = if (HostManager.hostIsMac) {
         Xcode.findCurrent()
-    } catch (t: Throwable) {
-        if (HostManager.hostIsMac) throw t
+    } else {
         null
     }
 
