@@ -16,16 +16,16 @@
 package io.toxicity.sqlite.mc.gradle
 
 import app.cash.sqldelight.gradle.SqlDelightExtension
-import app.cash.sqldelight.gradle.SqlDelightPlugin
+import org.gradle.api.Plugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 
-abstract class SQLiteMCPlugin internal constructor(): SqlDelightPlugin() {
+abstract class SQLiteMCPlugin internal constructor(): Plugin<Project> {
 
     final override fun apply(project: Project) {
-        super.apply(project)
+        project.plugins.apply("app.cash.sqldelight")
 
         val delegate = project.extensions.getByType(SqlDelightExtension::class.java)
         delegate.linkSqlite.set(false)
