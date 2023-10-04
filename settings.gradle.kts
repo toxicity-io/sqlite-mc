@@ -26,18 +26,27 @@ pluginManagement {
 includeBuild("build-logic")
 
 @Suppress("PrivatePropertyName")
+private val KMP_TARGETS: String? by settings
+@Suppress("PrivatePropertyName")
 private val CHECK_PUBLICATION: String? by settings
+@Suppress("PrivatePropertyName")
+private val KMP_TARGETS_ALL = System.getProperty("KMP_TARGETS_ALL") != null
+@Suppress("PrivatePropertyName")
+private val TARGETS = KMP_TARGETS?.split(',')
 
 if (CHECK_PUBLICATION != null) {
     include(":tools:check-publication")
 } else {
-// :library
+
+    val enableJvm = KMP_TARGETS_ALL || TARGETS?.contains("JVM") != false
+
     listOf(
-        "android-unit-test",
-        "driver",
-        "driver-test",
-        "gradle-plugin",
-    ).forEach { core ->
-        include(":library:$core")
+        Pair("android-unit-test", enableJvm),
+        Pair("driver", true),
+        Pair("driver-test", true),
+        Pair("gradle-plugin", enableJvm),
+    ).forEach { (module, enable) ->
+        if (!enable) return@forEach
+        include(":library:$module")
     }
 }
