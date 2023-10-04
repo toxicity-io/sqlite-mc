@@ -1,17 +1,17 @@
-From e52914bf7a4c45c891cd67737a418a727ff712c2 Mon Sep 17 00:00:00 2001
+From bbc25fa3fd5a4ecaf908f1272ed99459b2c36667 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Sat, 30 Sep 2023 15:05:38 -0400
 Subject: [PATCH 10/11] Configure build to use SQLite3MultipleCiphers
 
 ---
- Makefile                                 | 21 +++++++++--------
+ Makefile                                 | 23 +++++++++---------
  Makefile.common                          | 30 ++++++++++++------------
  VERSION                                  |  1 +
  src/main/java/org/sqlite/core/NativeDB.c |  2 +-
- 4 files changed, 28 insertions(+), 26 deletions(-)
+ 4 files changed, 29 insertions(+), 27 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 840ad53..8be8f89 100644
+index 840ad53..bdb31d7 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -19,7 +19,7 @@ SQLITE_OBJ?=$(SQLITE_OUT)/sqlite3.o
@@ -37,6 +37,15 @@ index 840ad53..8be8f89 100644
  
  $(SQLITE_UNPACKED): $(SQLITE_ARCHIVE)
  	unzip -qo $< -d $(TARGET)/tmp.$(version)
+@@ -82,7 +77,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+ 	    -DSQLITE_DEFAULT_MEMSTATUS=0 \
+ 	    -DSQLITE_DEFAULT_FILE_PERMISSIONS=0666 \
+ 	    -DSQLITE_MAX_VARIABLE_NUMBER=250000 \
+-	    -DSQLITE_MAX_MMAP_SIZE=1099511627776 \
++	    -DSQLITE_MAX_MMAP_SIZE=0 \
+ 	    -DSQLITE_MAX_LENGTH=2147483647 \
+ 	    -DSQLITE_MAX_COLUMN=32767 \
+ 	    -DSQLITE_MAX_SQL_LENGTH=1073741824 \
 @@ -90,10 +85,16 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	    -DSQLITE_MAX_ATTACHED=125 \
  	    -DSQLITE_MAX_PAGE_COUNT=4294967294 \
