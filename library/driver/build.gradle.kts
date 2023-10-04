@@ -306,10 +306,7 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             "-DSQLITE_DEFAULT_MEMSTATUS=0",
             "-DSQLITE_DEFAULT_FILE_PERMISSIONS=0666",
             "-DSQLITE_MAX_VARIABLE_NUMBER=250000",
-
-            // On Darwin, this is 0. This was altered to match what
-            // Jvm is being compiled with.
-            "-DSQLITE_MAX_MMAP_SIZE=1099511627776",
+            "-DSQLITE_MAX_MMAP_SIZE=0",
             "-DSQLITE_MAX_LENGTH=2147483647",
             "-DSQLITE_MAX_COLUMN=32767",
             "-DSQLITE_MAX_SQL_LENGTH=1073741824",
@@ -317,12 +314,7 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             "-DSQLITE_MAX_ATTACHED=125",
             "-DSQLITE_MAX_PAGE_COUNT=4294967294",
             "-DSQLITE_DQS=0",
-
-            // This is a default setting on Darwin, but was also
-            // added to the compilation for Jvm as a precautionary
-            // measure. So, it is utilized by all platforms.
             "-DOMIT_LOAD_EXTENSION",
-
             "-DCODEC_TYPE=CODEC_TYPE_CHACHA20",
             "-DSQLITE_ENABLE_EXTFUNC=1",
             "-DSQLITE_ENABLE_REGEXP=1",
