@@ -64,3 +64,9 @@ apiValidation {
         ignoredProjects.add("driver-test")
     }
 }
+
+plugins.apply("base")
+
+tasks.getByName("clean") {
+    rootDir.resolve("build").delete()
+}
