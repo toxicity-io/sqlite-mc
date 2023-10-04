@@ -49,6 +49,7 @@ android-library = { id = "com.android.library", version.ref = "gradle-android" }
 binary-compat = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "gradle-binary-compat" }
 build-config = { id = "com.github.gmazzo.buildconfig", version.ref = "gradle-build-config" }
 cklib = { id = "co.touchlab.cklib", version.ref = "gradle-cklib" }
+kmp-configuration = { id = "io.matthewnelson.kmp.configuration", version.ref = "gradle-kmp-configuration" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "gradle-kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "gradle-kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "gradle-kotlin" }
