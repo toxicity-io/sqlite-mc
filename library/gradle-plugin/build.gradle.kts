@@ -88,8 +88,13 @@ tasks.named<Test>("test") {
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(17))
     })
-    environment("ORG_GRADLE_PROJECT_sqlitemcVersion", project.version)
+    environment(
+        Pair("ORG_GRADLE_PROJECT_sqlitemcVersion", project.version),
+        Pair("ORG_GRADLE_PROJECT_KMP_TARGETS", findProperty("KMP_TARGETS")),
+    )
 }
+
+configureTestOutput()
 
 tasks.named<ValidatePlugins>("validatePlugins") {
     enableStricterValidation.set(true)
