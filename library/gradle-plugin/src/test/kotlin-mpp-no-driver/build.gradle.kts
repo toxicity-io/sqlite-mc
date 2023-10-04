@@ -35,6 +35,6 @@ kotlin {
 
     if (HostManager.hostIsMac) {
         iosX64 { }
-        watchosArm64 { }
+        watchosSimulatorArm64 { }
     }
 }

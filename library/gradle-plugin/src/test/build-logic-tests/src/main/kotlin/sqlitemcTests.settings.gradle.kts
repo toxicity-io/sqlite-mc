@@ -30,7 +30,7 @@ dependencyResolutionManagement {
     }
 
     repositories {
-        maven(url = "file://${rootDir}/../../../../build/localMaven")
+        maven(url = "file://${rootDir}/../../../../../build/localMaven")
         mavenCentral()
         google()
     }

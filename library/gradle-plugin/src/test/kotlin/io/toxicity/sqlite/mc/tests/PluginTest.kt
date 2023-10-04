@@ -41,7 +41,6 @@ class PluginTest {
             .withArguments("dependencies", "--stacktrace")
             .build()
 
-        // TODO: Use injected dialect string
         assertTrue(dependenciesResult.output.contains("app.cash.sqldelight:$SQLITE_DIALECT:$SQLDELIGHT_VERSION"))
     }
 

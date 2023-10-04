@@ -59,7 +59,6 @@ kmpConfiguration {
             extensions.configure<SqlDelightExtension>("sqldelight") {
                 linkSqlite.set(false)
 
-                // TODO: Gradle Plugin (Issue #18)
                 targets.filterIsInstance<KotlinNativeTarget>()
                     .filter { it.konanTarget.family.isAppleFamily }
                     .flatMap { it.binaries }

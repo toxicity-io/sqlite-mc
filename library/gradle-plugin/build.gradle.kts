@@ -15,6 +15,7 @@
  **/
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     kotlin("jvm")
@@ -64,10 +65,18 @@ buildConfig {
 
 tasks.named<Test>("test") {
     dependsOn(
-        ":library:driver:publishAllPublicationsToInstallLocallyRepository",
+        ":library:driver:publishJvmPublicationToInstallLocallyRepository",
+        ":library:driver:publishKotlinMultiplatformPublicationToInstallLocallyRepository",
         ":library:android-unit-test:publishAllPublicationsToInstallLocallyRepository",
         ":library:gradle-plugin:publishAllPublicationsToInstallLocallyRepository"
     )
+    if (HostManager.hostIsMac) {
+        dependsOn(
+            ":library:driver:publishIosX64PublicationToInstallLocallyRepository",
+            ":library:driver:publishWatchosArm64PublicationToInstallLocallyRepository",
+            ":library:driver:publishWatchosSimulatorArm64PublicationToInstallLocallyRepository",
+        )
+    }
 
     useJUnit()
     javaLauncher.set(javaToolchains.launcherFor {
