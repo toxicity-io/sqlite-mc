@@ -20,6 +20,7 @@ plugins {
     kotlin("jvm")
     id("publication")
     id("java-gradle-plugin")
+    id(libs.plugins.build.config.get().pluginId)
 }
 
 java {
@@ -46,6 +47,19 @@ dependencies {
     api(libs.gradle.sql.delight)
     implementation(libs.gradle.kotlin)
     testImplementation(kotlin("test"))
+}
+
+buildConfig {
+    className("Versions")
+    packageName("io.toxicity.sqlite.mc.gradle")
+
+    useKotlinOutput {
+        topLevelConstants = true
+        internalVisibility = true
+    }
+
+    buildConfigField("String", "VERSION", "\"$version\"")
+    buildConfigField("String", "SQLITE_DIALECT", "\"${libs.versions.sql.delight.dialect.get()}\"")
 }
 
 tasks.named<Test>("test") {

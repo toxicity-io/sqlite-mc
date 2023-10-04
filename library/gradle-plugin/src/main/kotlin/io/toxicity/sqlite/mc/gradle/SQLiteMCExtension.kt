@@ -15,7 +15,7 @@
  **/
 package io.toxicity.sqlite.mc.gradle
 
-import app.cash.sqldelight.VERSION
+import app.cash.sqldelight.VERSION as SQLDELIGHT_VERSION
 import app.cash.sqldelight.gradle.SqlDelightDatabase
 import app.cash.sqldelight.gradle.SqlDelightDsl
 import app.cash.sqldelight.gradle.SqlDelightExtension
@@ -46,7 +46,7 @@ abstract class SQLiteMCExtension internal constructor(
 
         @Suppress("RedundantSamConstructor")
         container.whenObjectAdded(Action {
-            it.dialect("app.cash.sqldelight:sqlite-3-38-dialect:${VERSION}")
+            it.dialect("app.cash.sqldelight:${SQLITE_DIALECT}:${SQLDELIGHT_VERSION}")
         })
 
         return container

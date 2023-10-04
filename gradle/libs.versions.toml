@@ -6,6 +6,7 @@ encoding = "2.0.0"
 
 gradle-android = "8.1.2"
 gradle-binary-compat = "0.13.2"
+gradle-build-config = "4.1.2"
 gradle-cklib = "0.2.4"
 gradle-kmp-configuration = "0.1.4"
 gradle-kotlin = "1.9.10"
@@ -15,6 +16,7 @@ kotlinx-coroutines = "1.7.3"
 
 okio = "3.5.0"
 
+sql-delight-dialect = "sqlite-3-38-dialect"
 sql-delight = "2.0.0"
 sql-jdbc-xerial = "3.43.0.0"
 
@@ -45,6 +47,7 @@ sql-jdbc-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "sql-jdbc-x
 [plugins]
 android-library = { id = "com.android.library", version.ref = "gradle-android" }
 binary-compat = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "gradle-binary-compat" }
+build-config = { id = "com.github.gmazzo.buildconfig", version.ref = "gradle-build-config" }
 cklib = { id = "co.touchlab.cklib", version.ref = "gradle-cklib" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "gradle-kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "gradle-kotlin" }

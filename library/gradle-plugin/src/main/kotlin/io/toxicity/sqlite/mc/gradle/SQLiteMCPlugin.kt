@@ -55,8 +55,7 @@ abstract class SQLiteMCPlugin internal constructor(): Plugin<Project> {
                     .apiConfigurationName
             )
             .dependencies
-            // TODO: Inject Version
-            .add(dependencies.create("io.toxicity.sqlite-mc:driver:2.0.0-1.6.4-0-SNAPSHOT"))
+            .add(dependencies.create("io.toxicity.sqlite-mc:driver:$VERSION"))
 
         // TODO: Add android-unit-test dependency to android source sets (if available)
 
