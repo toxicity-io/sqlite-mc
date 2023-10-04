@@ -16,25 +16,30 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.multiplatform) apply(false)
     alias(libs.plugins.sqlitemc)
+    alias(libs.plugins.kmp.configuration)
 }
 
-sqliteMC {
-    addDriverAndLink.set(false)
+kmpConfiguration {
+    configure {
+        jvm()
 
-    databases {
-        create("Database") {
-            packageName.set("com.sample")
+        if (HostManager.hostIsMac) {
+            iosX64()
+            watchosSimulatorArm64()
         }
-    }
-}
 
-kotlin {
-    jvm { }
+        kotlin {
+            sqliteMC {
+                addDriverAndLink.set(false)
 
-    if (HostManager.hostIsMac) {
-        iosX64 { }
-        watchosSimulatorArm64 { }
+                databases {
+                    create("Database") {
+                        packageName.set("com.sample")
+                    }
+                }
+            }
+        }
     }
 }

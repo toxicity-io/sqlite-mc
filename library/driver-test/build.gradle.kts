@@ -25,8 +25,10 @@ kmpConfiguration {
 
         androidLibrary(namespace = "io.toxicity.sqlite.mc.driver.test") {
             sourceSetTest {
-                dependencies {
-                    implementation(project(":library:android-unit-test"))
+                findProject(":library:android-unit-test")?.let { androidUnitTest ->
+                    dependencies {
+                        implementation(androidUnitTest)
+                    }
                 }
             }
             sourceSetTestInstrumented {

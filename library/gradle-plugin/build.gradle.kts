@@ -64,26 +64,37 @@ buildConfig {
 }
 
 tasks.named<Test>("test") {
+    project(":library:driver")
+        .tasks
+        .names
+        .forEach {
+            when (it) {
+                "publishJvmPublicationToInstallLocallyRepository",
+                "publishKotlinMultiplatformPublicationToInstallLocallyRepository",
+                "publishIosX64PublicationToInstallLocallyRepository",
+                "publishWatchosArm64PublicationToInstallLocallyRepository",
+                "publishWatchosSimulatorArm64PublicationToInstallLocallyRepository",
+                -> dependsOn(":library:driver:$it")
+                else -> {}
+            }
+        }
+
     dependsOn(
-        ":library:driver:publishJvmPublicationToInstallLocallyRepository",
-        ":library:driver:publishKotlinMultiplatformPublicationToInstallLocallyRepository",
         ":library:android-unit-test:publishAllPublicationsToInstallLocallyRepository",
-        ":library:gradle-plugin:publishAllPublicationsToInstallLocallyRepository"
+        ":library:gradle-plugin:publishAllPublicationsToInstallLocallyRepository",
     )
-    if (HostManager.hostIsMac) {
-        dependsOn(
-            ":library:driver:publishIosX64PublicationToInstallLocallyRepository",
-            ":library:driver:publishWatchosArm64PublicationToInstallLocallyRepository",
-            ":library:driver:publishWatchosSimulatorArm64PublicationToInstallLocallyRepository",
-        )
-    }
 
     useJUnit()
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(17))
     })
-    environment("ORG_GRADLE_PROJECT_sqlitemcVersion", project.version)
+    environment(
+        Pair("ORG_GRADLE_PROJECT_sqlitemcVersion", project.version),
+        Pair("ORG_GRADLE_PROJECT_KMP_TARGETS", findProperty("KMP_TARGETS")),
+    )
 }
+
+configureTestOutput()
 
 tasks.named<ValidatePlugins>("validatePlugins") {
     enableStricterValidation.set(true)
