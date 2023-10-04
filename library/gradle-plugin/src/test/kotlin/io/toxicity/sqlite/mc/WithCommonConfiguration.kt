@@ -13,31 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-rootProject.name = "sqlite-mc"
+package io.toxicity.sqlite.mc
 
-pluginManagement {
-    repositories {
-        mavenCentral()
-        google()
-        gradlePluginPortal()
-    }
-}
+import org.gradle.testkit.runner.GradleRunner
+import java.io.File
 
-includeBuild("build-logic")
-
-@Suppress("PrivatePropertyName")
-private val CHECK_PUBLICATION: String? by settings
-
-if (CHECK_PUBLICATION != null) {
-    include(":tools:check-publication")
-} else {
-// :library
-    listOf(
-        "android-unit-test",
-        "driver",
-        "driver-test",
-        "gradle-plugin",
-    ).forEach { core ->
-        include(":library:$core")
-    }
+internal fun GradleRunner.withCommonConfiguration(projectRoot: File): GradleRunner {
+    File(projectRoot, "gradle.properties").writeText(
+        """
+      |org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g
+      |android.useAndroidX=true
+      |
+    """.trimMargin(),
+    )
+    return withProjectDir(projectRoot)
 }

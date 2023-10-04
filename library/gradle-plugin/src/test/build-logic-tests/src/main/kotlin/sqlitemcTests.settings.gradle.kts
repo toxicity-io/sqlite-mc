@@ -13,31 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-rootProject.name = "sqlite-mc"
-
 pluginManagement {
     repositories {
+        maven(url = "file://${settingsDir.absolutePath}/../../../../../build/localMaven")
         mavenCentral()
         google()
-        gradlePluginPortal()
     }
 }
 
-includeBuild("build-logic")
+dependencyResolutionManagement {
+    versionCatalogs.register("libs") {
+        from(files("../../../../../gradle/libs.versions.toml"))
 
-@Suppress("PrivatePropertyName")
-private val CHECK_PUBLICATION: String? by settings
+        val sqlitemcVersion: String by settings
+        plugin("sqlitemc", "io.toxicity.sqlite-mc").version(sqlitemcVersion)
+    }
 
-if (CHECK_PUBLICATION != null) {
-    include(":tools:check-publication")
-} else {
-// :library
-    listOf(
-        "android-unit-test",
-        "driver",
-        "driver-test",
-        "gradle-plugin",
-    ).forEach { core ->
-        include(":library:$core")
+    repositories {
+        maven(url = "file://${rootDir}/../../../../../build/localMaven")
+        mavenCentral()
+        google()
     }
 }
