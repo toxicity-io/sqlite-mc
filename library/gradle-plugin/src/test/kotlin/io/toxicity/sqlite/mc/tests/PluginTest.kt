@@ -15,6 +15,8 @@
  **/
 package io.toxicity.sqlite.mc.tests
 
+import app.cash.sqldelight.VERSION as SQLDELIGHT_VERSION
+import io.toxicity.sqlite.mc.gradle.SQLITE_DIALECT
 import io.toxicity.sqlite.mc.withCommonConfiguration
 import org.gradle.testkit.runner.GradleRunner
 import java.io.File
@@ -40,7 +42,7 @@ class PluginTest {
             .build()
 
         // TODO: Use injected dialect string
-        assertTrue(dependenciesResult.output.contains("app.cash.sqldelight:sqlite-3-38-dialect:"))
+        assertTrue(dependenciesResult.output.contains("app.cash.sqldelight:$SQLITE_DIALECT:$SQLDELIGHT_VERSION"))
     }
 
     @Test
