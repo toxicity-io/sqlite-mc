@@ -42,6 +42,8 @@ public class FactoryConfig private constructor(
     public val schema: SqlSchema<QueryResult.Value<Unit>>,
     @JvmField
     public val filesystemConfig: FilesystemConfig,
+    @JvmField
+    public val pragmaConfig: PragmaConfig,
 
     @JvmSynthetic
     internal val dispatcher: CoroutineDispatcher,
@@ -82,6 +84,7 @@ public class FactoryConfig private constructor(
         }
 
         private var filesystemConfig: FilesystemConfig? = null
+        private var pragmaConfig: PragmaConfig? = null
 
         // internal for testing only
         @JvmField
@@ -114,8 +117,35 @@ public class FactoryConfig private constructor(
         public fun afterVersion(
             of: Long,
             block: (SqlDriver) -> Unit,
-        ) {
+        ): Builder {
             afterVersions.add(AfterVersion(afterVersion = of, block))
+            return this
+        }
+
+        /**
+         * Create a [PragmaConfig], or updates the currently set
+         * [pragmaConfig].
+         * */
+        @MCConfigDsl
+        public fun pragmas(
+            block: PragmaConfig.Builder.() -> Unit,
+        ): Builder {
+            pragmaConfig = PragmaConfig.new(pragmaConfig, block)
+            return this
+        }
+
+        /**
+         * Set an already existing [PragmaConfig], or remove the currently
+         * applied config by passing null.
+         *
+         * @param [other] inherit from an existing [PragmaConfig]
+         * */
+        @MCConfigDsl
+        public fun pragmas(
+            other: PragmaConfig?,
+        ): Builder {
+            pragmaConfig = other
+            return this
         }
 
         /**
@@ -131,8 +161,9 @@ public class FactoryConfig private constructor(
         public fun filesystem(
             databasesDir: DatabasesDir,
             block: FilesystemConfig.Builder.() -> Unit = {},
-        ) {
+        ): Builder {
             filesystemConfig = FilesystemConfig.new(databasesDir, block)
+            return this
         }
 
         /**
@@ -150,8 +181,9 @@ public class FactoryConfig private constructor(
         public fun filesystem(
             other: FilesystemConfig,
             block: FilesystemConfig.Builder.() -> Unit = {},
-        ) {
+        ): Builder {
             filesystemConfig = other.new(block)
+            return this
         }
 
         @JvmSynthetic
@@ -159,6 +191,7 @@ public class FactoryConfig private constructor(
             dbName = dbName,
             schema = schema,
             filesystemConfig = filesystemConfig ?: FilesystemConfig.Default,
+            pragmaConfig = pragmaConfig ?: PragmaConfig.Default,
             dispatcher = dispatcher.let { dispatcher ->
                 if (dispatcher == Dispatchers.IO) {
                     @OptIn(ExperimentalCoroutinesApi::class)

@@ -80,6 +80,21 @@ database encryption.
           // do something
       }
 
+      // Optional: Add PRAGMA statements to be executed
+      // upon each connection opening.
+      //
+      // See >> https://www.sqlite.org/pragma.html
+      pragmas {
+          // both ephemeral and filesystem connections
+          put("busy_timeout", 3_000.toString())
+  
+          // ephemeral connections only
+          ephemeral.put("secure_delete", "false")
+  
+          // filesystem connections only
+          filesystem.put("secure_delete", "fast")
+      }
+
       // Can omit to simply go with the default DatabasesDir and
       // EncryptionConfig (ChaCha20)
       filesystem(databasesDir) {        
@@ -200,16 +215,22 @@ database encryption.
       }
   }
 
-  val sharedConfig = FilesystemConfig.new(databasesDir) {
+  val sharedPragmas = PragmaConfig.new(other = null) {
+      put("busy_timeout", 5_000.toString())
+  }
+
+  val sharedFilesystem = FilesystemConfig.new(databasesDir) {
       encryptionMigrations(migrationConfig)
       encryption(customChaCha20)
   }
 
   val factory1 = SQLiteMCDriver.Factory("first.db", DatabaseFirst.Schema) {
-      filesystem(sharedConfig)
+      pragmas(sharedPragmas)
+      filesystem(sharedFilesystem)
   }
   val factory2 = SQLiteMCDriver.Factory("second.db", DatabaseSecond.Schema) {
-      filesystem(sharedConfig)
+      pragmas(sharedPragmas)
+      filesystem(sharedFilesystem)
   }
   ```
 

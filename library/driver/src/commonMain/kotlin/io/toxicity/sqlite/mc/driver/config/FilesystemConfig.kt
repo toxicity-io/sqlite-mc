@@ -96,11 +96,15 @@ public class FilesystemConfig private constructor(
          * [Builder.encryptionMigrationConfig].
          * */
         @MCConfigDsl
-        public fun encryptionMigrations(block: EncryptionMigrationConfig.Builder.() -> Unit) {
+        public fun encryptionMigrations(
+            block: EncryptionMigrationConfig.Builder.() -> Unit
+        ): Builder {
             encryptionMigrationConfig = EncryptionMigrationConfig
                 .Builder(null)
                 .apply(block)
                 .build()
+
+            return this
         }
 
         /**
@@ -117,8 +121,11 @@ public class FilesystemConfig private constructor(
          *   from the current [FilesystemConfig] by passing null.
          * */
         @MCConfigDsl
-        public fun encryptionMigrations(other: EncryptionMigrationConfig?) {
+        public fun encryptionMigrations(
+            other: EncryptionMigrationConfig?
+        ): Builder {
             encryptionMigrationConfig = other
+            return this
         }
 
         /**
@@ -128,8 +135,11 @@ public class FilesystemConfig private constructor(
          * the database file will not use encryption.
          * */
         @MCConfigDsl
-        public fun encryption(block: EncryptionConfig.Builder.() -> Unit) {
+        public fun encryption(
+            block: EncryptionConfig.Builder.() -> Unit
+        ): Builder {
             encryptionConfig = EncryptionConfig.newOrNull(null, block)
+            return this
         }
 
         /**
@@ -140,8 +150,11 @@ public class FilesystemConfig private constructor(
          * the database file will not use encryption.
          * */
         @MCConfigDsl
-        public fun encryption(other: EncryptionConfig?) {
+        public fun encryption(
+            other: EncryptionConfig?
+        ): Builder {
             encryptionConfig = other
+            return this
         }
 
         @JvmSynthetic

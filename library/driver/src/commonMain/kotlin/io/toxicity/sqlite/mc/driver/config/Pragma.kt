@@ -220,14 +220,14 @@ internal fun Pragmas.toMCSQLStatements(): List<String> {
         if (isRekey) {
             // Must be executed before rekey statements
             // to ensure the database is decrypted.
-            add("SELECT 1 FROM sqlite_schema;")
+            add("SELECT 1 FROM sqlite_schema")
 
             // Cannot rekey when db is in journal_mode
             // WAL, so always set to the default so that
             // any properties passed with the setting
             // will reset it to the desired value after
             // rekeying.
-            add("PRAGMA journal_mode = DELETE;")
+            add("PRAGMA journal_mode=DELETE")
         }
 
         for (mcPragma in Pragma.MC.ALL) {
@@ -255,9 +255,9 @@ internal fun Pragmas.toMCSQLStatements(): List<String> {
                 is Pragma.MC.KEY,
                 is Pragma.MC.RE_KEY -> {
                     if (isRekey) {
-                        "PRAGMA ${Pragma.MC.KEY.name} = $value;".let { rekeyNonTransient.add(it) }
+                        "PRAGMA ${Pragma.MC.KEY.name} = $value".let { rekeyNonTransient.add(it) }
                     }
-                    "PRAGMA ${mcPragma.name} = $value;"
+                    "PRAGMA ${mcPragma.name} = $value"
                 }
                 else -> {
                     val arg3 = value.toIntOrNull()
