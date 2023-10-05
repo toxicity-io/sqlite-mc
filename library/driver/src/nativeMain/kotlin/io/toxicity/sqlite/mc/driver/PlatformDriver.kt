@@ -299,15 +299,19 @@ private inline fun MutableMap<String, String>.pageSize(): Int? {
 @Suppress("NOTHING_TO_INLINE")
 private inline fun MutableMap<String, String>.foreignKeys(): Boolean {
     return remove("foreign_keys")?.let { value ->
-        // can be true/false, or 1/0
-        value.toBooleanStrictOrNull() ?: value.toIntOrNull()?.let { it == 1 }
+        // can be true/false, 1/0, or ON/OFF
+        value.toBooleanStrictOrNull()
+            ?: value.toIntOrNull()?.let { it == 1 }
+            ?: value.equals("ON", ignoreCase = true)
     } ?: false
 }
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun MutableMap<String, String>.recursiveTriggers(): Boolean {
     return remove("recursive_triggers")?.let { value ->
-        // can be true/false, or 1/0
-        value.toBooleanStrictOrNull() ?: value.toIntOrNull()?.let { it == 1 }
+        // can be true/false, 1/0, or ON/OFF
+        value.toBooleanStrictOrNull()
+            ?: value.toIntOrNull()?.let { it == 1 }
+            ?: value.equals("ON", ignoreCase = true)
     } ?: false
 }
