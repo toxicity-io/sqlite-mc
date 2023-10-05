@@ -126,7 +126,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     url = url,
                     properties = properties,
                     schema = schema,
-                    migrateEmptySchema = false, // TODO: Move to FactoryConfig.platformOptions
+                    migrateEmptySchema = platformConfig.migrateEmptySchema,
                     callbacks = afterVersions,
                 )
             } catch (t: Throwable) {
@@ -157,7 +157,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     url = url,
                     properties = properties,
                     schema = schema,
-                    migrateEmptySchema = false, // TODO: Move to FactoryConfig.platformOptions
+                    migrateEmptySchema = platformConfig.migrateEmptySchema,
                     callbacks = afterVersions,
                 )
             } catch (t: Throwable) {

@@ -68,9 +68,10 @@ public final class io/toxicity/sqlite/mc/driver/config/DatabasesDir {
 public final class io/toxicity/sqlite/mc/driver/config/FactoryConfig {
 	public final field dbName Ljava/lang/String;
 	public final field filesystemConfig Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;
+	public final field platformConfig Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;
 	public final field pragmaConfig Lio/toxicity/sqlite/mc/driver/config/PragmaConfig;
 	public final field schema Lapp/cash/sqldelight/db/SqlSchema;
-	public synthetic fun <init> (Ljava/lang/String;Lapp/cash/sqldelight/db/SqlSchema;Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;Lio/toxicity/sqlite/mc/driver/config/PragmaConfig;Lkotlinx/coroutines/CoroutineDispatcher;[Lapp/cash/sqldelight/db/AfterVersion;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Lapp/cash/sqldelight/db/SqlSchema;Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;Lio/toxicity/sqlite/mc/driver/config/PragmaConfig;Lkotlinx/coroutines/CoroutineDispatcher;[Lapp/cash/sqldelight/db/AfterVersion;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class io/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder {
@@ -86,6 +87,8 @@ public final class io/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder {
 	public final fun filesystem (Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;
 	public static synthetic fun filesystem$default (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;
 	public static synthetic fun filesystem$default (Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;
+	public final fun platform (Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;)Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;
+	public final fun platform (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;
 	public final fun pragmas (Lio/toxicity/sqlite/mc/driver/config/PragmaConfig;)Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;
 	public final fun pragmas (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/FactoryConfig$Builder;
 }
@@ -114,6 +117,26 @@ public final class io/toxicity/sqlite/mc/driver/config/FilesystemConfig$Builder 
 
 public final class io/toxicity/sqlite/mc/driver/config/FilesystemConfig$Companion {
 	public final fun new (Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/PlatformConfig {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/PlatformConfig$Companion;
+	public static final field Default Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;
+	public final field migrateEmptySchema Z
+	public synthetic fun <init> (ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public static final fun new (Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;
+	public final fun new (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/PlatformConfig$Builder {
+	public field migrateEmptySchema Z
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/PlatformConfig$Companion {
+	public final fun new (Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;
 }
 
 public abstract class io/toxicity/sqlite/mc/driver/config/Pragma {
