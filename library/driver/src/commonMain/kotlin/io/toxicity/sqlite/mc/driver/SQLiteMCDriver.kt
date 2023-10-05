@@ -19,9 +19,10 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlSchema
 import io.toxicity.sqlite.mc.driver.config.*
 import io.toxicity.sqlite.mc.driver.config.encryption.*
-import io.toxicity.sqlite.mc.driver.config.pragma.mutablePragmas
+import io.toxicity.sqlite.mc.driver.config.mutablePragmas
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlin.concurrent.Volatile
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -60,7 +61,7 @@ public class SQLiteMCDriver private constructor(
         public val config: FactoryConfig,
     ) {
 
-        // TODO: Volatile
+        @Volatile
         private var hasOpened = false
 
         /**

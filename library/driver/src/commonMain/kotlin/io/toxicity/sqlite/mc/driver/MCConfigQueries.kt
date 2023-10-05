@@ -20,7 +20,7 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlCursor
 import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.core.Decoder.Companion.decodeToByteArray
-import io.toxicity.sqlite.mc.driver.config.pragma.Pragma
+import io.toxicity.sqlite.mc.driver.config.Pragma
 import io.toxicity.sqlite.mc.driver.config.encryption.Cipher
 import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
 import io.toxicity.sqlite.mc.driver.internal.ext.escapeSQL

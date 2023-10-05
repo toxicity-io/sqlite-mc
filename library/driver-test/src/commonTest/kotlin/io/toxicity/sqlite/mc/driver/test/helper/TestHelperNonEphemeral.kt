@@ -20,6 +20,7 @@ import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
+import io.toxicity.sqlite.mc.driver.config.PragmaConfig
 import io.toxicity.sqlite.mc.driver.config.encryption.Key
 import io.toxicity.sqlite.mc.driver.test.TestDatabase
 import kotlinx.coroutines.test.TestResult
@@ -38,7 +39,7 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
 
     protected fun runDriverTest(
         key: Key = this.keyPassphrase,
-        // pass null to use in memory db
+        pragmas: (PragmaConfig.Builder.() -> Unit) = {},
         filesystem: (FilesystemConfig.Builder.() -> Unit) = {},
         testLogger: ((String) -> Unit)? = this.testLogger,
         timeout: Duration = 10.seconds,
@@ -55,6 +56,7 @@ abstract class TestHelperNonEphemeral: TestHelperBase() {
                 logger = testLogger
                 redactLogs = false
 
+                pragmas(pragmas)
                 filesystem(databasesDir, filesystem)
             }
         )

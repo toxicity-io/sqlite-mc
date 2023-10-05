@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
+
 package io.toxicity.sqlite.mc.driver
 
 import app.cash.sqldelight.Query
@@ -24,9 +26,9 @@ import app.cash.sqldelight.logs.LogSqliteDriver
 import co.touchlab.sqliter.*
 import co.touchlab.sqliter.interop.Logger
 import io.toxicity.sqlite.mc.driver.config.*
-import io.toxicity.sqlite.mc.driver.config.pragma.MutablePragmas
-import io.toxicity.sqlite.mc.driver.config.pragma.Pragma
-import io.toxicity.sqlite.mc.driver.config.pragma.toMCSQLStatements
+import io.toxicity.sqlite.mc.driver.config.MutablePragmas
+import io.toxicity.sqlite.mc.driver.config.Pragma
+import io.toxicity.sqlite.mc.driver.config.toMCSQLStatements
 
 public actual sealed class PlatformDriver actual constructor(private val args: Args): SqlDriver {
 
@@ -80,6 +82,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
 
         @Throws(IllegalArgumentException::class, IllegalStateException::class)
         internal actual fun FactoryConfig.create(keyPragma: MutablePragmas, rekeyPragma: MutablePragmas?): Args {
+            val pragmas = pragmaConfig.filesystem.toMutableMap()
 
             val config = DatabaseConfiguration(
                 name = dbName,
@@ -87,31 +90,27 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 create = schema.create(),
                 upgrade = schema.upgrade(afterVersions),
                 inMemory = false,
-                journalMode = JournalMode.DELETE,
-                extendedConfig = DatabaseConfiguration.Extended( // TODO: Move to FactoryConfig.platformOptions
-                    foreignKeyConstraints = false,
-                    busyTimeout = 5_000,
-                    pageSize = null,
+                journalMode = pragmas.journalMode(),
+                extendedConfig = DatabaseConfiguration.Extended(
+                    foreignKeyConstraints = pragmas.foreignKeys(),
+                    busyTimeout = pragmas.busyTimeout(),
+                    pageSize = pragmas.pageSize(),
                     synchronousFlag = null,
                     basePath = filesystemConfig.databasesDir.path,
-                    recursiveTriggers = false,
+                    recursiveTriggers = pragmas.recursiveTriggers(),
                     lookasideSlotSize = -1,
                     lookasideSlotCount = -1,
                 ),
                 loggingConfig = NO_LOG,
                 lifecycleConfig = DatabaseConfiguration.Lifecycle(
                     onCreateConnection = { conn ->
-//                        logger?.invoke("onCreateConnection - START")
-
                         keyPragma.toMCSQLStatements().forEach { statement ->
-//                            logger?.invoke("EXECUTE\n $statement")
                             conn.rawExecSql(statement)
                         }
 
                         if (!rekeyPragma.isNullOrEmpty()) {
 
                             rekeyPragma.toMCSQLStatements().forEach { statement ->
-//                                logger?.invoke("EXECUTE\n $statement")
                                 conn.rawExecSql(statement)
                             }
 
@@ -127,19 +126,20 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                             rekeyPragma.clear()
                         }
 
-//                        logger?.invoke("EXECUTE\n SELECT 1 FROM sqlite_schema;")
-                        conn.rawExecSql("SELECT 1 FROM sqlite_schema;")
+                        conn.rawExecSql("SELECT 1 FROM sqlite_schema")
 
-//                        logger?.invoke("onCreateConnection - FINISH")
+                        pragmas.forEach { entry ->
+                            conn.rawExecSql("PRAGMA ${entry.key} = ${entry.value}")
+                        }
                     },
-                    onCloseConnection = {  },
+                    onCloseConnection = {},
                 ),
             )
 
             val manager: DatabaseManager = try {
                 val m = createDatabaseManager(config)
                 // Try opening first connection to ensure the key
-                // is correct and/or rekey works.
+                // is correct and/or rekey worked.
                 m.withConnection {}
                 m
             } catch (t: Throwable) {
@@ -156,6 +156,8 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
 
         @Throws(IllegalStateException::class)
         internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
+            val pragmas = pragmaConfig.ephemeral.toMutableMap()
+
             val config = DatabaseConfiguration(
                 name = when (opt) {
                     EphemeralOpt.IN_MEMORY -> null
@@ -170,24 +172,28 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     EphemeralOpt.NAMED -> true
                     EphemeralOpt.TEMPORARY -> false
                 },
-                journalMode = JournalMode.DELETE,
-                extendedConfig = DatabaseConfiguration.Extended( // TODO: Move to FactoryConfig.platformOptions
-                    foreignKeyConstraints = false,
-                    busyTimeout = 5_000,
-                    pageSize = null,
+                journalMode = pragmas.journalMode(),
+                extendedConfig = DatabaseConfiguration.Extended(
+                    foreignKeyConstraints = pragmas.foreignKeys(),
+                    busyTimeout = pragmas.busyTimeout(),
+                    pageSize = pragmas.pageSize(),
                     synchronousFlag = null,
                     basePath = when (opt) {
                         EphemeralOpt.IN_MEMORY,
                         EphemeralOpt.NAMED -> null
                         EphemeralOpt.TEMPORARY -> ""
                     },
-                    recursiveTriggers = false,
+                    recursiveTriggers = pragmas.recursiveTriggers(),
                     lookasideSlotSize = -1,
                     lookasideSlotCount = -1,
                 ),
                 loggingConfig = NO_LOG,
                 lifecycleConfig = DatabaseConfiguration.Lifecycle(
-                    onCreateConnection = {},
+                    onCreateConnection = { conn ->
+                        pragmas.forEach { entry ->
+                            conn.withStatement("PRAGMA ${entry.key} = ${entry.value}") { execute() }
+                        }
+                    },
                     onCloseConnection = {},
                 ),
             )
@@ -218,6 +224,18 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 },
                 maxReaderConnections = 1,
             )
+
+            try {
+                // Establish initial connection to ensure any pragma statements passed
+                // did not cause issue. NativeSqliteDriver will hold onto this connection
+                // until driver.close has been invoked.
+                driver.executeQuery(null, "PRAGMA user_version", mapper = { cursor ->
+                    QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null)
+                }, 0, null).value
+            } catch (t: Throwable) {
+                if (t is IllegalStateException) throw t
+                throw IllegalStateException("Failed to create a connection", t)
+            }
 
             return Args(null, driver, logger?.let { LogSqliteDriver(driver, it) })
         }
@@ -261,4 +279,35 @@ private fun SqlSchema<QueryResult.Value<Unit>>.upgrade(
     wrapConnection(connection) {
         migrate(it, oldVersion.toLong(), newVersion.toLong(), callbacks = afterVersions)
     }
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun MutableMap<String, String>.journalMode(): JournalMode {
+    return remove("journal_mode")?.let { JournalMode.forString(it) } ?: JournalMode.DELETE
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun MutableMap<String, String>.busyTimeout(): Int {
+    return remove("busy_timeout")?.toIntOrNull() ?: 3_000
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun MutableMap<String, String>.pageSize(): Int? {
+    return remove("page_size")?.toIntOrNull()
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun MutableMap<String, String>.foreignKeys(): Boolean {
+    return remove("foreign_keys")?.let { value ->
+        // can be true/false, or 1/0
+        value.toBooleanStrictOrNull() ?: value.toIntOrNull()?.let { it == 1 }
+    } ?: false
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun MutableMap<String, String>.recursiveTriggers(): Boolean {
+    return remove("recursive_triggers")?.let { value ->
+        // can be true/false, or 1/0
+        value.toBooleanStrictOrNull() ?: value.toIntOrNull()?.let { it == 1 }
+    } ?: false
 }

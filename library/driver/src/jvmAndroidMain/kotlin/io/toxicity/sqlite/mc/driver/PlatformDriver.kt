@@ -26,7 +26,7 @@ import app.cash.sqldelight.driver.jdbc.JdbcDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import app.cash.sqldelight.logs.LogSqliteDriver
 import io.toxicity.sqlite.mc.driver.config.*
-import io.toxicity.sqlite.mc.driver.config.pragma.MutablePragmas
+import io.toxicity.sqlite.mc.driver.config.MutablePragmas
 import io.toxicity.sqlite.mc.driver.internal.JDBCMCProperties
 import io.toxicity.sqlite.mc.driver.internal.JDBCMC
 import java.io.File
@@ -118,7 +118,8 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
 
             val url = JDBCMC.PREFIX + filesystemConfig.databasesDir.resolve(dbName)
             val properties = JDBCMCProperties.of(keyPragma = keyPragma, rekeyPragma = rekeyPragma)
-            // TODO: Add config properties (and remove any "password" pragma that may have been added)
+            properties.putAll(pragmaConfig.filesystem)
+            properties.remove("password")
 
             val driver = try {
                 JdbcSqliteDriver(
@@ -149,7 +150,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 EphemeralOpt.NAMED -> "file:$dbName?mode=memory&cache=shared"
                 EphemeralOpt.TEMPORARY -> ""
             }.let { JDBCMCProperties.of(it) }
-            // TODO: Add config properties (and remove any "password" pragma that may have been added)
+            properties.putAll(pragmaConfig.ephemeral)
 
             val driver = try {
                 JdbcSqliteDriver(

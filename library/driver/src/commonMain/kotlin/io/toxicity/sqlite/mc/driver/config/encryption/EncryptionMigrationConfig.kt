@@ -209,19 +209,25 @@ public class EncryptionMigrationConfig private constructor(
          *     }
          * */
         @MCConfigDsl
-        public fun migrationFrom(block: EncryptionMigration.Builder.() -> Unit) {
+        public fun migrationFrom(
+            block: EncryptionMigration.Builder.() -> Unit
+        ): Builder {
             val migration = EncryptionMigration.Builder().apply(block).buildMigration()
             if (migration != null) {
                 migrations.add(migration)
             }
+            return this
         }
 
         /**
          * Add an already configured [EncryptionMigration]
          * */
         @MCConfigDsl
-        public fun migrationFrom(other: EncryptionMigration) {
+        public fun migrationFrom(
+            other: EncryptionMigration
+        ): Builder {
             migrations.add(other)
+            return this
         }
 
         init {

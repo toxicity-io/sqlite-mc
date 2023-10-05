@@ -20,8 +20,8 @@ import io.toxicity.sqlite.mc.driver.MCConfigDsl
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.internal.ext.appendIndent
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
-import io.toxicity.sqlite.mc.driver.config.pragma.Pragma
-import io.toxicity.sqlite.mc.driver.config.pragma.MutablePragmas
+import io.toxicity.sqlite.mc.driver.config.Pragma
+import io.toxicity.sqlite.mc.driver.config.MutablePragmas
 import io.toxicity.sqlite.mc.driver.internal.ext.appendColon
 import kotlin.jvm.*
 
@@ -211,8 +211,9 @@ public class EncryptionConfig private constructor(
         @MCConfigDsl
         public fun chaCha20(
             block: MCChaCha20Config.Options.() -> Unit,
-        ) {
+        ): Builder {
             MCChaCha20Config.Options { cipherConfig = it }.apply(block)
+            return this
         }
 
         @MCConfigDsl
@@ -220,15 +221,17 @@ public class EncryptionConfig private constructor(
         public fun chaCha20(
             other: MCChaCha20Config,
             block: MCChaCha20Config.Builder.() -> Unit = {},
-        ) {
+        ): Builder {
             cipherConfig = MCChaCha20Config.Builder(other).apply(block).build()
+            return this
         }
 
         @MCConfigDsl
         public fun rc4(
             block: MCRC4Config.Options.() -> Unit,
-        ) {
+        ): Builder {
             MCRC4Config.Options { cipherConfig = it }.apply(block)
+            return this
         }
 
         @MCConfigDsl
@@ -236,15 +239,17 @@ public class EncryptionConfig private constructor(
         public fun rc4(
             other: MCRC4Config,
             block: MCRC4Config.Builder.() -> Unit = {},
-        ) {
+        ): Builder {
             cipherConfig = MCRC4Config.Builder(other).apply(block).build()
+            return this
         }
 
         @MCConfigDsl
         public fun sqlCipher(
             block: MCSqlCipherConfig.Options.() -> Unit
-        ) {
+        ): Builder {
             MCSqlCipherConfig.Options { cipherConfig = it }.apply(block)
+            return this
         }
 
         @MCConfigDsl
@@ -252,15 +257,17 @@ public class EncryptionConfig private constructor(
         public fun sqlCipher(
             other: MCSqlCipherConfig,
             block: MCSqlCipherConfig.Builder.() -> Unit = {},
-        ) {
+        ): Builder {
             cipherConfig = MCSqlCipherConfig.Builder(other).apply(block).build()
+            return this
         }
 
         @MCConfigDsl
         public fun wxAES128(
             block: MCWxAES128Config.Options.() -> Unit,
-        ) {
+        ): Builder {
             MCWxAES128Config.Options { cipherConfig = it }.apply(block)
+            return this
         }
 
         @MCConfigDsl
@@ -268,15 +275,17 @@ public class EncryptionConfig private constructor(
         public fun wxAES128(
             other: MCWxAES128Config,
             block: MCWxAES128Config.Builder.() -> Unit = {},
-        ) {
+        ): Builder {
             cipherConfig = MCWxAES128Config.Builder(other).apply(block).build()
+            return this
         }
 
         @MCConfigDsl
         public fun wxAES256(
             block: MCWxAES256Config.Options.() -> Unit
-        ) {
+        ): Builder {
             MCWxAES256Config.Options { cipherConfig = it }.apply(block)
+            return this
         }
 
         @MCConfigDsl
@@ -284,8 +293,9 @@ public class EncryptionConfig private constructor(
         public fun wxAES256(
             other: MCWxAES256Config,
             block: MCWxAES256Config.Builder.() -> Unit = {},
-        ) {
+        ): Builder {
             cipherConfig = MCWxAES256Config.Builder(other).apply(block).build()
+            return this
         }
 
         @JvmSynthetic
