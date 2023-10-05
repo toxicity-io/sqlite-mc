@@ -1,6 +1,6 @@
-From 7000cec176ebb84b79e33f0cc7235a278f222e19 Mon Sep 17 00:00:00 2001
+From 35e40ea380592f95e7cd230b65bab20c5a9cd685 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 4 Oct 2023 07:59:56 -0400
+Date: Thu, 5 Oct 2023 15:28:51 -0400
 Subject: [PATCH 11/11] Replace getentropy with SecRandomCopyBytes
 
 ---
@@ -11,7 +11,7 @@ Subject: [PATCH 11/11] Replace getentropy with SecRandomCopyBytes
  create mode 100755 sec_random_copy_bytes.sh
 
 diff --git a/Makefile b/Makefile
-index bdb31d7..e11f983 100644
+index 5bf51b4..e126f9d 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -39,6 +39,7 @@ $(SQLITE_UNPACKED): $(SQLITE_ARCHIVE)

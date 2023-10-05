@@ -285,8 +285,7 @@ Versioning follows the following pattern of `SQLDelight` - `SQLite3MultipleCiphe
 `SQLITE_MAX_FUNCTION_ARG=127`  
 `SQLITE_MAX_ATTACHED=125`  
 `SQLITE_MAX_PAGE_COUNT=4294967294`  
-`SQLITE_DQS=0`  
-`OMIT_LOAD_EXTENSION`  
+`SQLITE_DQS=0`   
 `CODEC_TYPE=CODEC_TYPE_CHACHA20`  
 `SQLITE_ENABLE_EXTFUNC=1`  
 `SQLITE_ENABLE_REGEXP=1`  
@@ -300,6 +299,7 @@ Versioning follows the following pattern of `SQLDelight` - `SQLite3MultipleCiphe
 **Native:**
 
 `SQLITE_THREADSAFE=2`  
+`SQLITE_OMIT_LOAD_EXTENSION`
 
 <details>
     <summary>Reason</summary>
@@ -312,7 +312,13 @@ SQLDelight's NativeSqliteDriver utilizes thread pools
 and nerfs any benefit that Serialized would offer, so.
 
 This *might* change in the future if migrating away from
-SQLDelight's NativeSqliteDriver and SQLiter
+SQLDelight's NativeSqliteDriver and SQLiter.
+
+Omission of the load extension code is only able to be
+set for Native, as Jvm requires the code to remain in
+order to link with the JNI interface. Extension loading
+is disabled by default for Jvm, but the C code must stay
+in order to mitigate modifying the Java codebase.
 ```
 
 </details>
@@ -320,7 +326,7 @@ SQLDelight's NativeSqliteDriver and SQLiter
 **Darwin:**
 
 `SQLITE_ENABLE_API_ARMOR`  
-`OMIT_AUTORESET`  
+`SQLITE_OMIT_AUTORESET`  
 
 <details>
     <summary>Reason</summary>

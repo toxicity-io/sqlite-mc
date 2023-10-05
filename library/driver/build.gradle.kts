@@ -276,7 +276,7 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             // Darwin devices. macOS 10.11.6+, iOS 9.3.5+
             listOf(
                 "-DSQLITE_ENABLE_API_ARMOR",
-                "-DOMIT_AUTORESET",
+                "-DSQLITE_OMIT_AUTORESET",
             ).let { compilerArgs.addAll(it) }
         }
 
@@ -290,6 +290,11 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             // This *might* change in the future if migrating away from
             // SQLDelight's NativeSqliteDriver and SQLiter
             "-DSQLITE_THREADSAFE=2",
+
+            // This removes extension loading entirely. On Jvm, this flag
+            // is needed at compile time because of the JNI interface, but
+            // for native it is completely disabled.
+            "-DSQLITE_OMIT_LOAD_EXTENSION",
 
             // Remaining flags are what JVM is compiled with
             "-DSQLITE_HAVE_ISNAN=1",
@@ -314,7 +319,6 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             "-DSQLITE_MAX_ATTACHED=125",
             "-DSQLITE_MAX_PAGE_COUNT=4294967294",
             "-DSQLITE_DQS=0",
-            "-DOMIT_LOAD_EXTENSION",
             "-DCODEC_TYPE=CODEC_TYPE_CHACHA20",
             "-DSQLITE_ENABLE_EXTFUNC=1",
             "-DSQLITE_ENABLE_REGEXP=1",
