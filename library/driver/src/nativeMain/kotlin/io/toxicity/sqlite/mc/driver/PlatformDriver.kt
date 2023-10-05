@@ -149,7 +149,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 throw IllegalStateException("Failed to create DatabaseManager", t)
             }
 
-            val driver = NativeSqliteDriver(manager, maxReaderConnections = 1) // TODO: Move to FactoryConfig.platformOptions
+            val driver = NativeSqliteDriver(manager, platformConfig.maxReaderConnections)
 
             return Args(keyPragma, driver, logger?.let { LogSqliteDriver(driver, it) })
         }

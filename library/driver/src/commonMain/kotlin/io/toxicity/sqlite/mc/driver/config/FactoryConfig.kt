@@ -43,6 +43,8 @@ public class FactoryConfig private constructor(
     @JvmField
     public val filesystemConfig: FilesystemConfig,
     @JvmField
+    public val platformConfig: PlatformConfig,
+    @JvmField
     public val pragmaConfig: PragmaConfig,
 
     @JvmSynthetic
@@ -84,6 +86,7 @@ public class FactoryConfig private constructor(
         }
 
         private var filesystemConfig: FilesystemConfig? = null
+        private var platformConfig: PlatformConfig? = null
         private var pragmaConfig: PragmaConfig? = null
 
         // internal for testing only
@@ -123,6 +126,30 @@ public class FactoryConfig private constructor(
         }
 
         /**
+         * Create a new [PlatformConfig], or updates the currently set
+         * [platformConfig].
+         * */
+        @MCConfigDsl
+        public fun platform(
+            block: PlatformConfig.Builder.() -> Unit,
+        ): Builder {
+            platformConfig = PlatformConfig.new(platformConfig, block)
+            return this
+        }
+
+        /**
+         * Set an already existing [PlatformConfig], or remove the currently
+         * applied config by passing null.
+         * */
+        @MCConfigDsl
+        public fun platform(
+            other: PlatformConfig?
+        ): Builder {
+            platformConfig = other
+            return this
+        }
+
+        /**
          * Create a [PragmaConfig], or updates the currently set
          * [pragmaConfig].
          * */
@@ -137,8 +164,6 @@ public class FactoryConfig private constructor(
         /**
          * Set an already existing [PragmaConfig], or remove the currently
          * applied config by passing null.
-         *
-         * @param [other] inherit from an existing [PragmaConfig]
          * */
         @MCConfigDsl
         public fun pragmas(
@@ -191,6 +216,7 @@ public class FactoryConfig private constructor(
             dbName = dbName,
             schema = schema,
             filesystemConfig = filesystemConfig ?: FilesystemConfig.Default,
+            platformConfig = platformConfig ?: PlatformConfig.Default,
             pragmaConfig = pragmaConfig ?: PragmaConfig.Default,
             dispatcher = dispatcher.let { dispatcher ->
                 if (dispatcher == Dispatchers.IO) {
