@@ -288,7 +288,7 @@ private inline fun MutableMap<String, String>.journalMode(): JournalMode {
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun MutableMap<String, String>.busyTimeout(): Int {
-    return remove("busy_timeout")?.toIntOrNull() ?: 5_000
+    return remove("busy_timeout")?.toIntOrNull() ?: 3_000
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -298,10 +298,16 @@ private inline fun MutableMap<String, String>.pageSize(): Int? {
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun MutableMap<String, String>.foreignKeys(): Boolean {
-    return remove("foreign_keys")?.toIntOrNull()?.let { it == 1 } ?: false
+    return remove("foreign_keys")?.let { value ->
+        // can be true/false, or 1/0
+        value.toBooleanStrictOrNull() ?: value.toIntOrNull()?.let { it == 1 }
+    } ?: false
 }
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun MutableMap<String, String>.recursiveTriggers(): Boolean {
-    return remove("recursive_triggers")?.toIntOrNull()?.let { it == 1 } ?: false
+    return remove("recursive_triggers")?.let { value ->
+        // can be true/false, or 1/0
+        value.toBooleanStrictOrNull() ?: value.toIntOrNull()?.let { it == 1 }
+    } ?: false
 }
