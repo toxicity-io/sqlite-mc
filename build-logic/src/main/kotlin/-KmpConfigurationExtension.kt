@@ -37,10 +37,10 @@ fun KmpConfigurationExtension.configureShared(
 
         // Just use JVM. Not dealing with native desktop
         // b/c it's a shit-show (especially Linux)
-//        linuxX64()
+        linuxX64()
 //        macosArm64()
 //        macosX64()
-//        mingwX64()
+        mingwX64()
 
         tvosArm64()
         tvosX64()
@@ -67,8 +67,8 @@ fun KmpConfigurationExtension.configureShared(
 
 fun KmpConfigurationContainerDsl.androidLibrary(
     namespace: String,
-    buildTools: String? = "34.0.0",
-    compileSdk: Int = 34,
+    buildTools: String? = "33.0.2",
+    compileSdk: Int = 33,
     minSdk: Int = 23,
     javaVersion: JavaVersion = JavaVersion.VERSION_1_8,
     action: (Action<TargetAndroidContainer.Library>)? = null,

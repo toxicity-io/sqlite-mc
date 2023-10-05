@@ -15,9 +15,9 @@
  **/
 package io.toxicity.sqlite.mc.driver.config.encryption
 
-import io.toxicity.sqlite.mc.driver.config.pragma.Pragma
-import io.toxicity.sqlite.mc.driver.config.pragma.MutablePragmas
-import io.toxicity.sqlite.mc.driver.config.pragma.mutablePragmas
+import io.toxicity.sqlite.mc.driver.config.Pragma
+import io.toxicity.sqlite.mc.driver.config.MutablePragmas
+import io.toxicity.sqlite.mc.driver.config.mutablePragmas
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

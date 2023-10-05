@@ -15,7 +15,7 @@
  **/
 @file:Suppress("ClassName", "SpellCheckingInspection")
 
-package io.toxicity.sqlite.mc.driver.config.pragma
+package io.toxicity.sqlite.mc.driver.config
 
 import app.cash.sqldelight.db.SqlCursor
 import io.toxicity.sqlite.mc.driver.MCConfigDsl
