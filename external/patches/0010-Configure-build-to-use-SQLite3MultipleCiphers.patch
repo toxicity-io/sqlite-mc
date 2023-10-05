@@ -1,17 +1,17 @@
-From bbc25fa3fd5a4ecaf908f1272ed99459b2c36667 Mon Sep 17 00:00:00 2001
+From a16bb65834f37d3a5916fabab8b8449e678e99f4 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Sat, 30 Sep 2023 15:05:38 -0400
 Subject: [PATCH 10/11] Configure build to use SQLite3MultipleCiphers
 
 ---
- Makefile                                 | 23 +++++++++---------
+ Makefile                                 | 22 ++++++++---------
  Makefile.common                          | 30 ++++++++++++------------
  VERSION                                  |  1 +
  src/main/java/org/sqlite/core/NativeDB.c |  2 +-
- 4 files changed, 29 insertions(+), 27 deletions(-)
+ 4 files changed, 28 insertions(+), 27 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 840ad53..bdb31d7 100644
+index 840ad53..5bf51b4 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -19,7 +19,7 @@ SQLITE_OBJ?=$(SQLITE_OUT)/sqlite3.o
@@ -46,11 +46,10 @@ index 840ad53..bdb31d7 100644
  	    -DSQLITE_MAX_LENGTH=2147483647 \
  	    -DSQLITE_MAX_COLUMN=32767 \
  	    -DSQLITE_MAX_SQL_LENGTH=1073741824 \
-@@ -90,10 +85,16 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+@@ -90,10 +85,15 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	    -DSQLITE_MAX_ATTACHED=125 \
  	    -DSQLITE_MAX_PAGE_COUNT=4294967294 \
  	    -DSQLITE_DQS=0 \
-+	    -DOMIT_LOAD_EXTENSION \
 +	    -DCODEC_TYPE=CODEC_TYPE_CHACHA20 \
 +	    -DSQLITE_ENABLE_EXTFUNC=1 \
 +	    -DSQLITE_ENABLE_REGEXP=1 \
@@ -65,7 +64,7 @@ index 840ad53..bdb31d7 100644
  
  $(SQLITE_OUT)/$(LIBNAME): $(SQLITE_HEADER) $(SQLITE_OBJ) $(SRC)/org/sqlite/core/NativeDB.c $(TARGET)/common-lib/NativeDB.h
  	@mkdir -p $(@D)
-@@ -109,7 +110,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
+@@ -109,7 +109,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
  NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
  
  # For cross-compilation, install docker. See also https://github.com/dockcross/dockcross
