@@ -37,10 +37,10 @@ fun KmpConfigurationExtension.configureShared(
 
         // Just use JVM. Not dealing with native desktop
         // b/c it's a shit-show (especially Linux)
-        linuxX64()
+//        linuxX64()
 //        macosArm64()
 //        macosX64()
-        mingwX64()
+//        mingwX64()
 
         tvosArm64()
         tvosX64()
