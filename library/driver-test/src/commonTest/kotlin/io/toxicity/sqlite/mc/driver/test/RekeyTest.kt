@@ -59,7 +59,7 @@ abstract class RekeyTest: TestHelperNonEphemeral() {
             testLogger("RUN - ${i++}")
 
             // db files automatically delete once runMCDriverTest completes.
-            runDriverTest(key1, filesystem, timeout = 20.seconds) { factory, driver ->
+            runDriverTest(key1, filesystem = filesystem, timeout = 20.seconds) { factory, driver ->
                 val expected = "4314tlkjansd"
                 driver.upsert("key", expected)
                 assertEquals(expected, driver.get("key"))

@@ -227,7 +227,7 @@ internal fun Pragmas.toMCSQLStatements(): List<String> {
             // any properties passed with the setting
             // will reset it to the desired value after
             // rekeying.
-            add("PRAGMA journal_mode=DELETE")
+            add("PRAGMA journal_mode = DELETE")
         }
 
         for (mcPragma in Pragma.MC.ALL) {

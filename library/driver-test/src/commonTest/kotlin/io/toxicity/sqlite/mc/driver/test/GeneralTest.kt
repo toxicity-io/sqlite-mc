@@ -15,6 +15,7 @@
  **/
 package io.toxicity.sqlite.mc.driver.test
 
+import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.use
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
@@ -121,7 +122,7 @@ abstract class GeneralTest: TestHelperNonEphemeral() {
             testLogger("RUN - ${i++}")
 
             // db files automatically delete once runMCDriverTest completes.
-            runDriverTest(key1, filesystem) { factory, driver ->
+            runDriverTest(key1, filesystem = filesystem) { factory, driver ->
                 val expected = "abcd12345"
                 driver.upsert("key", expected)
                 driver.close()
@@ -138,6 +139,25 @@ abstract class GeneralTest: TestHelperNonEphemeral() {
                 }
             }
         }
+    }
+
+    @Test
+    fun givenDriver_whenPragmas_thenSetsExpected() = runDriverTest(
+        pragmas = {
+            // SQLite3MultipleCiphers is compiled with 1 (true),
+            // changing this to "fast" should result in it being set
+            // to 2
+            put("secure_delete", "fast")
+        }
+    ) { _, driver ->
+        val secureDelete = driver.executeQuery(0, "PRAGMA secure_delete", mapper = { cursor ->
+            QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null)
+        }, 0, null).value
+
+        // 0 = false
+        // 1 = true
+        // 2 = fast
+        assertEquals(2, secureDelete)
     }
 
 }
