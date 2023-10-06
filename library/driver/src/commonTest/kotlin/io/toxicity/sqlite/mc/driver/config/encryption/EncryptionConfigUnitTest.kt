@@ -15,8 +15,8 @@
  **/
 package io.toxicity.sqlite.mc.driver.config.encryption
 
-import io.toxicity.sqlite.mc.driver.config.Pragma
-import io.toxicity.sqlite.mc.driver.config.mutablePragmas
+import io.toxicity.sqlite.mc.driver.config.MCPragma
+import io.toxicity.sqlite.mc.driver.config.mutableMCPragmas
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -198,9 +198,9 @@ class EncryptionConfigUnitTest {
             }
         }
 
-        val pragmas = mutablePragmas()
+        val pragmas = mutableMCPragmas()
         config.applyPragmas(pragmas)
-        assertEquals(Pragma.MC.CIPHER, pragmas.toList().first().first)
+        assertEquals(MCPragma.CIPHER, pragmas.toList().first().first)
     }
 
 }

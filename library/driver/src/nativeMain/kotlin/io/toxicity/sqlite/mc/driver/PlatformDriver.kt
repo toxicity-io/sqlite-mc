@@ -26,8 +26,8 @@ import app.cash.sqldelight.logs.LogSqliteDriver
 import co.touchlab.sqliter.*
 import co.touchlab.sqliter.interop.Logger
 import io.toxicity.sqlite.mc.driver.config.*
-import io.toxicity.sqlite.mc.driver.config.MutablePragmas
-import io.toxicity.sqlite.mc.driver.config.Pragma
+import io.toxicity.sqlite.mc.driver.config.MutableMCPragmas
+import io.toxicity.sqlite.mc.driver.config.MCPragma
 import io.toxicity.sqlite.mc.driver.config.toMCSQLStatements
 
 public actual sealed class PlatformDriver actual constructor(private val args: Args): SqlDriver {
@@ -81,7 +81,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
     protected actual companion object {
 
         @Throws(IllegalArgumentException::class, IllegalStateException::class)
-        internal actual fun FactoryConfig.create(keyPragma: MutablePragmas, rekeyPragma: MutablePragmas?): Args {
+        internal actual fun FactoryConfig.create(keyPragma: MutableMCPragmas, rekeyPragma: MutableMCPragmas?): Args {
             val pragmas = pragmaConfig.filesystem.toMutableMap()
 
             val config = DatabaseConfiguration(
@@ -117,8 +117,8 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                             // rekey successful, swap out old for new
                             keyPragma.clear()
                             rekeyPragma.forEach { entry ->
-                                if (entry.key is Pragma.MC.RE_KEY) {
-                                    keyPragma[Pragma.MC.KEY] = entry.value
+                                if (entry.key is MCPragma.RE_KEY) {
+                                    keyPragma[MCPragma.KEY] = entry.value
                                 } else {
                                     keyPragma[entry.key] = entry.value
                                 }
@@ -241,7 +241,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
         }
 
         internal actual class Args(
-            internal val properties: MutablePragmas?,
+            internal val properties: MutableMCPragmas?,
             internal val nativeDriver: NativeSqliteDriver,
             internal val logDriver: LogSqliteDriver?,
         )

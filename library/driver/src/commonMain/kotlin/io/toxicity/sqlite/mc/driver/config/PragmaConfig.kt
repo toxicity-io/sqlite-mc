@@ -144,7 +144,7 @@ public class PragmaConfig private constructor(
         @JvmSynthetic
         internal fun build(): PragmaConfig {
 
-            Pragma.MC.ALL.forEach { pragma ->
+            MCPragma.ALL.forEach { pragma ->
                 ephemeral.remove(pragma.name)
                 filesystem.remove(pragma.name)
             }

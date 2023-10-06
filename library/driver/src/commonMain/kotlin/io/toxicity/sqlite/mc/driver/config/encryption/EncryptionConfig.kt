@@ -20,8 +20,8 @@ import io.toxicity.sqlite.mc.driver.MCConfigDsl
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.internal.ext.appendIndent
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
-import io.toxicity.sqlite.mc.driver.config.Pragma
-import io.toxicity.sqlite.mc.driver.config.MutablePragmas
+import io.toxicity.sqlite.mc.driver.config.MCPragma
+import io.toxicity.sqlite.mc.driver.config.MutableMCPragmas
 import io.toxicity.sqlite.mc.driver.internal.ext.appendColon
 import kotlin.jvm.*
 
@@ -327,10 +327,10 @@ public class EncryptionConfig private constructor(
         return buildString {
             append(this@EncryptionConfig::class.simpleName)
             appendLine(": [")
-            appendIndent(Pragma.MC.HMAC_CHECK)
+            appendIndent(MCPragma.HMAC_CHECK)
             appendColon()
             appendLine(hmacCheck)
-            appendIndent(Pragma.MC.MC_LEGACY_WAL)
+            appendIndent(MCPragma.MC_LEGACY_WAL)
             appendColon()
             appendLine(mcLegacyWAL)
 
@@ -349,26 +349,26 @@ public class EncryptionConfig private constructor(
     }
 
     @JvmSynthetic
-    internal fun applyPragmas(pragmas: MutablePragmas, addAll: Boolean = false): EncryptionConfig {
-        if (!pragmas.containsKey(Pragma.MC.CIPHER)) {
+    internal fun applyPragmas(pragmas: MutableMCPragmas, addAll: Boolean = false): EncryptionConfig {
+        if (!pragmas.containsKey(MCPragma.CIPHER)) {
             cipherConfig.applyPragmas(pragmas, addAll)
         }
         if (addAll || !hmacCheck) {
-            Pragma.MC.HMAC_CHECK.put(pragmas, hmacCheck)
+            MCPragma.HMAC_CHECK.put(pragmas, hmacCheck)
         }
         if (addAll || mcLegacyWAL) {
-            Pragma.MC.MC_LEGACY_WAL.put(pragmas, mcLegacyWAL)
+            MCPragma.MC_LEGACY_WAL.put(pragmas, mcLegacyWAL)
         }
         return this
     }
 
     @JvmSynthetic
     @Throws(IllegalArgumentException::class)
-    internal fun applyKeyPragma(pragmas: MutablePragmas, key: Key, isRekey: Boolean): EncryptionConfig {
+    internal fun applyKeyPragma(pragmas: MutableMCPragmas, key: Key, isRekey: Boolean): EncryptionConfig {
         if (isRekey) {
-            Pragma.MC.RE_KEY.put(pragmas, Pair(key, cipherConfig.cipher))
+            MCPragma.RE_KEY.put(pragmas, Pair(key, cipherConfig.cipher))
         } else {
-            Pragma.MC.KEY.put(pragmas, Pair(key, cipherConfig.cipher))
+            MCPragma.KEY.put(pragmas, Pair(key, cipherConfig.cipher))
         }
         return this
     }

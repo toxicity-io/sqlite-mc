@@ -18,8 +18,8 @@
 package io.toxicity.sqlite.mc.driver.config.encryption
 
 import io.toxicity.sqlite.mc.driver.internal.ext.appendIndent
-import io.toxicity.sqlite.mc.driver.config.Pragma
-import io.toxicity.sqlite.mc.driver.config.MutablePragmas
+import io.toxicity.sqlite.mc.driver.config.MCPragma
+import io.toxicity.sqlite.mc.driver.config.MutableMCPragmas
 import io.toxicity.sqlite.mc.driver.internal.ext.appendColon
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
@@ -39,9 +39,9 @@ public sealed class MCCipherConfig(
 ) {
 
     @JvmSynthetic
-    internal fun applyPragmas(pragmas: MutablePragmas, addAll: Boolean = false) {
-        Pragma.MC.CIPHER.put(pragmas, cipher)
-        Pragma.MC.LEGACY.put(pragmas, legacy)
+    internal fun applyPragmas(pragmas: MutableMCPragmas, addAll: Boolean = false) {
+        MCPragma.CIPHER.put(pragmas, cipher)
+        MCPragma.LEGACY.put(pragmas, legacy)
 
         when (val config = this) {
             is MCChaCha20Config -> config.apply(pragmas, addAll)
@@ -52,25 +52,25 @@ public sealed class MCCipherConfig(
         }
     }
 
-    private fun MCChaCha20Config.apply(pragmas: MutablePragmas, addAll: Boolean) {
+    private fun MCChaCha20Config.apply(pragmas: MutableMCPragmas, addAll: Boolean) {
         val config = when (legacy) {
             0 -> MCChaCha20Config.Default
             else -> MCChaCha20Config.SQLeet
         }
 
         if (addAll || legacyPageSize != config.legacyPageSize) {
-            Pragma.MC.LEGACY_PAGE_SIZE.put(pragmas, legacyPageSize)
+            MCPragma.LEGACY_PAGE_SIZE.put(pragmas, legacyPageSize)
         }
         if (addAll || kdfIter != config.kdfIter) {
-            Pragma.MC.KDF_ITER.put(pragmas, kdfIter)
+            MCPragma.KDF_ITER.put(pragmas, kdfIter)
         }
     }
-    private fun MCRC4Config.apply(pragmas: MutablePragmas, addAll: Boolean) {
+    private fun MCRC4Config.apply(pragmas: MutableMCPragmas, addAll: Boolean) {
         if (addAll || legacyPageSize != MCRC4Config.Default.legacyPageSize) {
-            Pragma.MC.LEGACY_PAGE_SIZE.put(pragmas, legacyPageSize)
+            MCPragma.LEGACY_PAGE_SIZE.put(pragmas, legacyPageSize)
         }
     }
-    private fun MCSqlCipherConfig.apply(pragmas: MutablePragmas, addAll: Boolean) {
+    private fun MCSqlCipherConfig.apply(pragmas: MutableMCPragmas, addAll: Boolean) {
         val config = when (legacy) {
             0 -> MCSqlCipherConfig.Default
             1 -> MCSqlCipherConfig.v1
@@ -80,49 +80,49 @@ public sealed class MCCipherConfig(
         }
 
         if (addAll || legacyPageSize != config.legacyPageSize) {
-            Pragma.MC.LEGACY_PAGE_SIZE.put(pragmas, legacyPageSize)
+            MCPragma.LEGACY_PAGE_SIZE.put(pragmas, legacyPageSize)
         }
         if (addAll || kdfIter != config.kdfIter) {
-            Pragma.MC.KDF_ITER.put(pragmas, kdfIter)
+            MCPragma.KDF_ITER.put(pragmas, kdfIter)
         }
         if (addAll || fastKdfIter != config.fastKdfIter) {
-            Pragma.MC.FAST_KDF_ITER.put(pragmas, fastKdfIter)
+            MCPragma.FAST_KDF_ITER.put(pragmas, fastKdfIter)
         }
         if (addAll || hmacUse != config.hmacUse) {
-            Pragma.MC.HMAC_USE.put(pragmas, hmacUse)
+            MCPragma.HMAC_USE.put(pragmas, hmacUse)
         }
         if (hmacPngo != null && (addAll || hmacPngo != config.hmacPngo)) {
-            Pragma.MC.HMAC_PNGO.put(pragmas, hmacPngo)
+            MCPragma.HMAC_PNGO.put(pragmas, hmacPngo)
         }
         if (hmacSaltMask != null && (addAll || hmacSaltMask != config.hmacSaltMask)) {
-            Pragma.MC.HMAC_SALT_MASK.put(pragmas, hmacSaltMask)
+            MCPragma.HMAC_SALT_MASK.put(pragmas, hmacSaltMask)
         }
         if (addAll || kdfAlgorithm != config.kdfAlgorithm) {
-            Pragma.MC.KDF_ALGORITHM.put(pragmas, kdfAlgorithm)
+            MCPragma.KDF_ALGORITHM.put(pragmas, kdfAlgorithm)
         }
         if (addAll || hmacAlgorithm != config.hmacAlgorithm) {
-            Pragma.MC.HMAC_ALGORITHM.put(pragmas, hmacAlgorithm)
+            MCPragma.HMAC_ALGORITHM.put(pragmas, hmacAlgorithm)
         }
         if (plaintextHeaderSize != null && (addAll || plaintextHeaderSize != config.plaintextHeaderSize)) {
-            Pragma.MC.PLAIN_TEXT_HEADER_SIZE.put(pragmas, plaintextHeaderSize)
+            MCPragma.PLAIN_TEXT_HEADER_SIZE.put(pragmas, plaintextHeaderSize)
         }
     }
 
-    private fun MCWxAES128Config.apply(pragmas: MutablePragmas, addAll: Boolean) {
+    private fun MCWxAES128Config.apply(pragmas: MutableMCPragmas, addAll: Boolean) {
         val config = MCWxAES128Config.Default
 
         if (addAll || legacyPageSize != config.legacyPageSize) {
-            Pragma.MC.LEGACY_PAGE_SIZE.put(pragmas, legacyPageSize)
+            MCPragma.LEGACY_PAGE_SIZE.put(pragmas, legacyPageSize)
         }
     }
-    private fun MCWxAES256Config.apply(pragmas: MutablePragmas, addAll: Boolean) {
+    private fun MCWxAES256Config.apply(pragmas: MutableMCPragmas, addAll: Boolean) {
         val config = MCWxAES256Config.Default
 
         if (addAll || legacyPageSize != config.legacyPageSize) {
-            Pragma.MC.LEGACY_PAGE_SIZE.put(pragmas, legacyPageSize)
+            MCPragma.LEGACY_PAGE_SIZE.put(pragmas, legacyPageSize)
         }
         if (addAll || kdfIter != config.kdfIter) {
-            Pragma.MC.KDF_ITER.put(pragmas, kdfIter)
+            MCPragma.KDF_ITER.put(pragmas, kdfIter)
         }
     }
 
@@ -209,81 +209,81 @@ public sealed class MCCipherConfig(
         return buildString {
             append(this@MCCipherConfig::class.simpleName)
             appendLine(": [")
-            appendIndent(Pragma.MC.CIPHER)
+            appendIndent(MCPragma.CIPHER)
             appendColon()
             appendLine(cipher)
 
             when (this@MCCipherConfig) {
                 is MCChaCha20Config -> {
-                    appendIndent(Pragma.MC.LEGACY)
+                    appendIndent(MCPragma.LEGACY)
                     appendColon()
                     appendLine(legacy)
-                    appendIndent(Pragma.MC.LEGACY_PAGE_SIZE)
+                    appendIndent(MCPragma.LEGACY_PAGE_SIZE)
                     appendColon()
                     appendLine(legacyPageSize)
-                    appendIndent(Pragma.MC.KDF_ITER)
+                    appendIndent(MCPragma.KDF_ITER)
                     appendColon()
                     appendLine(kdfIter)
                 }
                 is MCRC4Config -> {
-                    appendIndent(Pragma.MC.LEGACY)
+                    appendIndent(MCPragma.LEGACY)
                     appendColon()
                     appendLine(legacy)
-                    appendIndent(Pragma.MC.LEGACY_PAGE_SIZE)
+                    appendIndent(MCPragma.LEGACY_PAGE_SIZE)
                     appendColon()
                     appendLine(legacyPageSize)
                 }
                 is MCSqlCipherConfig -> {
-                    appendIndent(Pragma.MC.LEGACY)
+                    appendIndent(MCPragma.LEGACY)
                     appendColon()
                     appendLine(legacy)
-                    appendIndent(Pragma.MC.LEGACY_PAGE_SIZE)
+                    appendIndent(MCPragma.LEGACY_PAGE_SIZE)
                     appendColon()
                     appendLine(legacyPageSize)
-                    appendIndent(Pragma.MC.KDF_ITER)
+                    appendIndent(MCPragma.KDF_ITER)
                     appendColon()
                     appendLine(kdfIter)
-                    appendIndent(Pragma.MC.HMAC_USE)
+                    appendIndent(MCPragma.HMAC_USE)
                     appendColon()
                     appendLine(hmacUse)
-                    appendIndent(Pragma.MC.HMAC_PNGO)
+                    appendIndent(MCPragma.HMAC_PNGO)
                     appendColon()
                     append(hmacPngo)
                     if (hmacPngo != null) {
                         append(" (${hmacPngo.ordinal})")
                     }
                     appendLine()
-                    appendIndent(Pragma.MC.HMAC_SALT_MASK)
+                    appendIndent(MCPragma.HMAC_SALT_MASK)
                     appendColon()
                     appendLine(hmacSaltMask)
-                    appendIndent(Pragma.MC.KDF_ALGORITHM)
+                    appendIndent(MCPragma.KDF_ALGORITHM)
                     appendColon()
                     append(kdfAlgorithm)
                     appendLine(" (${kdfAlgorithm.ordinal})")
-                    appendIndent(Pragma.MC.HMAC_ALGORITHM)
+                    appendIndent(MCPragma.HMAC_ALGORITHM)
                     appendColon()
                     append(hmacAlgorithm)
                     appendLine(" (${hmacAlgorithm.ordinal})")
-                    appendIndent(Pragma.MC.PLAIN_TEXT_HEADER_SIZE)
+                    appendIndent(MCPragma.PLAIN_TEXT_HEADER_SIZE)
                     appendColon()
                     appendLine(plaintextHeaderSize)
                 }
                 is MCWxAES128Config -> {
-                    appendIndent(Pragma.MC.LEGACY)
+                    appendIndent(MCPragma.LEGACY)
                     appendColon()
                     appendLine(legacy)
-                    appendIndent(Pragma.MC.LEGACY_PAGE_SIZE)
+                    appendIndent(MCPragma.LEGACY_PAGE_SIZE)
                     appendColon()
                     appendLine(legacyPageSize)
                 }
                 is MCWxAES256Config -> {
-                    appendIndent(Pragma.MC.LEGACY)
+                    appendIndent(MCPragma.LEGACY)
                     appendColon()
                     appendLine(legacy)
-                    appendIndent(Pragma.MC.LEGACY_PAGE_SIZE)
+                    appendIndent(MCPragma.LEGACY_PAGE_SIZE)
                     appendColon()
                     appendLine(legacyPageSize)
-                    appendIndent(Pragma.MC.KDF_ITER)
+                    appendIndent(MCPragma.KDF_ITER)
                     appendColon()
                     appendLine(kdfIter)
                 }

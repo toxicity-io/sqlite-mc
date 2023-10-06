@@ -25,121 +25,89 @@ import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 
-public abstract class Pragma<FieldType: Any> private constructor(
+public abstract class MCPragma<FieldType: Any> private constructor(
     @JvmField
     public val name: String,
 
-    private val transformer: Transformer<FieldType>
+    @JvmSynthetic
+    internal val mapper: (SqlCursor) -> FieldType,
+    private val transformer: Transformer<FieldType> = TransformAny,
 ) {
 
-    public abstract class MC<FieldType: Any> private constructor(
-        name: String,
-        transformer: Transformer<FieldType> = TransformAny.unsafeCast(),
+    internal object CIPHER: MCPragma<Cipher>(
+        name = "cipher",
+        mapper = { Cipher.valueOfOrNull(it.getString(0)!!)!! },
+        transformer = { it.name }
+    )
+    internal object HMAC_CHECK: MCPragma<Boolean>(
+        name = "hmac_check",
+        mapper = MapBoolean,
+        transformer = TransformBoolean,
+    )
+    internal object MC_LEGACY_WAL: MCPragma<Boolean>(
+        name = "mc_legacy_wal",
+        mapper = MapBoolean,
+        transformer = TransformBoolean,
+    )
 
-        @JvmSynthetic
-        internal val mapper: (SqlCursor) -> FieldType
-    ): Pragma<FieldType>(name, transformer) {
-
-        internal object CIPHER: MC<Cipher>(
-            name = "cipher",
-            transformer = { it.name },
-            mapper = { Cipher.valueOfOrNull(it.getString(0)!!)!! }
-        )
-        internal object HMAC_CHECK: MC<Boolean>(
-            name = "hmac_check",
-            transformer = TransformBoolean,
-            mapper = MapBoolean,
-        )
-        internal object MC_LEGACY_WAL: MC<Boolean>(
-            name = "mc_legacy_wal",
-            transformer = TransformBoolean,
-            mapper = MapBoolean,
-        )
-
-        public object LEGACY: MC<Int>(
-            name = "legacy",
-            mapper = MapInt,
-        )
-        public object LEGACY_PAGE_SIZE: MC<Int>(
-            name = "legacy_page_size",
-            mapper = MapInt,
-        )
-        public object KDF_ITER: MC<Int>(
-            name = "kdf_iter",
-            mapper = MapInt,
-        )
-        public object FAST_KDF_ITER: MC<Int>(
-            name = "fast_kdf_iter",
-            mapper = MapInt,
-        )
-        public object HMAC_USE: MC<Boolean>(
-            name = "hmac_use",
-            transformer = TransformBoolean,
-            mapper = MapBoolean,
-        )
-        public object HMAC_PNGO: MC<HmacPngo>(
-            name = "hmac_pgno",
-            transformer = TransformEnum.unsafeCast(),
-            mapper = MapEnum(),
-        )
-        public object HMAC_SALT_MASK: MC<Byte>(
-            name = "hmac_salt_mask",
-            mapper = { MapInt(it).toByte() }
-        )
-        public object KDF_ALGORITHM: MC<KdfAlgorithm>(
-            name = "kdf_algorithm",
-            transformer = TransformEnum.unsafeCast(),
-            mapper = MapEnum(),
-        )
-        public object HMAC_ALGORITHM: MC<HmacAlgorithm>(
-            name = "hmac_algorithm",
-            transformer = TransformEnum.unsafeCast(),
-            mapper = MapEnum(),
-        )
-        public object PLAIN_TEXT_HEADER_SIZE: MC<Int>(
-            name = "plaintext_header_size",
-            mapper = MapInt,
-        )
+    public object LEGACY: MCPragma<Int>(
+        name = "legacy",
+        mapper = MapInt,
+    )
+    public object LEGACY_PAGE_SIZE: MCPragma<Int>(
+        name = "legacy_page_size",
+        mapper = MapInt,
+    )
+    public object KDF_ITER: MCPragma<Int>(
+        name = "kdf_iter",
+        mapper = MapInt,
+    )
+    public object FAST_KDF_ITER: MCPragma<Int>(
+        name = "fast_kdf_iter",
+        mapper = MapInt,
+    )
+    public object HMAC_USE: MCPragma<Boolean>(
+        name = "hmac_use",
+        mapper = MapBoolean,
+        transformer = TransformBoolean,
+    )
+    public object HMAC_PNGO: MCPragma<HmacPngo>(
+        name = "hmac_pgno",
+        mapper = MapEnum(),
+        transformer = TransformEnum.unsafeCast(),
+    )
+    public object HMAC_SALT_MASK: MCPragma<Byte>(
+        name = "hmac_salt_mask",
+        mapper = { MapInt(it).toByte() }
+    )
+    public object KDF_ALGORITHM: MCPragma<KdfAlgorithm>(
+        name = "kdf_algorithm",
+        mapper = MapEnum(),
+        transformer = TransformEnum.unsafeCast(),
+    )
+    public object HMAC_ALGORITHM: MCPragma<HmacAlgorithm>(
+        name = "hmac_algorithm",
+        mapper = MapEnum(),
+        transformer = TransformEnum.unsafeCast(),
+    )
+    public object PLAIN_TEXT_HEADER_SIZE: MCPragma<Int>(
+        name = "plaintext_header_size",
+        mapper = MapInt,
+    )
 
 
 
 
-        internal object KEY: MC<Pair<Key, Cipher>>(
-            name = "key",
-            transformer = { (key, cipher) -> key.retrieveFormatted(cipher) },
-            mapper = MapIllegalState.unsafeCast(),
-        )
-        internal object RE_KEY: MC<Pair<Key, Cipher>>(
-            name = "rekey",
-            transformer = { (key, cipher) -> key.retrieveFormatted(cipher) },
-            mapper = MapIllegalState.unsafeCast(),
-        )
-
-        internal companion object {
-
-            @JvmStatic
-            @get:JvmSynthetic
-            internal val ALL: Set<MC<*>> by lazy {
-                buildSet(capacity = 16) {
-                    add(CIPHER)
-                    add(HMAC_CHECK)
-                    add(MC_LEGACY_WAL)
-                    add(LEGACY)
-                    add(LEGACY_PAGE_SIZE)
-                    add(KDF_ITER)
-                    add(FAST_KDF_ITER)
-                    add(HMAC_USE)
-                    add(HMAC_PNGO)
-                    add(HMAC_SALT_MASK)
-                    add(KDF_ALGORITHM)
-                    add(HMAC_ALGORITHM)
-                    add(PLAIN_TEXT_HEADER_SIZE)
-                    add(KEY)
-                    add(RE_KEY)
-                }
-            }
-        }
-    }
+    internal object KEY: MCPragma<Pair<Key, Cipher>>(
+        name = "key",
+        mapper = MapIllegalState.unsafeCast(),
+        transformer = { (key, cipher) -> key.retrieveFormatted(cipher) },
+    )
+    internal object RE_KEY: MCPragma<Pair<Key, Cipher>>(
+        name = "rekey",
+        mapper = MapIllegalState.unsafeCast(),
+        transformer = { (key, cipher) -> key.retrieveFormatted(cipher) },
+    )
 
     override fun toString(): String = name
 
@@ -147,7 +115,7 @@ public abstract class Pragma<FieldType: Any> private constructor(
     @JvmSynthetic
     @Throws(IllegalArgumentException::class)
     internal fun put(
-        pragmas: MutablePragmas,
+        pragmas: MutableMCPragmas,
         value: FieldType,
     ) { pragmas[this] = transformer.transform(value) }
 
@@ -157,7 +125,30 @@ public abstract class Pragma<FieldType: Any> private constructor(
         fun transform(value: FieldType): String
     }
 
-    private companion object {
+    internal companion object {
+
+        @JvmStatic
+        @get:JvmSynthetic
+        internal val ALL: Set<MCPragma<*>> by lazy {
+            buildSet(capacity = 16) {
+                add(CIPHER)
+                add(HMAC_CHECK)
+                add(MC_LEGACY_WAL)
+                add(LEGACY)
+                add(LEGACY_PAGE_SIZE)
+                add(KDF_ITER)
+                add(FAST_KDF_ITER)
+                add(HMAC_USE)
+                add(HMAC_PNGO)
+                add(HMAC_SALT_MASK)
+                add(KDF_ALGORITHM)
+                add(HMAC_ALGORITHM)
+                add(PLAIN_TEXT_HEADER_SIZE)
+                add(KEY)
+                add(RE_KEY)
+            }
+        }
+
         private val TransformAny: Transformer<Any> = Transformer { it.toString() }
         private val TransformBoolean: Transformer<Boolean> = Transformer { (if (it) 1 else 0).toString() }
         private val TransformEnum: Transformer<Enum<*>> = Transformer { it.ordinal.toString() }
@@ -186,27 +177,22 @@ public abstract class Pragma<FieldType: Any> private constructor(
     }
 }
 
-internal typealias MutablePragmas = MutableMap<Pragma<*>, String>
-internal typealias Pragmas = Map<Pragma<*>, String>
+internal typealias MutableMCPragmas = MutableMap<MCPragma<*>, String>
+internal typealias MCPragmas = Map<MCPragma<*>, String>
 
 @JvmSynthetic
 @Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
-internal inline fun mutablePragmas(): MutablePragmas = mutableMapOf()
-
-@JvmSynthetic
-internal fun MutablePragmas.removeMCPragmas() {
-    Pragma.MC.ALL.forEach { remove(it) }
-}
+internal inline fun mutableMCPragmas(): MutableMCPragmas = mutableMapOf()
 
 @JvmSynthetic
 @Throws(IllegalArgumentException::class)
-internal fun Pragmas.toMCSQLStatements(): List<String> {
+internal fun MCPragmas.toMCSQLStatements(): List<String> {
 
-    val cipher = get(Pragma.MC.CIPHER)?.let { Cipher.valueOf(it) }
+    val cipher = get(MCPragma.CIPHER)?.let { Cipher.valueOf(it) }
         ?: throw IllegalArgumentException("cipher is a required parameter")
-    require(containsKey(Pragma.MC.LEGACY)) { "legacy is a required parameter" }
-    val isRekey = containsKey(Pragma.MC.RE_KEY)
-    require(isRekey || containsKey(Pragma.MC.KEY)) { "key or rekey is a required parameter" }
+    require(containsKey(MCPragma.LEGACY)) { "legacy is a required parameter" }
+    val isRekey = containsKey(MCPragma.RE_KEY)
+    require(isRekey || containsKey(MCPragma.KEY)) { "key or rekey is a required parameter" }
 
     // If performing a rekey, this will also build
     // and add the non-transient key statements to be
@@ -230,11 +216,11 @@ internal fun Pragmas.toMCSQLStatements(): List<String> {
             add("PRAGMA journal_mode = DELETE")
         }
 
-        for (mcPragma in Pragma.MC.ALL) {
+        for (mcPragma in MCPragma.ALL) {
             val value = get(mcPragma) ?: continue
 
             val sql = when (mcPragma) {
-                is Pragma.MC.CIPHER -> {
+                is MCPragma.CIPHER -> {
                     if (isRekey) {
                         // e.g. SELECT sqlite3mc_config('default:cipher', 'chacha20');
                         mcPragma.name.buildMCConfigSQL(
@@ -252,10 +238,10 @@ internal fun Pragmas.toMCSQLStatements(): List<String> {
                     )
                 }
 
-                is Pragma.MC.KEY,
-                is Pragma.MC.RE_KEY -> {
+                is MCPragma.KEY,
+                is MCPragma.RE_KEY -> {
                     if (isRekey) {
-                        "PRAGMA ${Pragma.MC.KEY.name} = $value".let { rekeyNonTransient.add(it) }
+                        "PRAGMA ${MCPragma.KEY.name} = $value".let { rekeyNonTransient.add(it) }
                     }
                     "PRAGMA ${mcPragma.name} = $value"
                 }
