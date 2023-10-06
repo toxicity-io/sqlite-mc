@@ -155,8 +155,8 @@ public class PragmaConfig private constructor(
             }
 
             return PragmaConfig(
-                ephemeral = ephemeral.toMap(),
-                filesystem = filesystem.toMap(),
+                ephemeral = ImmutablePragma(ephemeral),
+                filesystem = ImmutablePragma(filesystem),
             )
         }
 
@@ -223,4 +223,21 @@ public class PragmaConfig private constructor(
             append(']')
         }
     }
+}
+
+private class ImmutablePragma(
+    map: MutableMap<String, String>,
+): Map<String, String> {
+
+    private val delegate = map.toMap()
+
+    override val entries: Set<Map.Entry<String, String>> get() = delegate.entries
+    override val keys: Set<String> get() = delegate.keys
+    override val size: Int get() = delegate.size
+    override val values: Collection<String> get() = delegate.values
+
+    override fun isEmpty(): Boolean = delegate.isEmpty()
+    override operator fun get(key: String): String? = delegate[key]
+    override fun containsValue(value: String): Boolean = delegate.containsValue(value)
+    override fun containsKey(key: String): Boolean = delegate.containsKey(key)
 }
