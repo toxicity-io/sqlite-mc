@@ -19,8 +19,8 @@ import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import io.matthewnelson.encoding.base64.Base64
 import io.matthewnelson.encoding.core.use
 import io.matthewnelson.encoding.core.util.LineBreakOutFeed
-import io.toxicity.sqlite.mc.driver.config.MutablePragmas
-import io.toxicity.sqlite.mc.driver.config.Pragma
+import io.toxicity.sqlite.mc.driver.config.MutableMCPragmas
+import io.toxicity.sqlite.mc.driver.config.MCPragma
 import io.toxicity.sqlite.mc.driver.config.toMCSQLStatements
 import java.sql.SQLException
 import java.util.Properties
@@ -36,9 +36,9 @@ internal class JDBCMCProperties private constructor(
      * */
     internal val ephemeralUrlSuffix: String,
 
-    private val keyPragma: MutablePragmas?,
+    private val keyPragma: MutableMCPragmas?,
     @Volatile
-    private var rekeyPragma: MutablePragmas?,
+    private var rekeyPragma: MutableMCPragmas?,
 ): Properties() {
 
     @Volatile
@@ -46,16 +46,16 @@ internal class JDBCMCProperties private constructor(
     private val lock = Any()
 
     init {
-        require(keyPragma?.containsKey(Pragma.MC.KEY) != false) {
+        require(keyPragma?.containsKey(MCPragma.KEY) != false) {
             "keyPragma must contain Pragma.MC.KEY"
         }
-        require(keyPragma?.containsKey(Pragma.MC.RE_KEY) != true) {
+        require(keyPragma?.containsKey(MCPragma.RE_KEY) != true) {
             "keyPragma cannot contain Pragma.MC.RE_KEY"
         }
-        require(rekeyPragma?.containsKey(Pragma.MC.RE_KEY) != false) {
+        require(rekeyPragma?.containsKey(MCPragma.RE_KEY) != false) {
             "rekeyPragma must contain Pragma.MC.RE_KEY"
         }
-        require(rekeyPragma?.containsKey(Pragma.MC.KEY) != true) {
+        require(rekeyPragma?.containsKey(MCPragma.KEY) != true) {
             "rekeyPragma cannot contain Pragma.MC.KEY"
         }
     }
@@ -99,8 +99,8 @@ internal class JDBCMCProperties private constructor(
                     keyPragma.clear()
 
                     rekey.forEach { entry ->
-                        if (entry.key is Pragma.MC.RE_KEY) {
-                            keyPragma[Pragma.MC.KEY] = entry.value
+                        if (entry.key is MCPragma.RE_KEY) {
+                            keyPragma[MCPragma.KEY] = entry.value
                         } else {
                             keyPragma[entry.key] = entry.value
                         }
@@ -208,8 +208,8 @@ internal class JDBCMCProperties private constructor(
         @JvmSynthetic
         @Throws(IllegalArgumentException::class)
         internal fun of(
-            keyPragma: MutablePragmas,
-            rekeyPragma: MutablePragmas?,
+            keyPragma: MutableMCPragmas,
+            rekeyPragma: MutableMCPragmas?,
         ): JDBCMCProperties = JDBCMCProperties(
             ephemeralUrlSuffix = "",
             keyPragma = keyPragma,

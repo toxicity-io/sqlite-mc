@@ -26,7 +26,7 @@ import app.cash.sqldelight.driver.jdbc.JdbcDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import app.cash.sqldelight.logs.LogSqliteDriver
 import io.toxicity.sqlite.mc.driver.config.*
-import io.toxicity.sqlite.mc.driver.config.MutablePragmas
+import io.toxicity.sqlite.mc.driver.config.MutableMCPragmas
 import io.toxicity.sqlite.mc.driver.internal.JDBCMCProperties
 import io.toxicity.sqlite.mc.driver.internal.JDBCMC
 import java.io.File
@@ -113,7 +113,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
         @JvmStatic
         @JvmSynthetic
         @Throws(IllegalArgumentException::class, IllegalStateException::class)
-        internal actual fun FactoryConfig.create(keyPragma: MutablePragmas, rekeyPragma: MutablePragmas?): Args {
+        internal actual fun FactoryConfig.create(keyPragma: MutableMCPragmas, rekeyPragma: MutableMCPragmas?): Args {
             JDBCMC.initialize
 
             val url = JDBCMC.PREFIX + filesystemConfig.databasesDir.resolve(dbName)

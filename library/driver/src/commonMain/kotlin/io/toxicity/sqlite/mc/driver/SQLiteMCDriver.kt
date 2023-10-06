@@ -19,7 +19,7 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlSchema
 import io.toxicity.sqlite.mc.driver.config.*
 import io.toxicity.sqlite.mc.driver.config.encryption.*
-import io.toxicity.sqlite.mc.driver.config.mutablePragmas
+import io.toxicity.sqlite.mc.driver.config.mutableMCPragmas
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlin.concurrent.Volatile
@@ -170,14 +170,14 @@ public class SQLiteMCDriver private constructor(
             return config.withDispatcher {
 
                 val args = try {
-                    val keyPragma = mutablePragmas().apply {
+                    val keyPragma = mutableMCPragmas().apply {
                         filesystemConfig.encryptionConfig
                             .applyPragmas(this)
                             .applyKeyPragma(this, key, isRekey = false)
                     }
 
                     val rekeyPragma = if (rekey != null) {
-                        mutablePragmas().apply {
+                        mutableMCPragmas().apply {
                             filesystemConfig.encryptionConfig
                                 .applyPragmas(this)
                                 .applyKeyPragma(this, rekey, isRekey = true)
@@ -219,13 +219,13 @@ public class SQLiteMCDriver private constructor(
 
                     config.logger?.invoke("Attempting EncryptionMigration (${i--}) - $cipher: legacy = $legacy")
 
-                    val migrationPragma = mutablePragmas().apply {
+                    val migrationPragma = mutableMCPragmas().apply {
                         migration.encryptionConfig
                             .applyPragmas(this)
                             .applyKeyPragma(this, key, isRekey = false)
                     }
 
-                    val currentPragma = mutablePragmas().apply {
+                    val currentPragma = mutableMCPragmas().apply {
                         config.filesystemConfig.encryptionConfig
                             .applyPragmas(this)
                             .applyKeyPragma(this, rekey, isRekey = true)

@@ -20,7 +20,7 @@ import io.matthewnelson.encoding.base64.Base64
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import io.matthewnelson.encoding.core.EncodingException
 import io.matthewnelson.encoding.core.use
-import io.toxicity.sqlite.mc.driver.config.Pragma
+import io.toxicity.sqlite.mc.driver.config.MCPragma
 import org.sqlite.JDBC
 import org.sqlite.jdbc4.JDBC4Connection
 import org.sqlite.jdbc4.JDBC4Statement
@@ -81,7 +81,7 @@ private class JDBCMC4Statement(connection: JDBCMC4Connection): JDBC4Statement(co
     }
 
     override fun execute(sql: String?): Boolean {
-        if (sql == null || !sql.startsWith("pragma ${Pragma.MC.KEY.name} =", ignoreCase = true)) {
+        if (sql == null || !sql.startsWith("pragma ${MCPragma.KEY.name} =", ignoreCase = true)) {
             return super.execute(sql)
         }
 

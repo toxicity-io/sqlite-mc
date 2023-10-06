@@ -123,6 +123,53 @@ public final class io/toxicity/sqlite/mc/driver/config/FilesystemConfig$Companio
 	public final fun new (Lio/toxicity/sqlite/mc/driver/config/DatabasesDir;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/FilesystemConfig;
 }
 
+public abstract class io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public final field name Ljava/lang/String;
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lio/toxicity/sqlite/mc/driver/config/MCPragma$Transformer;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final synthetic fun getALL$driver_release ()Ljava/util/Set;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/MCPragma$FAST_KDF_ITER : io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/MCPragma$FAST_KDF_ITER;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/MCPragma$HMAC_ALGORITHM : io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/MCPragma$HMAC_ALGORITHM;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/MCPragma$HMAC_PNGO : io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/MCPragma$HMAC_PNGO;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/MCPragma$HMAC_SALT_MASK : io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/MCPragma$HMAC_SALT_MASK;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/MCPragma$HMAC_USE : io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/MCPragma$HMAC_USE;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/MCPragma$KDF_ALGORITHM : io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/MCPragma$KDF_ALGORITHM;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/MCPragma$KDF_ITER : io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/MCPragma$KDF_ITER;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/MCPragma$LEGACY : io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/MCPragma$LEGACY;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/MCPragma$LEGACY_PAGE_SIZE : io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/MCPragma$LEGACY_PAGE_SIZE;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/MCPragma$PLAIN_TEXT_HEADER_SIZE : io/toxicity/sqlite/mc/driver/config/MCPragma {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/MCPragma$PLAIN_TEXT_HEADER_SIZE;
+}
+
 public final class io/toxicity/sqlite/mc/driver/config/PlatformConfig {
 	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/PlatformConfig$Companion;
 	public static final field Default Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;
@@ -141,57 +188,6 @@ public final class io/toxicity/sqlite/mc/driver/config/PlatformConfig$Builder {
 
 public final class io/toxicity/sqlite/mc/driver/config/PlatformConfig$Companion {
 	public final fun new (Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/PlatformConfig;
-}
-
-public abstract class io/toxicity/sqlite/mc/driver/config/Pragma {
-	public final field name Ljava/lang/String;
-	public synthetic fun <init> (Ljava/lang/String;Lio/toxicity/sqlite/mc/driver/config/Pragma$Transformer;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class io/toxicity/sqlite/mc/driver/config/Pragma$MC : io/toxicity/sqlite/mc/driver/config/Pragma {
-	public synthetic fun <init> (Ljava/lang/String;Lio/toxicity/sqlite/mc/driver/config/Pragma$Transformer;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public static final synthetic fun getALL$driver_release ()Ljava/util/Set;
-}
-
-public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$FAST_KDF_ITER : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$FAST_KDF_ITER;
-}
-
-public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_ALGORITHM : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_ALGORITHM;
-}
-
-public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_PNGO : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_PNGO;
-}
-
-public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_SALT_MASK : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_SALT_MASK;
-}
-
-public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_USE : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$HMAC_USE;
-}
-
-public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$KDF_ALGORITHM : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$KDF_ALGORITHM;
-}
-
-public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$KDF_ITER : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$KDF_ITER;
-}
-
-public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$LEGACY : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$LEGACY;
-}
-
-public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$LEGACY_PAGE_SIZE : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$LEGACY_PAGE_SIZE;
-}
-
-public final class io/toxicity/sqlite/mc/driver/config/Pragma$MC$PLAIN_TEXT_HEADER_SIZE : io/toxicity/sqlite/mc/driver/config/Pragma$MC {
-	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/Pragma$MC$PLAIN_TEXT_HEADER_SIZE;
 }
 
 public final class io/toxicity/sqlite/mc/driver/config/PragmaConfig {

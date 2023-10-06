@@ -240,8 +240,8 @@ private fun ((String) -> Unit)?.toRedactedLoggerOrNull(redactLogs: Boolean, dbNa
             redactLogs
             && log.startsWith("EXECUTE\n PRAGMA", ignoreCase = true)
             && (
-                   log.contains("${Pragma.MC.RE_KEY.name} =", ignoreCase = true)
-                   || log.contains("${Pragma.MC.KEY.name} =", ignoreCase = true)
+                   log.contains("${MCPragma.RE_KEY.name} =", ignoreCase = true)
+                   || log.contains("${MCPragma.KEY.name} =", ignoreCase = true)
                )
         ) {
             log.replaceAfter("=", "") + " [REDACTED];"

@@ -20,7 +20,7 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlCursor
 import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.core.Decoder.Companion.decodeToByteArray
-import io.toxicity.sqlite.mc.driver.config.Pragma
+import io.toxicity.sqlite.mc.driver.config.MCPragma
 import io.toxicity.sqlite.mc.driver.config.encryption.Cipher
 import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
 import io.toxicity.sqlite.mc.driver.internal.ext.escapeSQL
@@ -43,7 +43,7 @@ internal interface MCConfigQueries {
     fun mcLegacyWAL(transient: Boolean): Boolean
 
     // TODO: documentation & tests
-    fun <T: Any> cipherParam(cipher: Cipher, param: Pragma.MC<T>): T?
+    fun <T: Any> cipherParam(cipher: Cipher, param: MCPragma<T>): T?
 
     // TODO: documentation & tests
     fun cipherSalt(schemaName: String?): String?
@@ -79,7 +79,7 @@ private class MCConfigQueriesImpl(
         return GetMCLegacyWALQuery(transient).executeAsOne()
     }
 
-    override fun <T : Any> cipherParam(cipher: Cipher, param: Pragma.MC<T>): T? {
+    override fun <T : Any> cipherParam(cipher: Cipher, param: MCPragma<T>): T? {
         return try {
             GetCipherParameterQuery(cipher, param).executeAsOneOrNull()
         } catch (_: Throwable) {
@@ -104,33 +104,33 @@ private class MCConfigQueriesImpl(
     private inner class GetCipherQuery(
         transient: Boolean
     ): MCConfigQueriesImpl.GetConfigQuery<Cipher>(
-        paramName = Pragma.MC.CIPHER.name,
+        paramName = MCPragma.CIPHER.name,
         optionalParamName = null,
         transient = transient,
-        mapper = Pragma.MC.CIPHER.mapper,
+        mapper = MCPragma.CIPHER.mapper,
     )
 
     private inner class GetHmacCheckQuery(
         transient: Boolean
     ): MCConfigQueriesImpl.GetConfigQuery<Boolean>(
-        paramName = Pragma.MC.HMAC_CHECK.name,
+        paramName = MCPragma.HMAC_CHECK.name,
         optionalParamName = null,
         transient = transient,
-        mapper = Pragma.MC.HMAC_CHECK.mapper,
+        mapper = MCPragma.HMAC_CHECK.mapper,
     )
 
     private inner class GetMCLegacyWALQuery(
         transient: Boolean
     ): MCConfigQueriesImpl.GetConfigQuery<Boolean>(
-        paramName = Pragma.MC.MC_LEGACY_WAL.name,
+        paramName = MCPragma.MC_LEGACY_WAL.name,
         optionalParamName = null,
         transient = transient,
-        mapper = Pragma.MC.MC_LEGACY_WAL.mapper,
+        mapper = MCPragma.MC_LEGACY_WAL.mapper,
     )
 
     private inner class GetCipherParameterQuery<T: Any>(
         cipher: Cipher,
-        pragma: Pragma.MC<T>,
+        pragma: MCPragma<T>,
     ): MCConfigQueriesImpl.GetConfigQuery<T>(
         paramName = cipher.name,
         optionalParamName = pragma.name,
@@ -178,17 +178,17 @@ private class MCConfigQueriesImpl(
 
         init {
             when (val p = paramName) {
-                Pragma.MC.CIPHER.name,
-                Pragma.MC.HMAC_CHECK.name,
-                Pragma.MC.MC_LEGACY_WAL.name -> {
+                MCPragma.CIPHER.name,
+                MCPragma.HMAC_CHECK.name,
+                MCPragma.MC_LEGACY_WAL.name -> {
                     require(optionalParamName == null) {
                         "$p cannot declare a field parameter." +
                         "That would change the setting."
                     }
                 }
 
-                Pragma.MC.KEY.name,
-                Pragma.MC.RE_KEY.name -> {
+                MCPragma.KEY.name,
+                MCPragma.RE_KEY.name -> {
                     throw IllegalArgumentException("$p does not have a config option")
                 }
             }

@@ -15,9 +15,9 @@
  **/
 package io.toxicity.sqlite.mc.driver.config.encryption
 
-import io.toxicity.sqlite.mc.driver.config.Pragma
-import io.toxicity.sqlite.mc.driver.config.MutablePragmas
-import io.toxicity.sqlite.mc.driver.config.mutablePragmas
+import io.toxicity.sqlite.mc.driver.config.MCPragma
+import io.toxicity.sqlite.mc.driver.config.MutableMCPragmas
+import io.toxicity.sqlite.mc.driver.config.mutableMCPragmas
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -27,7 +27,7 @@ class MCCipherConfigUnitTest {
 
     @Test
     fun givenConfig_whenDefaultNoChanges_thenContainsCipherAndLegacy() {
-        val list = mutableListOf<MutablePragmas>()
+        val list = mutableListOf<MutableMCPragmas>()
 
         list.addPragmas { chaCha20 { default() } }
         list.addPragmas { rc4 { default() } }
@@ -37,14 +37,14 @@ class MCCipherConfigUnitTest {
 
         list.forEach { pragmas ->
             assertEquals(2, pragmas.size)
-            pragmas.assertAtIndex<Pragma.MC.CIPHER>(index = 0)
-            pragmas.assertAtIndex<Pragma.MC.LEGACY>(index = 1)
+            pragmas.assertAtIndex<MCPragma.CIPHER>(index = 0)
+            pragmas.assertAtIndex<MCPragma.LEGACY>(index = 1)
         }
     }
 
     @Test
     fun givenConfig_whenLegacyNoChanges_thenContainsLegacy() {
-        val list = mutableListOf<MutablePragmas>()
+        val list = mutableListOf<MutableMCPragmas>()
 
         list.addPragmas { chaCha20 { sqleet() } }
 
@@ -60,14 +60,14 @@ class MCCipherConfigUnitTest {
 
         list.forEach { pragmas ->
             assertEquals(2, pragmas.size)
-            pragmas.assertAtIndex<Pragma.MC.CIPHER>(index = 0)
-            pragmas.assertAtIndex<Pragma.MC.LEGACY>(index = 1)
+            pragmas.assertAtIndex<MCPragma.CIPHER>(index = 0)
+            pragmas.assertAtIndex<MCPragma.LEGACY>(index = 1)
         }
     }
 
     @Test
     fun givenConfig_whenNonDefaultLegacyPageSize_thenContainsLegacyPageSize() {
-        val list = mutableListOf<MutablePragmas>()
+        val list = mutableListOf<MutableMCPragmas>()
 
         list.addPragmas { chaCha20 { default { legacyPageSize(65536) } } }
         list.addPragmas { rc4 { default { legacyPageSize(65536) } } }
@@ -79,13 +79,13 @@ class MCCipherConfigUnitTest {
             assertEquals(3, pragmas.size)
             // CIPHER
             // LEGACY
-            pragmas.assertAtIndex<Pragma.MC.LEGACY_PAGE_SIZE>(index = 2)
+            pragmas.assertAtIndex<MCPragma.LEGACY_PAGE_SIZE>(index = 2)
         }
     }
 
     @Test
     fun givenConfig_whenSQLCipherNullableFields_thenFallsBackToDefault() {
-        val list = mutableListOf<MutablePragmas>()
+        val list = mutableListOf<MutableMCPragmas>()
 
         // If null, building pragmas should fall back to the default value
         // i.e. the PRAGMA hmac_pngo should not be set
@@ -120,9 +120,9 @@ class MCCipherConfigUnitTest {
         } } }
 
         list.forEach { pragmas ->
-            assertFalse(pragmas.containsKey(Pragma.MC.HMAC_PNGO))
-            assertFalse(pragmas.containsKey(Pragma.MC.HMAC_SALT_MASK))
-            assertFalse(pragmas.containsKey(Pragma.MC.PLAIN_TEXT_HEADER_SIZE))
+            assertFalse(pragmas.containsKey(MCPragma.HMAC_PNGO))
+            assertFalse(pragmas.containsKey(MCPragma.HMAC_SALT_MASK))
+            assertFalse(pragmas.containsKey(MCPragma.PLAIN_TEXT_HEADER_SIZE))
         }
     }
 
@@ -134,7 +134,7 @@ class MCCipherConfigUnitTest {
     //
     // Another one is that PRAGMA legacy_page_size (if non-default for given cipher) **must**
     // come before PRAGMA key.
-    private inline fun <reified T: Pragma.MC<*>> MutablePragmas.assertAtIndex(index: Int) {
+    private inline fun <reified T: MCPragma<*>> MutableMCPragmas.assertAtIndex(index: Int) {
         var i = 0
         forEach { entry ->
             if (i++ == index) {
@@ -147,12 +147,12 @@ class MCCipherConfigUnitTest {
     }
 
     @Throws(IllegalStateException::class)
-    private fun MutableList<MutablePragmas>.addPragmas(
+    private fun MutableList<MutableMCPragmas>.addPragmas(
         block: EncryptionConfig.Builder.() -> Unit
     ) {
         val config = EncryptionConfig.new(other = null) { block() }
 
-        val pragmas = mutablePragmas()
+        val pragmas = mutableMCPragmas()
         config.cipherConfig.applyPragmas(pragmas)
         config.applyPragmas(pragmas)
         add(pragmas)
