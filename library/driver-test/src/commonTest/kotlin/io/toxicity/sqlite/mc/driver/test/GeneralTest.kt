@@ -16,6 +16,7 @@
 package io.toxicity.sqlite.mc.driver.test
 
 import app.cash.sqldelight.db.QueryResult
+import app.cash.sqldelight.db.SqlCursor
 import app.cash.sqldelight.db.use
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
@@ -151,31 +152,29 @@ abstract class GeneralTest: TestHelperNonEphemeral() {
 
             // These are set to false by default. This checks if
             // the parsing logic for true/false, 1/0, ON/OFF is
-            // there, resulting in SQLite returning 1 (on)
+            // there for native, resulting in SQLite returning 1 (on)
             put("foreign_keys", "ON")
             put("recursive_triggers", "true")
         }
     ) { _, driver ->
-        val secureDelete = driver.executeQuery(null, "PRAGMA secure_delete", mapper = { cursor ->
+        val mapper: (SqlCursor) -> QueryResult.Value<Long?> = { cursor ->
             QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null)
-        }, 0, null).value
+        }
+
+        val secureDelete = driver.executeQuery(null, "PRAGMA secure_delete", mapper, 0, null).value
 
         // 0 = false
         // 1 = true
         // 2 = fast
         assertEquals(2, secureDelete)
 
-        val foreignKeys = driver.executeQuery(null, "PRAGMA foreign_keys", mapper = { cursor ->
-            QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null)
-        }, 0, null).value
+        val foreignKeys = driver.executeQuery(null, "PRAGMA foreign_keys", mapper, 0, null).value
 
         // 0 = false
         // 1 = true
         assertEquals(1, foreignKeys)
 
-        val recursiveTriggers = driver.executeQuery(null, "PRAGMA recursive_triggers", mapper = { cursor ->
-            QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null)
-        }, 0, null).value
+        val recursiveTriggers = driver.executeQuery(null, "PRAGMA recursive_triggers", mapper, 0, null).value
 
         // 0 = false
         // 1 = true
