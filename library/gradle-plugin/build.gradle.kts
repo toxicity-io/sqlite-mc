@@ -87,10 +87,12 @@ tasks.named<Test>("test") {
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(17))
     })
-    environment(
-        Pair("ORG_GRADLE_PROJECT_sqlitemcVersion", project.version),
-        Pair("ORG_GRADLE_PROJECT_KMP_TARGETS", findProperty("KMP_TARGETS")),
-    )
+
+    val env = mutableMapOf(Pair("ORG_GRADLE_PROJECT_sqlitemcVersion", project.version))
+    findProperty("KMP_TARGETS")?.let { targets ->
+        env["ORG_GRADLE_PROJECT_KMP_TARGETS"] = targets
+    }
+    environment(env)
 }
 
 configureTestOutput()
