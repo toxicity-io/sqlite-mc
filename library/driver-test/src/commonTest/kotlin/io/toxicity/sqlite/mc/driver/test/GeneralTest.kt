@@ -148,9 +148,15 @@ abstract class GeneralTest: TestHelperNonEphemeral() {
             // changing this to "fast" should result in it being set
             // to 2
             put("secure_delete", "fast")
+
+            // These are set to false by default. This checks if
+            // the parsing logic for true/false, 1/0, ON/OFF is
+            // there, resulting in SQLite returning 1 (on)
+            put("foreign_keys", "ON")
+            put("recursive_triggers", "true")
         }
     ) { _, driver ->
-        val secureDelete = driver.executeQuery(0, "PRAGMA secure_delete", mapper = { cursor ->
+        val secureDelete = driver.executeQuery(null, "PRAGMA secure_delete", mapper = { cursor ->
             QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null)
         }, 0, null).value
 
@@ -158,6 +164,22 @@ abstract class GeneralTest: TestHelperNonEphemeral() {
         // 1 = true
         // 2 = fast
         assertEquals(2, secureDelete)
+
+        val foreignKeys = driver.executeQuery(null, "PRAGMA foreign_keys", mapper = { cursor ->
+            QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null)
+        }, 0, null).value
+
+        // 0 = false
+        // 1 = true
+        assertEquals(1, foreignKeys)
+
+        val recursiveTriggers = driver.executeQuery(null, "PRAGMA recursive_triggers", mapper = { cursor ->
+            QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null)
+        }, 0, null).value
+
+        // 0 = false
+        // 1 = true
+        assertEquals(1, recursiveTriggers)
     }
 
 }
