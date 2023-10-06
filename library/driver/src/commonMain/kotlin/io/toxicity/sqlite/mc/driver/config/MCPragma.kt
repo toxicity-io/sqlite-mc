@@ -74,7 +74,7 @@ public abstract class MCPragma<FieldType: Any> private constructor(
     public object HMAC_PNGO: MCPragma<HmacPngo>(
         name = "hmac_pgno",
         mapper = MapEnum(),
-        transformer = TransformEnum.unsafeCast(),
+        transformer = TransformEnum,
     )
     public object HMAC_SALT_MASK: MCPragma<Byte>(
         name = "hmac_salt_mask",
@@ -83,12 +83,12 @@ public abstract class MCPragma<FieldType: Any> private constructor(
     public object KDF_ALGORITHM: MCPragma<KdfAlgorithm>(
         name = "kdf_algorithm",
         mapper = MapEnum(),
-        transformer = TransformEnum.unsafeCast(),
+        transformer = TransformEnum,
     )
     public object HMAC_ALGORITHM: MCPragma<HmacAlgorithm>(
         name = "hmac_algorithm",
         mapper = MapEnum(),
-        transformer = TransformEnum.unsafeCast(),
+        transformer = TransformEnum,
     )
     public object PLAIN_TEXT_HEADER_SIZE: MCPragma<Int>(
         name = "plaintext_header_size",
@@ -100,12 +100,12 @@ public abstract class MCPragma<FieldType: Any> private constructor(
 
     internal object KEY: MCPragma<Pair<Key, Cipher>>(
         name = "key",
-        mapper = MapIllegalState.unsafeCast(),
+        mapper = { throw IllegalStateException("This parameter has no config option") },
         transformer = { (key, cipher) -> key.retrieveFormatted(cipher) },
     )
     internal object RE_KEY: MCPragma<Pair<Key, Cipher>>(
         name = "rekey",
-        mapper = MapIllegalState.unsafeCast(),
+        mapper = { throw IllegalStateException("This parameter has no config option") },
         transformer = { (key, cipher) -> key.retrieveFormatted(cipher) },
     )
 
@@ -155,24 +155,11 @@ public abstract class MCPragma<FieldType: Any> private constructor(
 
         private val MapBoolean: (SqlCursor) -> Boolean = { it.getLong(0)!! == 1L }
         private val MapInt: (SqlCursor) -> Int = { it.getLong(0)!!.toInt() }
-        private val MapIllegalState: (SqlCursor) -> Any = {
-            throw IllegalStateException("This parameter has no config option")
-        }
 
         @Suppress("FunctionName")
         private inline fun <reified T: Enum<T>> MapEnum(): (SqlCursor) -> T = { cursor ->
             val ordinal = cursor.getLong(0)!!.toInt()
             enumValues<T>().elementAtOrNull(ordinal)!!
-        }
-
-        @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
-        private inline fun <FieldType: Any, T: Transformer<*>> T.unsafeCast(): Transformer<FieldType> {
-            return this as Transformer<FieldType>
-        }
-
-        @Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
-        private inline fun <FieldType: Any, S: (SqlCursor) -> Any> S.unsafeCast(): (SqlCursor) -> FieldType {
-            return this as (SqlCursor) -> FieldType
         }
     }
 }
