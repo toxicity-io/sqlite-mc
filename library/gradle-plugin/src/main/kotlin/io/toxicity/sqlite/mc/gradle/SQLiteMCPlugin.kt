@@ -52,7 +52,7 @@ abstract class SQLiteMCPlugin internal constructor(): Plugin<Project> {
             .getByName(
                 sourceSets
                     .getByName(sourceSetMainName)
-                    .apiConfigurationName
+                    .implementationConfigurationName
             )
             .dependencies
             .add(dependencies.create("io.toxicity.sqlite-mc:driver:$VERSION"))
