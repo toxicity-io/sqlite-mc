@@ -15,6 +15,7 @@
  **/
 import co.touchlab.cklib.gradle.CompileToBitcode.Language.C
 import co.touchlab.cklib.gradle.CompileToBitcodeExtension
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.Architecture.*
@@ -106,6 +107,12 @@ kmpConfiguration {
                         implementation(libs.sql.delight.driver.native)
                     }
                 }
+            }
+
+            tasks.withType<Jar> {
+                if (name != "jvmJar") return@withType
+                from(zipTree(jdbcRepack.jarSQLiteJDBCJvm))
+                from(zipTree(jdbcRepack.jarSQLDelightDriver))
             }
 
             // Only configure if cklib is applied (i.e. not Windows)
