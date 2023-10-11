@@ -48,8 +48,6 @@ public enum class EphemeralOpt {
      * [IN_MEMORY]. If you wish to use the disk caching
      * behavior, you **must** execute `PRAGMA temp_store = 1;`
      * when the connection is initially created.
-     *
-     * // TODO: or add the Pragma FactoryConfig (Issue #3)
      * */
     TEMPORARY,
 }

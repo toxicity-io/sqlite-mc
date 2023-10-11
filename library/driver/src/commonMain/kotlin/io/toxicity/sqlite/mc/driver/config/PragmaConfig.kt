@@ -31,7 +31,9 @@ import kotlin.jvm.JvmSynthetic
  * @see [Builder]
  * */
 public class PragmaConfig private constructor(
+    @JvmField
     public val ephemeral: Map<String, String>,
+    @JvmField
     public val filesystem: Map<String, String>,
 ) {
 
