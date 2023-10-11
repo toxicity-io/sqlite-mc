@@ -189,10 +189,10 @@ public final class io/toxicity/sqlite/mc/driver/config/PlatformConfig$Companion 
 public final class io/toxicity/sqlite/mc/driver/config/PragmaConfig {
 	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/PragmaConfig$Companion;
 	public static final field Default Lio/toxicity/sqlite/mc/driver/config/PragmaConfig;
+	public final field ephemeral Ljava/util/Map;
+	public final field filesystem Ljava/util/Map;
 	public synthetic fun <init> (Ljava/util/Map;Ljava/util/Map;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getEphemeral ()Ljava/util/Map;
-	public final fun getFilesystem ()Ljava/util/Map;
 	public fun hashCode ()I
 	public static final fun new (Lio/toxicity/sqlite/mc/driver/config/PragmaConfig;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/PragmaConfig;
 	public final fun new (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/PragmaConfig;
