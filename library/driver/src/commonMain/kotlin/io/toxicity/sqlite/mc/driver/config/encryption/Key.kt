@@ -47,7 +47,7 @@ public class Key private constructor(
 
         /**
          * An empty key which can be referenced for things like
-         * Removing encryption from a database via a rekey.
+         * removing encryption from a database via a rekey.
          * */
         @JvmField
         public val Empty: Key = Key(value = "", isRaw = false)
@@ -67,7 +67,7 @@ public class Key private constructor(
         /**
          * A **RAW** key (as in you already derived a key from a
          * passphrase or something) to encrypt/decrypt the database
-         * file with. [key] **Must** be 32 bytes.
+         * file with. [key] **MUST** be 32 bytes.
          *
          * Optionally, you can also add a [salt] to be stored alongside
          * the [key]. [salt] **MUST** be 16 bytes. Pass null to not
@@ -97,12 +97,18 @@ public class Key private constructor(
             require(key.size == 32) { "A Raw key must be 32 bytes" }
             require(salt == null || salt.size == 16) { "Salt must be 16 bytes" }
 
-            val size = key.size + (salt?.size ?: 0)
+            val lineBreakInterval = Byte.MAX_VALUE
+
+            val size = Base16.config.encodeOutSize(
+                unEncodedSize = (key.size + (salt?.size ?: 0)).toLong(),
+                lineBreakInterval = lineBreakInterval,
+            ).toInt()
+
             val sb = StringBuilder(size)
 
             // Supplying our own LineBreakOutFeed will override the
             // default of 64 that the static Base16 instance uses.
-            val out = LineBreakOutFeed(interval = Byte.MAX_VALUE, out = { c -> sb.append(c) })
+            val out = LineBreakOutFeed(interval = lineBreakInterval, out = { c -> sb.append(c) })
 
             Base16.newEncoderFeed(out).use { feed ->
                 key.forEach { b -> feed.consume(b) }
