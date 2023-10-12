@@ -191,7 +191,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                 lifecycleConfig = DatabaseConfiguration.Lifecycle(
                     onCreateConnection = { conn ->
                         pragmas.forEach { entry ->
-                            conn.withStatement("PRAGMA ${entry.key} = ${entry.value}") { execute() }
+                            conn.rawExecSql("PRAGMA ${entry.key} = ${entry.value}")
                         }
                     },
                     onCloseConnection = {},
