@@ -233,6 +233,8 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     QueryResult.Value(if (cursor.next().value) cursor.getLong(0) else null)
                 }, 0, null).value
             } catch (t: Throwable) {
+                driver.close()
+                pragmas.clear()
                 if (t is IllegalStateException) throw t
                 throw IllegalStateException("Failed to create a connection", t)
             }
