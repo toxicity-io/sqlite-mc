@@ -30,6 +30,10 @@ abstract class EphemeralTest: TestHelperBase() {
         logger = testLogger
         redactLogs = false
 
+        pragmas {
+            put("secure_delete", "false")
+        }
+
         filesystem(databasesDir) {
             // defaults
         }
