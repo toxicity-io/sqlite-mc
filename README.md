@@ -32,8 +32,6 @@
 An [SQLDelight][url-sqldelight] driver that uses [SQLite3MultipleCiphers][url-sqlitemc] for 
 database encryption.
 
-
-
 ### Usage
 
 - Define `DatabasesDir`
@@ -89,7 +87,7 @@ database encryption.
           put("busy_timeout", 3_000.toString())
   
           // ephemeral connections only
-          ephemeral.put("secure_delete", "false")
+          ephemeral.put("secure_delete", false.toString())
   
           // filesystem connections only
           filesystem.put("secure_delete", "fast")
@@ -118,6 +116,7 @@ database encryption.
 
 - Easily spin up an ephemeral database for your configuration (no encryption)
   ```kotlin
+  // NOTE: Suspension function "create" alternative available
   val inMemoryDriver = factory.createBlocking(opt = EphemeralOpt.IN_MEMORY)
   val namedDriver = factory.createBlocking(opt = EphemeralOpt.NAMED)
   val tempDriver = factory.createBlocking(opt = EphemeralOpt.TEMPORARY)
@@ -129,17 +128,20 @@ database encryption.
 - Easily change `Key`s
   ```kotlin
   // NOTE: Suspension function "create" alternative available
-  val driver2 = factory.createBlocking(
-      key = Key.passphrase("password"),
-      rekey = Key.passphrase("new password"),
-  )
+  val driver2 = factory.createBlocking(key = Key.passphrase("password"), rekey = Key.passphrase("new password"))
   driver2.close()
 
+  // Remove encryption entirely by passing an empty key (i.e. Key.passphrase(""))
+  val driver3 = factory.createBlocking(key = key.passphrase("new password"), rekey = Key.Empty)
+  driver3.close()
+
   // Also supports use of RAW (already derived) keys and/or salt storage for SQLCipher & ChaCha20
-  val (derivedKey, salt) = deriveMy32ByteKeyAnd16ByteSalt("secret password") // however you want to do it
+  val salt = getOrCreate16ByteSalt("user abc")
+  val derivedKey = derive32ByteKey(salt, "user secret password input")
   val rawKey = Key.raw(key = derivedKey, salt = salt, fillKey = true)
 
-  val driver3 = factory.createBlocking(key = Key.passphrase("new password"), rekey = rawKey)
+  val driver4 = factory.createBlocking(key = Key.Empty, rekey = rawKey)
+  driver4.close()
   ```
 
 - Easily migrate encryption configurations between software releases by defining a migrations block
@@ -155,9 +157,9 @@ database encryption.
 
               // Simply move your old encryption config up to a migration.
               //
-              // Do note that if you _are_ migrating from SQLCipher library,
-              // the version of SQLCipher used the first time your app was
-              // published with it. You will _also_ need to define migrations
+              // If you _are_ migrating from SQLCipher library, note the
+              // version of SQLCipher used the first time your app was
+              // published with it. You will also need to define migrations
               // all the way back for each possible version (v1, v2, v3),
               // so that users who have not opened your app in a long time
               // can migrate from those versions as well.
@@ -363,44 +365,37 @@ I'm guessing this is not really a factor on iOS."
 
 <!-- TAG_VERSION -->
 
-Currently, this library is still under heavy construction.
+1. Remove `SQLDelight` gradle plugin and drivers from your project
+2. Apply the `sqlite-mc` gradle plugin.
+   ```kotlin
+   plugins {
+       // Provides the SQLDelight gradle plugin automatically and applies it
+       id("io.toxicity.sqlite-mc") version("2.0.0-1.7.2-0-alpha01")
+   }
 
-A `-SNAPSHOT` will be released in order to hone the API while
-integrating it into some other projects I am building this for,
-after which an `-alpha01` release will follow.
-
-<!--
-**Set `linkSqlite` to false**
-```kotlin
-sqldelight {
-    linkSqlite.set(false) // <<--- must be false if using native
-
-    databases {
-        // ...
-    }
-}
-```
-
-**Add dependencies**
-```kotlin
-dependencies {
-    val sqliteMC = "2.0.0-1.6.4-0-SNAPSHOT"
-
-    // NOTE: Remove dependencies on the following if you have them
-    //  - "app.cash.sqldelight:sqlite-driver"
-    //  - "app.cash.sqldelight:native-driver"
-
-    implementation("io.toxicity.sqlite-mc:driver:$sqliteMC")
-
-    // For android unit tests (NOT instrumented)
-    // This is simply the desktop binary resources needed for JDBC
-    testImplementation("io.toxicity.sqlite-mc:android-unit-test:$sqliteMC")
-}
-```
--->
+   // Will automatically:
+   //  - Configure the latest SQLite dialect
+   //  - Add the sqlite-mc driver dependency
+   //  - Link native targets for provided SQLite3MultipleCiphers binaries
+   sqliteMC {
+       databases {
+           // Configure just like you would the SQLDelight plugin
+       }
+   }
+   ```
+3. If you have Android unit tests
+   ```kotlin
+   dependencies {
+       // For android unit tests (NOT instrumented)
+       //
+       // This is simply the desktop binary resources needed for
+       // JDBC to operate locally on the machine.
+       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.0-1.7.2-0-alpha01")
+   }
+   ```
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.0--1.7.2--0--SNAPSHOT-blue.svg?style=flat
+[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.0--1.7.2--0--alpha01-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
