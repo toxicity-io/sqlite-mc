@@ -18,7 +18,8 @@ okio = "3.5.0"
 
 sql-delight-dialect = "sqlite-3-38-dialect"
 sql-delight = "2.0.0"
-sql-jdbc-xerial = "3.43.0.0"
+sql-jdbc-xerial = "3.43.2.0"
+slf4j = "2.0.9"
 
 [libraries]
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
@@ -43,6 +44,8 @@ sql-delight-driver-jdbc = { module = "app.cash.sqldelight:jdbc-driver", version.
 sql-delight-driver-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sql-delight" }
 sql-delight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sql-delight" }
 sql-jdbc-xerial = { module = "org.xerial:sqlite-jdbc", version.ref = "sql-jdbc-xerial" }
+
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "gradle-android" }

@@ -1,20 +1,20 @@
-From a16bb65834f37d3a5916fabab8b8449e678e99f4 Mon Sep 17 00:00:00 2001
+From dd88bc7501a90f16303bb995bcb998fe122c1e2f Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Sat, 30 Sep 2023 15:05:38 -0400
-Subject: [PATCH 10/11] Configure build to use SQLite3MultipleCiphers
+Date: Fri, 13 Oct 2023 07:12:33 -0400
+Subject: [PATCH 10/10] Configure build to use SQLite3MultipleCiphers
 
 ---
- Makefile                                 | 22 ++++++++---------
- Makefile.common                          | 30 ++++++++++++------------
+ Makefile                                 | 22 +++++++--------
+ Makefile.common                          | 34 ++++++++++++------------
  VERSION                                  |  1 +
  src/main/java/org/sqlite/core/NativeDB.c |  2 +-
- 4 files changed, 28 insertions(+), 27 deletions(-)
+ 4 files changed, 30 insertions(+), 29 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 840ad53..5bf51b4 100644
+index 7ec39ad..16973c9 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -19,7 +19,7 @@ SQLITE_OBJ?=$(SQLITE_OUT)/sqlite3.o
+@@ -20,7 +20,7 @@ SQLITE_OBJ?=$(SQLITE_OUT)/sqlite3.o
  SQLITE_ARCHIVE:=$(TARGET)/$(sqlite)-amal.zip
  SQLITE_UNPACKED:=$(TARGET)/sqlite-unpack.log
  SQLITE_SOURCE?=$(TARGET)/$(SQLITE_AMAL_PREFIX)
@@ -23,7 +23,7 @@ index 840ad53..5bf51b4 100644
  ifneq ($(SQLITE_SOURCE),$(TARGET)/$(SQLITE_AMAL_PREFIX))
  	created := $(shell touch $(SQLITE_UNPACKED))
  endif
-@@ -33,12 +33,7 @@ G_ID:=$(shell id -g)
+@@ -34,12 +34,7 @@ G_ID:=$(shell id -g)
  
  $(SQLITE_ARCHIVE):
  	@mkdir -p $(@D)
@@ -37,7 +37,7 @@ index 840ad53..5bf51b4 100644
  
  $(SQLITE_UNPACKED): $(SQLITE_ARCHIVE)
  	unzip -qo $< -d $(TARGET)/tmp.$(version)
-@@ -82,7 +77,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+@@ -86,7 +81,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	    -DSQLITE_DEFAULT_MEMSTATUS=0 \
  	    -DSQLITE_DEFAULT_FILE_PERMISSIONS=0666 \
  	    -DSQLITE_MAX_VARIABLE_NUMBER=250000 \
@@ -46,7 +46,7 @@ index 840ad53..5bf51b4 100644
  	    -DSQLITE_MAX_LENGTH=2147483647 \
  	    -DSQLITE_MAX_COLUMN=32767 \
  	    -DSQLITE_MAX_SQL_LENGTH=1073741824 \
-@@ -90,10 +85,15 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+@@ -94,10 +89,15 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	    -DSQLITE_MAX_ATTACHED=125 \
  	    -DSQLITE_MAX_PAGE_COUNT=4294967294 \
  	    -DSQLITE_DQS=0 \
@@ -64,7 +64,7 @@ index 840ad53..5bf51b4 100644
  
  $(SQLITE_OUT)/$(LIBNAME): $(SQLITE_HEADER) $(SQLITE_OBJ) $(SRC)/org/sqlite/core/NativeDB.c $(TARGET)/common-lib/NativeDB.h
  	@mkdir -p $(@D)
-@@ -109,7 +109,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
+@@ -113,7 +113,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
  NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
  
  # For cross-compilation, install docker. See also https://github.com/dockcross/dockcross
@@ -74,10 +74,10 @@ index 840ad53..5bf51b4 100644
  native: $(NATIVE_DLL)
  
 diff --git a/Makefile.common b/Makefile.common
-index 638c24f..e992cb2 100644
+index df3dd2a..24302d9 100644
 --- a/Makefile.common
 +++ b/Makefile.common
-@@ -69,28 +69,28 @@ Default_SQLITE_FLAGS  :=
+@@ -73,28 +73,28 @@ Default_SQLITE_FLAGS  :=
  
  Linux-x86_CC        := $(CROSS_PREFIX)gcc
  Linux-x86_STRIP     := $(CROSS_PREFIX)strip
@@ -110,13 +110,13 @@ index 638c24f..e992cb2 100644
  Linux-Musl-x86_64_LINKFLAGS := $(Default_LINKFLAGS)
  Linux-Musl-x86_64_LIBNAME   := libsqlitejdbc.so
  Linux-Musl-x86_64_SQLITE_FLAGS  :=
-@@ -139,14 +139,14 @@ Linux-Android-aarch64_SQLITE_FLAGS  :=
+@@ -143,14 +143,14 @@ Linux-Android-aarch64_SQLITE_FLAGS  :=
  
  Linux-Android-x86_CC        := $(CROSS_PREFIX)clang
  Linux-Android-x86_STRIP     := $(CROSS_ROOT)/bin/llvm-strip
 -Linux-Android-x86_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(CROSS_ROOT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog
 +Linux-Android-x86_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(CROSS_ROOT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog -msse4.2 -maes
- Linux-Android-x86_LINKFLAGS := $(Default_LINKFLAGS)
+ Linux-Android-x86_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-soname,libsqlitejdbc.so
  Linux-Android-x86_LIBNAME   := libsqlitejdbc.so
  Linux-Android-x86_SQLITE_FLAGS  :=
  
@@ -124,10 +124,10 @@ index 638c24f..e992cb2 100644
  Linux-Android-x86_64_STRIP     := $(CROSS_ROOT)/bin/llvm-strip
 -Linux-Android-x86_64_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(CROSS_ROOT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog
 +Linux-Android-x86_64_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(CROSS_ROOT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog -msse4.2 -maes
- Linux-Android-x86_64_LINKFLAGS := $(Default_LINKFLAGS)
+ Linux-Android-x86_64_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-soname,libsqlitejdbc.so
  Linux-Android-x86_64_LIBNAME   := libsqlitejdbc.so
  Linux-Android-x86_64_SQLITE_FLAGS  :=
-@@ -160,21 +160,21 @@ Linux-ppc64_SQLITE_FLAGS  :=
+@@ -164,21 +164,21 @@ Linux-ppc64_SQLITE_FLAGS  :=
  
  DragonFly-x86_64_CC        := $(CROSS_PREFIX)cc
  DragonFly-x86_64_STRIP     := $(CROSS_PREFIX)strip
@@ -152,7 +152,7 @@ index 638c24f..e992cb2 100644
  FreeBSD-x86_64_LINKFLAGS := -shared
  FreeBSD-x86_64_LIBNAME   := libsqlitejdbc.so
  FreeBSD-x86_64_SQLITE_FLAGS  :=
-@@ -188,7 +188,7 @@ FreeBSD-aarch64_SQLITE_FLAGS  :=
+@@ -192,7 +192,7 @@ FreeBSD-aarch64_SQLITE_FLAGS  :=
  
  OpenBSD-x86_64_CC        := $(CROSS_PREFIX)gcc
  OpenBSD-x86_64_STRIP     := $(CROSS_PREFIX)strip
@@ -161,7 +161,7 @@ index 638c24f..e992cb2 100644
  OpenBSD-x86_64_LINKFLAGS := -shared
  OpenBSD-x86_64_LIBNAME   := libsqlitejdbc.so
  OpenBSD-x86_64_SQLITE_FLAGS  := 
-@@ -202,7 +202,7 @@ SunOS-sparcv9_SQLITE_FLAGS  :=
+@@ -206,7 +206,7 @@ SunOS-sparcv9_SQLITE_FLAGS  :=
  
  Mac-x86_CC        := gcc
  Mac-x86_STRIP     := strip -x
@@ -170,16 +170,25 @@ index 638c24f..e992cb2 100644
  Mac-x86_LINKFLAGS := -dynamiclib
  Mac-x86_LIBNAME   := libsqlitejdbc.dylib
  Mac-x86_SQLITE_FLAGS  := -DSQLITE_ENABLE_LOCKING_STYLE=0
-@@ -220,7 +220,7 @@ MAC_SDK := /Developer/SDKs/MacOSX10.10.sdk
+@@ -224,8 +224,8 @@ MAC_SDK := /Developer/SDKs/MacOSX10.10.sdk
  ifeq ($(wildcard MAC_SDK),)
  	MAC_SDK := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk
  endif
 -Mac-x86_64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -mmacosx-version-min=10.6 -fvisibility=hidden -Wno-implicit-function-declaration
-+Mac-x86_64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -mmacosx-version-min=10.6 -fvisibility=hidden -Wno-implicit-function-declaration -msse4.2 -maes
- Mac-x86_64_LINKFLAGS := -dynamiclib 
+-Mac-x86_64_LINKFLAGS := -dynamiclib 
++Mac-x86_64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -mmacosx-version-min=10.7 -fvisibility=hidden -Wno-implicit-function-declaration -msse4.2 -maes
++Mac-x86_64_LINKFLAGS := -dynamiclib -framework Security
  Mac-x86_64_LIBNAME   := libsqlitejdbc.dylib
  Mac-x86_64_SQLITE_FLAGS  := 
-@@ -237,15 +237,15 @@ Mac-aarch64_SQLITE_FLAGS :=
+ 
+@@ -235,21 +235,21 @@ Mac-aarch64_CC        := $(CROSS_PREFIX)clang
+ Mac-aarch64_STRIP     := $(CROSS_PREFIX)strip -x
+ MAC_SDK := /usr/osxcross/SDK/MacOSX11.3.sdk
+ Mac-aarch64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -mmacosx-version-min=10.9 -fvisibility=hidden -Wno-implicit-function-declaration
+-Mac-aarch64_LINKFLAGS  := -dynamiclib
++Mac-aarch64_LINKFLAGS  := -dynamiclib -framework Security
+ Mac-aarch64_LIBNAME    := libsqlitejdbc.dylib
+ Mac-aarch64_SQLITE_FLAGS := 
  
  Windows-x86_CC           := $(CROSS_PREFIX)gcc
  Windows-x86_STRIP        := $(CROSS_PREFIX)strip
@@ -199,12 +208,12 @@ index 638c24f..e992cb2 100644
  Windows-x86_64_SQLITE_FLAGS :=
  
 diff --git a/VERSION b/VERSION
-index bb0826e..3201dcf 100644
+index 58516cc..5aa310b 100644
 --- a/VERSION
 +++ b/VERSION
 @@ -1 +1,2 @@
- version=3.43.0
-+version_mc=1.6.4
+ version=3.43.2
++version_mc=1.7.2
 diff --git a/src/main/java/org/sqlite/core/NativeDB.c b/src/main/java/org/sqlite/core/NativeDB.c
 index 111c312..a5f144c 100644
 --- a/src/main/java/org/sqlite/core/NativeDB.c

@@ -1,17 +1,17 @@
-From f48a0b85a97e90761e1aaf5123533b950e2d4ac6 Mon Sep 17 00:00:00 2001
+From c86d45250f02d74f754cf16c3028acc43f2a5023 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Sat, 30 Sep 2023 15:00:34 -0400
-Subject: [PATCH 01/11] Add user/group ids to docker build
+Date: Fri, 13 Oct 2023 07:09:23 -0400
+Subject: [PATCH 01/10] Add user/group ids to docker build
 
 ---
  Makefile | 17 ++++++++++-------
  1 file changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index fff1841..3f9d151 100644
+index 5bf5df0..16f229a 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -28,6 +28,9 @@ SQLITE_INCLUDE := $(shell dirname "$(SQLITE_HEADER)")
+@@ -29,6 +29,9 @@ SQLITE_INCLUDE := $(shell dirname "$(SQLITE_HEADER)")
  
  CCFLAGS:= -I$(SQLITE_OUT) -I$(SQLITE_INCLUDE) $(CCFLAGS)
  
@@ -21,7 +21,7 @@ index fff1841..3f9d151 100644
  $(SQLITE_ARCHIVE):
  	@mkdir -p $(@D)
  	curl -L --max-redirs 0 -f -o$@ https://www.sqlite.org/2023/$(SQLITE_AMAL_PREFIX).zip || \
-@@ -138,10 +141,10 @@ win-arm64: $(SQLITE_UNPACKED) jni-header
+@@ -142,10 +145,10 @@ win-arm64: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-windows-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-w64-mingw32- OS_NAME=Windows OS_ARCH=aarch64'
  
  linux32: $(SQLITE_UNPACKED) jni-header
@@ -34,7 +34,7 @@ index fff1841..3f9d151 100644
  
  freebsd32: $(SQLITE_UNPACKED) jni-header
  	docker run $(DOCKER_RUN_OPTS) -v $$PWD:/workdir empterdose/freebsd-cross-build:9.3 sh -c 'apk add bash; apk add openjdk8; apk add perl; make clean-native native OS_NAME=FreeBSD OS_ARCH=x86 CROSS_PREFIX=i386-freebsd9-'
-@@ -153,10 +156,10 @@ freebsd-arm64: $(SQLITE_UNPACKED) jni-header
+@@ -157,10 +160,10 @@ freebsd-arm64: $(SQLITE_UNPACKED) jni-header
  	docker run $(DOCKER_RUN_OPTS) -v $$PWD:/workdir gotson/freebsd-cross-build:aarch64-11.4 sh -c 'make clean-native native OS_NAME=FreeBSD OS_ARCH=aarch64 CROSS_PREFIX=aarch64-unknown-freebsd11-'
  
  linux-musl32: $(SQLITE_UNPACKED) jni-header
@@ -47,7 +47,7 @@ index fff1841..3f9d151 100644
  
  linux-musl-arm64: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-musl-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-linux-musl- OS_NAME=Linux-Musl OS_ARCH=aarch64'
-@@ -189,14 +192,14 @@ linux-ppc64: $(SQLITE_UNPACKED) jni-header
+@@ -193,14 +196,14 @@ linux-ppc64: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-ppc64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64'
  
  mac64: $(SQLITE_UNPACKED) jni-header

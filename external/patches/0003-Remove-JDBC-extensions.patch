@@ -1,17 +1,17 @@
-From 6bca68bba88e182cac3fe0318d11c0dceee260b0 Mon Sep 17 00:00:00 2001
+From 6fbdd1e445d558b60a38989c89a8135798917c11 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Sat, 30 Sep 2023 15:01:51 -0400
-Subject: [PATCH 03/11] Remove JDBC extensions
+Date: Fri, 13 Oct 2023 07:09:56 -0400
+Subject: [PATCH 03/10] Remove JDBC extensions
 
 ---
  Makefile | 12 +-----------
  1 file changed, 1 insertion(+), 11 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 1a480fc..178e243 100644
+index b5db213..ff11d34 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -65,18 +65,8 @@ clean: clean-native clean-java clean-tests
+@@ -69,18 +69,8 @@ clean: clean-native clean-java clean-tests
  
  $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	@mkdir -p $(@D)
