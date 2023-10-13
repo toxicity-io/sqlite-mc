@@ -1,7 +1,7 @@
 From 92d9916b6e6621498d2575f13b1e046d275362f0 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:10:29 -0400
-Subject: [PATCH 05/10] Add Linux-Musl definitions
+Subject: [PATCH 05/11] Add Linux-Musl definitions
 
 ---
  Makefile.common | 23 ++++++++++++++++++++++-

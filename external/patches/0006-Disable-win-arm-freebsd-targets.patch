@@ -1,7 +1,7 @@
 From f93e0f576e9b965733a9417e7f46144b474a0d4e Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:10:57 -0400
-Subject: [PATCH 06/10] Disable win-arm/freebsd targets
+Subject: [PATCH 06/11] Disable win-arm/freebsd targets
 
 ---
  Makefile | 2 +-

@@ -1,0 +1,57 @@
+From 74deaeec768e1963909c137cf8becb69554a53e5 Mon Sep 17 00:00:00 2001
+From: Matthew Nelson <developer@matthewnelson.io>
+Date: Fri, 13 Oct 2023 11:37:01 -0400
+Subject: [PATCH 11/11] Remove logging from NativeDB
+
+---
+ src/main/java/org/sqlite/core/NativeDB.java | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/src/main/java/org/sqlite/core/NativeDB.java b/src/main/java/org/sqlite/core/NativeDB.java
+index 03b368c..9ae53b1 100644
+--- a/src/main/java/org/sqlite/core/NativeDB.java
++++ b/src/main/java/org/sqlite/core/NativeDB.java
+@@ -19,8 +19,6 @@ package org.sqlite.core;
+ import java.nio.ByteBuffer;
+ import java.nio.charset.StandardCharsets;
+ import java.sql.SQLException;
+-import org.slf4j.Logger;
+-import org.slf4j.LoggerFactory;
+ import org.sqlite.BusyHandler;
+ import org.sqlite.Collation;
+ import org.sqlite.Function;
+@@ -30,7 +28,6 @@ import org.sqlite.SQLiteJDBCLoader;
+ 
+ /** This class provides a thin JNI layer over the SQLite3 C API. */
+ public final class NativeDB extends DB {
+-    private static final Logger logger = LoggerFactory.getLogger(NativeDB.class);
+     private static final int DEFAULT_BACKUP_BUSY_SLEEP_TIME_MILLIS = 100;
+     private static final int DEFAULT_BACKUP_NUM_BUSY_BEFORE_FAIL = 3;
+     private static final int DEFAULT_PAGES_PER_BACKUP_STEP = 100;
+@@ -90,11 +87,6 @@ public final class NativeDB extends DB {
+     /** @see org.sqlite.core.DB#_exec(java.lang.String) */
+     @Override
+     public synchronized int _exec(String sql) throws SQLException {
+-        logger.atTrace()
+-                .setMessage("DriverManager [{}] [SQLite EXEC] {}")
+-                .addArgument(() -> Thread.currentThread().getName())
+-                .addArgument(sql)
+-                .log();
+         return _exec_utf8(stringToUtf8ByteArray(sql));
+     }
+ 
+@@ -126,11 +118,6 @@ public final class NativeDB extends DB {
+     /** @see org.sqlite.core.DB#prepare(java.lang.String) */
+     @Override
+     protected synchronized SafeStmtPtr prepare(String sql) throws SQLException {
+-        logger.atTrace()
+-                .setMessage("DriverManager [{}] [SQLite EXEC] {}")
+-                .addArgument(() -> Thread.currentThread().getName())
+-                .addArgument(sql)
+-                .log();
+         return new SafeStmtPtr(this, prepare_utf8(stringToUtf8ByteArray(sql)));
+     }
+ 
+-- 
+2.34.1
+
