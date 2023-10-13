@@ -1,6 +1,6 @@
-From 7a96e0c2c8dd64fb3a6abf10291eccc7bce2e65e Mon Sep 17 00:00:00 2001
+From 92d9916b6e6621498d2575f13b1e046d275362f0 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Sat, 30 Sep 2023 15:02:35 -0400
+Date: Fri, 13 Oct 2023 07:10:29 -0400
 Subject: [PATCH 05/11] Add Linux-Musl definitions
 
 ---
@@ -8,10 +8,10 @@ Subject: [PATCH 05/11] Add Linux-Musl definitions
  1 file changed, 22 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.common b/Makefile.common
-index f1e260d..638c24f 100644
+index e78ce60..df3dd2a 100644
 --- a/Makefile.common
 +++ b/Makefile.common
-@@ -48,7 +48,7 @@ endif
+@@ -52,7 +52,7 @@ endif
  
  # os=Default is meant to be generic unix/linux
  
@@ -20,7 +20,7 @@ index f1e260d..638c24f 100644
  target := $(OS_NAME)-$(OS_ARCH)
  
  ifeq (,$(findstring $(strip $(target)),$(known_targets)))
-@@ -81,6 +81,27 @@ Linux-x86_64_LINKFLAGS := $(Default_LINKFLAGS)
+@@ -85,6 +85,27 @@ Linux-x86_64_LINKFLAGS := $(Default_LINKFLAGS)
  Linux-x86_64_LIBNAME   := libsqlitejdbc.so
  Linux-x86_64_SQLITE_FLAGS  := 
  

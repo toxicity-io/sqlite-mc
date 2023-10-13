@@ -400,7 +400,7 @@ dependencies {
 -->
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.0--1.6.4--0--SNAPSHOT-blue.svg?style=flat
+[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.0--1.7.2--0--SNAPSHOT-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
@@ -408,10 +408,10 @@ dependencies {
 [badge-coroutines]: https://img.shields.io/badge/coroutines-1.7.3-blue.svg?logo=kotlin
 [badge-encoding]: https://img.shields.io/badge/encoding-2.0.0-blue.svg?style=flat
 [badge-sqldelight]: https://img.shields.io/badge/SQLDelight-2.0.0-blue.svg?style=flat
-[badge-sqlite]: https://img.shields.io/badge/SQLite3-3.43.0-blue.svg?style=flat
-[badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.6.4-blue.svg?style=flat
+[badge-sqlite]: https://img.shields.io/badge/SQLite3-3.43.2-blue.svg?style=flat
+[badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.7.2-blue.svg?style=flat
 [badge-sqliter]: https://img.shields.io/badge/SQLiter-1.2.3-blue.svg?style=flat
-[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.43.0.0-blue.svg?style=flat
+[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.43.2.0-blue.svg?style=flat
 
 <!-- TAG_PLATFORMS -->
 [badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2023]-6EDB8D.svg?style=flat
