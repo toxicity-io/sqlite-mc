@@ -40,7 +40,7 @@ kmpConfiguration {
         androidLibrary(namespace = "tools.check.publication") {
             sourceSetMain {
                 dependencies {
-                    implementation("$gourp:driver-android:$version")
+                    implementation("$group:driver-android:$version")
                 }
             }
             sourceSetTest {
