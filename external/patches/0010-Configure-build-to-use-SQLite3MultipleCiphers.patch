@@ -1,7 +1,7 @@
-From dd88bc7501a90f16303bb995bcb998fe122c1e2f Mon Sep 17 00:00:00 2001
+From f76d3e300f5914edc20b6d8512cce8f026281aa9 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:12:33 -0400
-Subject: [PATCH 10/11] Configure build to use SQLite3MultipleCiphers
+Subject: [PATCH 10/10] Configure build to use SQLite3MultipleCiphers
 
 ---
  Makefile                                 | 22 +++++++--------
@@ -11,7 +11,7 @@ Subject: [PATCH 10/11] Configure build to use SQLite3MultipleCiphers
  4 files changed, 30 insertions(+), 29 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 7ec39ad..16973c9 100644
+index 0db2eca..a052a06 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -20,7 +20,7 @@ SQLITE_OBJ?=$(SQLITE_OUT)/sqlite3.o
@@ -74,7 +74,7 @@ index 7ec39ad..16973c9 100644
  native: $(NATIVE_DLL)
  
 diff --git a/Makefile.common b/Makefile.common
-index df3dd2a..24302d9 100644
+index 0b374bf..9863d9a 100644
 --- a/Makefile.common
 +++ b/Makefile.common
 @@ -73,28 +73,28 @@ Default_SQLITE_FLAGS  :=

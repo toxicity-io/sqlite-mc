@@ -406,7 +406,7 @@ I'm guessing this is not really a factor on iOS."
 [badge-sqlite]: https://img.shields.io/badge/SQLite3-3.43.2-blue.svg?style=flat
 [badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.7.2-blue.svg?style=flat
 [badge-sqliter]: https://img.shields.io/badge/SQLiter-1.2.3-blue.svg?style=flat
-[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.43.2.0-blue.svg?style=flat
+[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.43.2.1-blue.svg?style=flat
 
 <!-- TAG_PLATFORMS -->
 [badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2023]-6EDB8D.svg?style=flat
