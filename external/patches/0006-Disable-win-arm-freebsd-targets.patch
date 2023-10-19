@@ -1,14 +1,14 @@
-From f93e0f576e9b965733a9417e7f46144b474a0d4e Mon Sep 17 00:00:00 2001
+From 534056672ea4ac1fb64c291145a4a41eab82fec2 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:10:57 -0400
-Subject: [PATCH 06/11] Disable win-arm/freebsd targets
+Subject: [PATCH 06/10] Disable win-arm/freebsd targets
 
 ---
  Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index ff11d34..f456faa 100644
+index 4de7e05..15c6a02 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -113,7 +113,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)

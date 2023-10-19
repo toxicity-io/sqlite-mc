@@ -18,8 +18,8 @@ okio = "3.5.0"
 
 sql-delight-dialect = "sqlite-3-38-dialect"
 sql-delight = "2.0.0"
-sql-jdbc-xerial = "3.43.2.0"
-slf4j = "2.0.9"
+sql-jdbc-xerial = "3.43.2.1"
+slf4j = "1.7.36"
 
 [libraries]
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }

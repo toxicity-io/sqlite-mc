@@ -1,14 +1,14 @@
-From c86d45250f02d74f754cf16c3028acc43f2a5023 Mon Sep 17 00:00:00 2001
+From 403bb8b932d1a1e0df9a35edc2c1475eecd3297d Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:09:23 -0400
-Subject: [PATCH 01/11] Add user/group ids to docker build
+Subject: [PATCH 01/10] Add user/group ids to docker build
 
 ---
  Makefile | 17 ++++++++++-------
  1 file changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 5bf5df0..16f229a 100644
+index 0315b65..47caf48 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -29,6 +29,9 @@ SQLITE_INCLUDE := $(shell dirname "$(SQLITE_HEADER)")

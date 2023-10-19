@@ -1,14 +1,14 @@
-From 742f78576c18d25f72f896b866618ab17267ec10 Mon Sep 17 00:00:00 2001
+From 50d655b691fc16b9942664f0f181a7b5d8b82e94 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:11:28 -0400
-Subject: [PATCH 07/11] Disable mac shared lib adhoc signing
+Subject: [PATCH 07/10] Disable mac shared lib adhoc signing
 
 ---
  Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index f456faa..600a83d 100644
+index 15c6a02..46ad8df 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -113,7 +113,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
