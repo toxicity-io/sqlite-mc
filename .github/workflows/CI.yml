@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, macos-11, ubuntu-latest, ubuntu-22.04, windows-latest, windows-2019 ]
+        os: [ macos-latest, macos-11, ubuntu-latest, ubuntu-20.04, windows-latest, windows-2019 ]
 
     runs-on: ${{ matrix.os }}
 
@@ -69,7 +69,7 @@ jobs:
           ./gradlew check --stacktrace
           -PKMP_TARGETS="ANDROID,JVM,JS,ANDROID_ARM32,ANDROID_ARM64,ANDROID_X64,ANDROID_X86,LINUX_ARM32HFP,LINUX_ARM64,LINUX_MIPS32,LINUX_MIPSEL32,LINUX_X64,MINGW_X64,WASM,WASM_32"
       - name: Run Linux JVM Tests
-        if: matrix.os == 'ubuntu-22.04'
+        if: matrix.os == 'ubuntu-20.04'
         run: >
           ./gradlew check --stacktrace
           -PKMP_TARGETS="JVM"
