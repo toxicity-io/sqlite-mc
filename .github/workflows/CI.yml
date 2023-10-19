@@ -39,8 +39,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('gradle/libs.versions.toml') }}
-          restore-keys: ${{ runner.os }}-gradle-caches-
+          key: ${{ matrix.os }}-gradle-caches-${{ hashFiles('**/*.gradle.kts') }}-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: ${{ matrix.os }}-gradle-caches-
 
       - name: Setup JDK
         uses: actions/setup-java@v3.4.0
