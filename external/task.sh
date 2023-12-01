@@ -46,14 +46,6 @@ function build { ## Build sqlite-jdbc native libs and package .jar file
   __build:clean
   mkdir -p "$DIR_UNSIGNED"
 
-  ${DOCKER} build \
-    -f "$DIR_SCRIPT/docker/Dockerfile.ubuntu16-linux-x86" \
-    -t toxicity-io/ubuntu16-linux-x86 \
-    .
-  ${DOCKER} build \
-    -f "$DIR_SCRIPT/docker/Dockerfile.ubuntu16-linux-x86_64" \
-    -t toxicity-io/ubuntu16-linux-x86_64 \
-    .
   ${MAKE} native-all package test
 
   cp -Rv "$DIR_JDBC/src/main/resources/org/sqlite/native/Mac/" "$DIR_UNSIGNED/"
