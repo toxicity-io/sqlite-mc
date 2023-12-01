@@ -170,71 +170,62 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
 
         if (xcode != null) {
             when (kt) {
+                // iOS
                 IOS_ARM64 -> listOf(
-                    "-mios-version-min=9.0",
                     "-isysroot",
                     xcode.iphoneosSdk,
                 )
                 IOS_SIMULATOR_ARM64 -> listOf(
-                    "-mios-simulator-version-min=9.0",
                     "-isysroot",
                     xcode.iphonesimulatorSdk,
                 )
                 IOS_X64 -> listOf(
-                    "-mios-version-min=9.0",
                     "-isysroot",
                     xcode.iphoneosSdk,
                 )
 
+                // macOS
                 MACOS_ARM64 -> listOf(
-                    "-mmacosx-version-min=10.9",
                     "-isysroot",
                     xcode.macosxSdk,
                 )
                 MACOS_X64 -> listOf(
-                    "-mmacosx-version-min=10.7",
                     "-isysroot",
                     xcode.macosxSdk,
                 )
 
+                // tvOS
                 TVOS_ARM64 -> listOf(
-                    "-mtvos-version-min=9.0",
                     "-isysroot",
                     xcode.appletvosSdk,
                 )
                 TVOS_SIMULATOR_ARM64 -> listOf(
-                    "-mtvos-simulator-version-min=9.0",
                     "-isysroot",
                     xcode.appletvsimulatorSdk,
                 )
                 TVOS_X64 -> listOf(
-                    "-mtvos-version-min=9.0",
                     "-isysroot",
                     xcode.appletvosSdk,
                 )
 
+                // watchOS
                 WATCHOS_ARM32 -> listOf(
-                    "-mwatchos-version-min=3.0",
                     "-isysroot",
                     xcode.watchosSdk,
                 )
                 WATCHOS_ARM64 -> listOf(
-                    "-mwatchos-version-min=3.0",
                     "-isysroot",
                     xcode.watchosSdk,
                 )
                 WATCHOS_DEVICE_ARM64 -> listOf(
-                    "-mwatchos-version-min=3.0",
                     "-isysroot",
                     xcode.watchosSdk,
                 )
                 WATCHOS_SIMULATOR_ARM64 -> listOf(
-                    "-mwatchos-simulator-version-min=3.0",
                     "-isysroot",
                     xcode.watchsimulatorSdk,
                 )
                 WATCHOS_X64 -> listOf(
-                    "-mwatchos-version-min=3.0",
                     "-isysroot",
                     xcode.watchosSdk,
                 )
@@ -254,9 +245,6 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
         ).let { compilerArgs.addAll(it) }
 
         if (kt.family.isAppleFamily) {
-            // disable warning about version-min overriding version expressed in --target
-            compilerArgs.add("-Wno-overriding-t-option")
-
             // disable warning about gethostuuid being deprecated on darwin
             compilerArgs.add("-Wno-#warnings")
         }

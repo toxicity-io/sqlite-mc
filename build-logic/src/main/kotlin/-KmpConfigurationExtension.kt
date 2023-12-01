@@ -31,10 +31,6 @@ fun KmpConfigurationExtension.configureShared(
             compileTargetCompatibility = JavaVersion.VERSION_1_8
         }
 
-        iosArm64()
-        iosX64()
-        iosSimulatorArm64()
-
         // Just use JVM. Not dealing with native desktop
         // b/c it's a shit-show (especially Linux)
 //        linuxX64()
@@ -42,13 +38,13 @@ fun KmpConfigurationExtension.configureShared(
 //        macosX64()
 //        mingwX64()
 
-        tvosArm64()
-        tvosX64()
-        tvosSimulatorArm64()
+        iosAll()
+        tvosAll()
 
-        watchosX64()
+        // watchosDeviceArm64 not supported by some libraries
         watchosArm32()
         watchosArm64()
+        watchosX64()
         watchosSimulatorArm64()
 
         common {
