@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("KotlinRedundantDiagnosticSuppress")
+@file:Suppress("KotlinRedundantDiagnosticSuppress", "EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 
 package io.toxicity.sqlite.mc.driver
 
