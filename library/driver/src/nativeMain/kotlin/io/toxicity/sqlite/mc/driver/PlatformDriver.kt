@@ -80,6 +80,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
     
     protected actual companion object {
 
+        @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
         @Throws(IllegalArgumentException::class, IllegalStateException::class)
         internal actual fun FactoryConfig.create(keyPragma: MutableMCPragmas, rekeyPragma: MutableMCPragmas?): Args {
             val pragmas = pragmaConfig.filesystem.toMutableMap()
@@ -154,6 +155,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
             return Args(keyPragma, driver, logger?.let { LogSqliteDriver(driver, it) })
         }
 
+        @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
         @Throws(IllegalStateException::class)
         internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
             val pragmas = pragmaConfig.ephemeral.toMutableMap()
