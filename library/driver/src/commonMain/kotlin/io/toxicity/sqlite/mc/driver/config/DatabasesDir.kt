@@ -14,6 +14,8 @@
  * limitations under the License.
  **/
 
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+
 package io.toxicity.sqlite.mc.driver.config
 
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
