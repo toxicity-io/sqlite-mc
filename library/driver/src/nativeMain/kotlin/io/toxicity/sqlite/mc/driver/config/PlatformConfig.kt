@@ -36,6 +36,7 @@ public actual class PlatformConfig private constructor(
 
         public actual val Default: PlatformConfig = new(other = null) {}
 
+        @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
         public actual fun new(
             other: PlatformConfig?,
             block: Builder.() -> Unit,
@@ -60,6 +61,7 @@ public actual class PlatformConfig private constructor(
             }
         }
 
+        @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
         internal actual fun build(): PlatformConfig = PlatformConfig(
             maxReaderConnections = if (maxReaderConnections < 1) 1 else maxReaderConnections,
         )
