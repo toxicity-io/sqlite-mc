@@ -1,4 +1,5 @@
 [versions]
+androidx-startup = "1.1.1"
 androidx-test-core = "1.5.0"
 androidx-test-runner = "1.5.2"
 
@@ -22,6 +23,7 @@ sql-jdbc-xerial = "3.43.2.2"
 slf4j = "1.7.36"
 
 [libraries]
+androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup" }
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 

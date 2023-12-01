@@ -18,11 +18,6 @@
 package io.toxicity.sqlite.mc.driver.config
 
 import android.content.Context
-import java.io.File
+import io.toxicity.sqlite.mc.driver.internal.SqliteMCInitializer.Impl.Companion.databasesDirFile
 
-public fun Context.databasesDir(): DatabasesDir {
-    val path = applicationContext.getDatabasePath("d")
-    val parent = path.parentFile ?: File(path.path.dropLast(1))
-
-    return DatabasesDir(parent)
-}
+public fun Context.databasesDir(): DatabasesDir = DatabasesDir(databasesDirFile())

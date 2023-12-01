@@ -59,6 +59,7 @@ kmpConfiguration {
             sourceSetMain {
                 dependencies {
                     implementation(files(jdbcRepack.jarSQLiteJDBCAndroid))
+                    implementation(libs.androidx.startup.runtime)
                 }
             }
         }
