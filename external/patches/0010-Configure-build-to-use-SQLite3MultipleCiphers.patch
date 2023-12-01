@@ -1,4 +1,4 @@
-From f76d3e300f5914edc20b6d8512cce8f026281aa9 Mon Sep 17 00:00:00 2001
+From 7aba89b5dfaa290fa5c9eee6e7925ff2adec0ce4 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:12:33 -0400
 Subject: [PATCH 10/11] Configure build to use SQLite3MultipleCiphers

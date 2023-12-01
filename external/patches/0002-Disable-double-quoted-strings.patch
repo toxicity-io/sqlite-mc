@@ -1,4 +1,4 @@
-From 9c68f6c65e0f55134b94d2a7067565d297084ef3 Mon Sep 17 00:00:00 2001
+From b9d78f9fe8ffb467264a7f5da9ecc348f9967471 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:09:39 -0400
 Subject: [PATCH 02/11] Disable double-quoted strings
@@ -61,10 +61,10 @@ index a79cd86..89dd54b 100644
              assertThat(rs.getString(1)).isEqualTo("TGCA");
              rs.close();
 diff --git a/src/test/java/org/sqlite/PrepStmtTest.java b/src/test/java/org/sqlite/PrepStmtTest.java
-index 393f237..88922c7 100644
+index 403603c..405299c 100644
 --- a/src/test/java/org/sqlite/PrepStmtTest.java
 +++ b/src/test/java/org/sqlite/PrepStmtTest.java
-@@ -599,7 +599,7 @@ public class PrepStmtTest {
+@@ -600,7 +600,7 @@ public class PrepStmtTest {
      public void clearParameters() throws SQLException {
          stat.executeUpdate(
                  "create table tbl (colid integer primary key AUTOINCREMENT, col varchar)");
