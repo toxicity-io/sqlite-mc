@@ -65,7 +65,7 @@ fun KmpConfigurationContainerDsl.androidLibrary(
     namespace: String,
     buildTools: String? = "33.0.2",
     compileSdk: Int = 33,
-    minSdk: Int = 23,
+    minSdk: Int = 21,
     javaVersion: JavaVersion = JavaVersion.VERSION_1_8,
     action: (Action<TargetAndroidContainer.Library>)? = null,
 ) {

@@ -85,7 +85,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [ 23, 26, 29 ]
+        api-level: [ 21, 23, 26, 29 ]
         arch: [ x86_64 ]
     steps:
       - name: Checkout Repo
