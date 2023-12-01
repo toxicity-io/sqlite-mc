@@ -33,7 +33,8 @@ import kotlin.jvm.JvmField
  * to not throw exception when [DatabasesDir] is instantiated.
  *
  * Default Locations:
- * - Android: `/data/user/{userid}/{your.application.id}/databases/`
+ * - Android Runtime: `/data/user/{userid}/{your.application.id}/databases/`
+ * - Android Unit Tests: `{tmp dir}/sqlite_mc/.databases`
  * - Jvm - Unix: `~/.databases/`
  * - Jvm - Mingw: `{drive}:\Users\{username}\.databases\`
  * - Native - Apple: `~/Documents/databases/`

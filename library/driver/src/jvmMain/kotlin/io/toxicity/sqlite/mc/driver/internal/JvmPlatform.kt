@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:JvmName("AndroidPlatform")
+package io.toxicity.sqlite.mc.driver.internal
 
-package io.toxicity.sqlite.mc.driver.config
+import java.io.File
 
-import android.content.Context
-import io.toxicity.sqlite.mc.driver.internal.SqliteMCInitializer.Impl.Companion.databasesDirFile
-
-public fun Context.databasesDir(): DatabasesDir = DatabasesDir(databasesDirFile())
+internal actual val DEFAULT_DATABASES_DIR: File? by lazy {
+    System.getProperty("user.home")
+        ?.ifBlank { null }
+        ?.let { home -> File(home).resolve(".databases") }
+}
