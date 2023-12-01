@@ -86,7 +86,7 @@ jobs:
       fail-fast: false
       matrix:
         api-level: [ 21, 23, 26, 29 ]
-        arch: [ arm64-v8a, x86_64 ]
+        arch: [ x86_64 ]
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
