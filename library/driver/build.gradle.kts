@@ -350,8 +350,8 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
  * we do not want as a transitive dependency since we are compiling
  * our own sqlite-jdbc jar that uses SQLite3MultipleCiphers.
  *
- * For JVM, Mac/Windows/Linux/Linux-Musl/FreeBSD binaries are
- * repackaged, while Linux-Android is dropped.
+ * For JVM, Mac/Windows/Linux/Linux-Android/Linux-Musl/FreeBSD binaries are
+ * repackaged.
  *
  * For Android, all native binaries are dropped and Linux-Android
  * binaries are extracted to their respective src/androidMain/jniLibs
@@ -506,12 +506,7 @@ private class JdbcRepack {
 
                     // Don't include the readme or any android libs in
                     // the repackaged .jar file
-                    if (
-                        entry.name == "org/sqlite/native/readme.txt"
-                        || entry.name.startsWith("org/sqlite/native/Linux-Android")
-                    ) {
-                        return@forEach
-                    }
+                    if (entry.name == "org/sqlite/native/readme.txt") return@forEach
 
                     val signedLib: File? = when {
                         entry.isDirectory -> null
