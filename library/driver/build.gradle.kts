@@ -156,18 +156,6 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             else -> null
         }?.let { compilerArgs.addAll(it) }
 
-        when (kt) {
-            WATCHOS_ARM32 -> listOf(
-                "-arch",
-                "armv7k",
-            )
-            WATCHOS_ARM64 -> listOf(
-                "-arch",
-                "arm64",
-            )
-            else -> null
-        }?.let { compilerArgs.addAll(it) }
-
         if (xcode != null) {
             when (kt) {
                 // iOS
