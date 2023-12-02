@@ -1,4 +1,4 @@
-From 853488f3e225c4af17b7814122e76f7f53ceeacd Mon Sep 17 00:00:00 2001
+From 8e52e8b570da6b50a6b3ba9582d124d51d6bd859 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 1 Dec 2023 12:49:06 -0500
 Subject: [PATCH 11/11] Use build-env where possible
@@ -87,7 +87,7 @@ index a052a06..f497d3d 100644
  # deprecated
  mac32: $(SQLITE_UNPACKED) jni-header
 diff --git a/Makefile.common b/Makefile.common
-index 9863d9a..346dc86 100644
+index 9863d9a..82ecb74 100644
 --- a/Makefile.common
 +++ b/Makefile.common
 @@ -128,29 +128,29 @@ Linux-armv7_LIBNAME   := libsqlitejdbc.so
@@ -141,7 +141,7 @@ index 9863d9a..346dc86 100644
 -Mac-x86_64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -mmacosx-version-min=10.7 -fvisibility=hidden -Wno-implicit-function-declaration -msse4.2 -maes
 +Mac-x86_64_CC        := $(CROSS_PREFIX)clang
 +Mac-x86_64_STRIP     := $(CROSS_PREFIX)strip -x
-+Mac-x86_64_CCFLAGS    := -I$(PATH_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -fvisibility=hidden -Wno-implicit-function-declaration -msse4.2 -maes
++Mac-x86_64_CCFLAGS    := -I$(PATH_SDK)/System/Library/Frameworks/JavaNativeFoundation.framework/Headers -Ilib/inc_mac -Os -fPIC -fvisibility=hidden -Wno-implicit-function-declaration -msse4.2 -maes
  Mac-x86_64_LINKFLAGS := -dynamiclib -framework Security
  Mac-x86_64_LIBNAME   := libsqlitejdbc.dylib
  Mac-x86_64_SQLITE_FLAGS  := 
@@ -152,7 +152,7 @@ index 9863d9a..346dc86 100644
  Mac-aarch64_STRIP     := $(CROSS_PREFIX)strip -x
 -MAC_SDK := /usr/osxcross/SDK/MacOSX11.3.sdk
 -Mac-aarch64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -mmacosx-version-min=10.9 -fvisibility=hidden -Wno-implicit-function-declaration
-+Mac-aarch64_CCFLAGS    := -I$(PATH_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -fvisibility=hidden -Wno-implicit-function-declaration
++Mac-aarch64_CCFLAGS    := -I$(PATH_SDK)/System/Library/Frameworks/JavaNativeFoundation.framework/Headers -Ilib/inc_mac -Os -fPIC -fvisibility=hidden -Wno-implicit-function-declaration
  Mac-aarch64_LINKFLAGS  := -dynamiclib -framework Security
  Mac-aarch64_LIBNAME    := libsqlitejdbc.dylib
  Mac-aarch64_SQLITE_FLAGS := 
