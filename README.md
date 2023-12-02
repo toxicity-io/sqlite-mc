@@ -411,7 +411,7 @@ I'm guessing this is not really a factor on iOS."
 [badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.43.2.2-blue.svg?style=flat
 
 <!-- TAG_PLATFORMS -->
-[badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2023]-6EDB8D.svg?style=flat
+[badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2021]-6EDB8D.svg?style=flat
 [badge-platform-jvm]: http://img.shields.io/badge/-jvm-DB413D.svg?style=flat
 [badge-platform-js]: http://img.shields.io/badge/-js-F8DB5D.svg?style=flat
 [badge-platform-js-node]: https://img.shields.io/badge/-nodejs-68a063.svg?style=flat
