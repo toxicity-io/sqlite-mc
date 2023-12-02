@@ -238,6 +238,8 @@ database encryption.
 
 ### Jvm Supported Operating Systems
 
+**NOTE:** `macOS` and `Windows` binaries are code signed.
+
 |              | x86 | x86_64 | armv5 | armv6 | armv7 | arm64 | ppc64 |
 |--------------|-----|--------|-------|-------|-------|-------|-------|
 | Windows      | ✔   | ✔      |       |       |       |       |       |
@@ -370,7 +372,7 @@ I'm guessing this is not really a factor on iOS."
    ```kotlin
    plugins {
        // Provides the SQLDelight gradle plugin automatically and applies it
-       id("io.toxicity.sqlite-mc") version("2.0.0-1.7.2-0-alpha01")
+       id("io.toxicity.sqlite-mc") version("2.0.0-1.7.2-0-beta01")
    }
 
    // Will automatically:
@@ -390,23 +392,23 @@ I'm guessing this is not really a factor on iOS."
        //
        // This is simply the desktop binary resources needed for
        // JDBC to operate locally on the machine.
-       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.0-1.7.2-0-alpha01")
+       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.0-1.7.2-0-beta01")
    }
    ```
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.0--1.7.2--0--alpha01-blue.svg?style=flat
+[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.0--1.7.2--0--beta01-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
-[badge-kotlin]: https://img.shields.io/badge/kotlin-1.9.10-blue.svg?logo=kotlin
+[badge-kotlin]: https://img.shields.io/badge/kotlin-1.9.21-blue.svg?logo=kotlin
 [badge-coroutines]: https://img.shields.io/badge/coroutines-1.7.3-blue.svg?logo=kotlin
-[badge-encoding]: https://img.shields.io/badge/encoding-2.0.0-blue.svg?style=flat
+[badge-encoding]: https://img.shields.io/badge/encoding-2.1.0-blue.svg?style=flat
 [badge-sqldelight]: https://img.shields.io/badge/SQLDelight-2.0.0-blue.svg?style=flat
 [badge-sqlite]: https://img.shields.io/badge/SQLite3-3.43.2-blue.svg?style=flat
 [badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.7.2-blue.svg?style=flat
 [badge-sqliter]: https://img.shields.io/badge/SQLiter-1.2.3-blue.svg?style=flat
-[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.43.2.1-blue.svg?style=flat
+[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.43.2.2-blue.svg?style=flat
 
 <!-- TAG_PLATFORMS -->
 [badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2023]-6EDB8D.svg?style=flat
@@ -436,4 +438,3 @@ I'm guessing this is not really a factor on iOS."
 [url-sqlitemc]: https://github.com/utelle/SQLite3MultipleCiphers
 [url-sqliter]: https://github.com/touchlab/SQLiter
 [url-sqlitejdbc]: https://github.com/xerial/sqlite-jdbc
-
