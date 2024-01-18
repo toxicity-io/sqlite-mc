@@ -13,7 +13,7 @@ gradle-kmp-configuration = "0.1.7"
 gradle-kotlin = "1.9.21"
 gradle-maven-publish = "0.25.3"
 
-immutable = "0.1.0-alpha01"
+immutable = "0.1.0"
 
 kotlinx-coroutines = "1.7.3"
 
