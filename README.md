@@ -6,6 +6,7 @@
 [![badge-sqlite]][url-sqlite]
 [![badge-coroutines]][url-coroutines]
 [![badge-encoding]][url-encoding]
+[![badge-immutable]][url-immutable]
 [![badge-sqldelight]][url-sqldelight]
 [![badge-sqlitemc]][url-sqlitemc]
 [![badge-sqliter]][url-sqliter]
@@ -404,6 +405,7 @@ I'm guessing this is not really a factor on iOS."
 [badge-kotlin]: https://img.shields.io/badge/kotlin-1.9.21-blue.svg?logo=kotlin
 [badge-coroutines]: https://img.shields.io/badge/coroutines-1.7.3-blue.svg?logo=kotlin
 [badge-encoding]: https://img.shields.io/badge/encoding-2.1.0-blue.svg?style=flat
+[badge-immutable]: https://img.shields.io/badge/immutable-0.1.0--alpha01-blue.svg?style=flat
 [badge-sqldelight]: https://img.shields.io/badge/SQLDelight-2.0.0-blue.svg?style=flat
 [badge-sqlite]: https://img.shields.io/badge/SQLite3-3.43.2-blue.svg?style=flat
 [badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.7.2-blue.svg?style=flat
@@ -433,6 +435,7 @@ I'm guessing this is not really a factor on iOS."
 [url-kotlin]: https://kotlinlang.org
 [url-coroutines]: https://github.com/Kotlin/kotlinx.coroutines
 [url-encoding]: https://github.com/05nelsonm/encoding
+[url-immutable]: https://github.com/05nelsonm/immutable
 [url-sqldelight]: https://github.com/cashapp/sqldelight
 [url-sqlite]: https://sqlite.org
 [url-sqlitemc]: https://github.com/utelle/SQLite3MultipleCiphers

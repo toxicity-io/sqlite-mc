@@ -84,6 +84,7 @@ kmpConfiguration {
                 dependencies {
                     api(libs.sql.delight.runtime)
                     implementation(libs.encoding.base16)
+                    implementation(libs.immutable.collections)
                     implementation(libs.kotlinx.coroutines.core)
                 }
             }

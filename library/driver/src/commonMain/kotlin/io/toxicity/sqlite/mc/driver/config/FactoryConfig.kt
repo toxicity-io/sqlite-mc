@@ -20,6 +20,7 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.logs.LogSqliteDriver
+import io.matthewnelson.immutable.collections.toImmutableList
 import io.toxicity.sqlite.mc.driver.MCConfigDsl
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import kotlinx.coroutines.CoroutineDispatcher
@@ -50,7 +51,7 @@ public class FactoryConfig private constructor(
     @JvmSynthetic
     internal val dispatcher: CoroutineDispatcher,
     @JvmSynthetic
-    internal val afterVersions: Array<AfterVersion>,
+    internal val afterVersions: List<AfterVersion>,
     @JvmSynthetic
     internal val logger: ((String) -> Unit)?,
 ) {
@@ -226,7 +227,7 @@ public class FactoryConfig private constructor(
                     dispatcher
                 }
             },
-            afterVersions = afterVersions.toTypedArray(),
+            afterVersions = afterVersions.toImmutableList(),
             logger = logger.toRedactedLoggerOrNull(redactLogs, dbName),
         )
     }

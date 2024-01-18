@@ -18,6 +18,9 @@
 package io.toxicity.sqlite.mc.driver.config
 
 import app.cash.sqldelight.db.SqlCursor
+import io.matthewnelson.immutable.collections.immutableSetOf
+import io.matthewnelson.immutable.collections.toImmutableList
+import io.matthewnelson.immutable.collections.toImmutableSet
 import io.toxicity.sqlite.mc.driver.MCConfigDsl
 import io.toxicity.sqlite.mc.driver.config.encryption.*
 import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
@@ -130,23 +133,23 @@ public abstract class MCPragma<FieldType: Any> private constructor(
         @JvmStatic
         @get:JvmSynthetic
         internal val ALL: Set<MCPragma<*>> by lazy {
-            buildSet(capacity = 16) {
-                add(CIPHER)
-                add(HMAC_CHECK)
-                add(MC_LEGACY_WAL)
-                add(LEGACY)
-                add(LEGACY_PAGE_SIZE)
-                add(KDF_ITER)
-                add(FAST_KDF_ITER)
-                add(HMAC_USE)
-                add(HMAC_PNGO)
-                add(HMAC_SALT_MASK)
-                add(KDF_ALGORITHM)
-                add(HMAC_ALGORITHM)
-                add(PLAIN_TEXT_HEADER_SIZE)
-                add(KEY)
-                add(RE_KEY)
-            }
+            immutableSetOf(
+                CIPHER,
+                HMAC_CHECK,
+                MC_LEGACY_WAL,
+                LEGACY,
+                LEGACY_PAGE_SIZE,
+                KDF_ITER,
+                FAST_KDF_ITER,
+                HMAC_USE,
+                HMAC_PNGO,
+                HMAC_SALT_MASK,
+                KDF_ALGORITHM,
+                HMAC_ALGORITHM,
+                PLAIN_TEXT_HEADER_SIZE,
+                KEY,
+                RE_KEY,
+            )
         }
 
         private val TransformAny: Transformer<Any> = Transformer { it.toString() }
@@ -258,5 +261,5 @@ internal fun MCPragmas.toMCSQLStatements(): List<String> {
         }
 
         addAll(rekeyNonTransient)
-    }
+    }.toImmutableList()
 }

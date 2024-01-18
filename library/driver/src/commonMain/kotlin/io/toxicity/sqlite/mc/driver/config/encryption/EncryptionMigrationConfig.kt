@@ -15,6 +15,7 @@
  **/
 package io.toxicity.sqlite.mc.driver.config.encryption
 
+import io.matthewnelson.immutable.collections.toImmutableSet
 import io.toxicity.sqlite.mc.driver.MCConfigDsl
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
 import io.toxicity.sqlite.mc.driver.config.FilesystemConfig
@@ -238,7 +239,7 @@ public class EncryptionMigrationConfig private constructor(
 
         @JvmSynthetic
         internal fun build(): EncryptionMigrationConfig? {
-            val set = migrations.toSet()
+            val set = migrations.toImmutableSet()
             if (set.isEmpty()) return null
             return EncryptionMigrationConfig(set)
         }
