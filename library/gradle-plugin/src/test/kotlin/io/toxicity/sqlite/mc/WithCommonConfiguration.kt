@@ -23,6 +23,7 @@ internal fun GradleRunner.withCommonConfiguration(projectRoot: File): GradleRunn
         """
       |org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g
       |android.useAndroidX=true
+      |kotlin.mpp.applyDefaultHierarchyTemplate=false
       |
     """.trimMargin(),
     )
