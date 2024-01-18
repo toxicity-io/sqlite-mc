@@ -304,6 +304,7 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             "-DSQLITE_MAX_FUNCTION_ARG=127",
             "-DSQLITE_MAX_ATTACHED=125",
             "-DSQLITE_MAX_PAGE_COUNT=4294967294",
+            "-DSQLITE_DISABLE_PAGECACHE_OVERFLOW_STATS",
             "-DSQLITE_DQS=0",
             "-DCODEC_TYPE=CODEC_TYPE_CHACHA20",
             "-DSQLITE_ENABLE_EXTFUNC=1",
