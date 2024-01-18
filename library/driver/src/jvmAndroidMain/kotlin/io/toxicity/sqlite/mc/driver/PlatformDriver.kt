@@ -129,7 +129,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     properties = properties,
                     schema = schema,
                     migrateEmptySchema = platformConfig.migrateEmptySchema,
-                    callbacks = afterVersions,
+                    callbacks = afterVersions.toTypedArray(),
                 )
             } catch (t: Throwable) {
                 properties.clear()
@@ -160,7 +160,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
                     properties = properties,
                     schema = schema,
                     migrateEmptySchema = platformConfig.migrateEmptySchema,
-                    callbacks = afterVersions,
+                    callbacks = afterVersions.toTypedArray(),
                 )
             } catch (t: Throwable) {
                 if (t is IllegalStateException) throw t

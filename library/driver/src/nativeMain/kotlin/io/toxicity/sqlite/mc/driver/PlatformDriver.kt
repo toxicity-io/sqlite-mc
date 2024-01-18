@@ -278,10 +278,10 @@ private fun SqlSchema<QueryResult.Value<Unit>>.create(): (DatabaseConnection) ->
 }
 
 private fun SqlSchema<QueryResult.Value<Unit>>.upgrade(
-    afterVersions: Array<AfterVersion>
+    afterVersions: List<AfterVersion>
 ): (DatabaseConnection, Int, Int) -> Unit = { connection, oldVersion, newVersion ->
     wrapConnection(connection) {
-        migrate(it, oldVersion.toLong(), newVersion.toLong(), callbacks = afterVersions)
+        migrate(it, oldVersion.toLong(), newVersion.toLong(), callbacks = afterVersions.toTypedArray())
     }
 }
 
