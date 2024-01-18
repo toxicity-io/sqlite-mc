@@ -52,7 +52,7 @@ internal class JDBCMC4Connection private constructor(
             prop: JDBCMCProperties,
         ): JDBCMC4Connection? {
             if (!JDBC.isValidURL(url)) return null
-            val trimmed = url?.trim()?.plus(prop.ephemeralUrlSuffix) ?: return null
+            val trimmed = url?.trim() ?: return null
 
             val fileName = trimmed.substring(JDBCMC.PREFIX.length)
 

@@ -146,12 +146,12 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
         internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
             JDBCMC.initialize
 
-            val url = JDBCMC.PREFIX
-            val properties = when (opt) {
+            val url = JDBCMC.PREFIX + when (opt) {
                 EphemeralOpt.IN_MEMORY -> ":memory:"
                 EphemeralOpt.NAMED -> "file:$dbName?mode=memory&cache=shared"
                 EphemeralOpt.TEMPORARY -> ""
-            }.let { JDBCMCProperties.of(it) }
+            }
+            val properties = JDBCMCProperties.of()
             properties.putAll(pragmaConfig.ephemeral)
 
             val driver = try {

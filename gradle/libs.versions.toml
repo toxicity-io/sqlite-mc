@@ -17,10 +17,10 @@ immutable = "0.1.0"
 
 kotlinx-coroutines = "1.7.3"
 
-okio = "3.5.0"
+okio = "3.7.0"
 
 sql-delight-dialect = "sqlite-3-38-dialect"
-sql-delight = "2.0.0"
+sql-delight = "2.0.1"
 sql-jdbc-xerial = "3.43.2.2"
 slf4j = "1.7.36"
 
