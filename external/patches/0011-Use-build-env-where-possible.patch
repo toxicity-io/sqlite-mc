@@ -1,26 +1,26 @@
-From 8e52e8b570da6b50a6b3ba9582d124d51d6bd859 Mon Sep 17 00:00:00 2001
+From 65cbb4f3c47dfd98c57a8f998b3c7b866a553879 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Fri, 1 Dec 2023 12:49:06 -0500
+Date: Thu, 18 Jan 2024 13:42:47 -0500
 Subject: [PATCH 11/11] Use build-env where possible
 
 ---
- Makefile        | 25 +++++++++++++------------
+ Makefile        | 27 ++++++++++++++-------------
  Makefile.common | 35 ++++++++++++++---------------------
- 2 files changed, 27 insertions(+), 33 deletions(-)
+ 2 files changed, 28 insertions(+), 34 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index a052a06..f497d3d 100644
+index d963f92..c1713bf 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -21,6 +21,7 @@ SQLITE_ARCHIVE:=$(TARGET)/$(sqlite)-amal.zip
  SQLITE_UNPACKED:=$(TARGET)/sqlite-unpack.log
  SQLITE_SOURCE?=$(TARGET)/$(SQLITE_AMAL_PREFIX)
  SQLITE_HEADER?=$(SQLITE_SOURCE)/sqlite3mc_amalgamation.h
-+TAG_BUILD_ENV=0.1.0
++TAG_BUILD_ENV=0.1.3
  ifneq ($(SQLITE_SOURCE),$(TARGET)/$(SQLITE_AMAL_PREFIX))
  	created := $(shell touch $(SQLITE_UNPACKED))
  endif
-@@ -124,10 +125,10 @@ $(NATIVE_DLL): $(SQLITE_OUT)/$(LIBNAME)
+@@ -125,10 +126,10 @@ $(NATIVE_DLL): $(SQLITE_OUT)/$(LIBNAME)
  	cp $< $(NATIVE_TARGET_DIR)/$(LIBNAME)
  
  win32: $(SQLITE_UNPACKED) jni-header
@@ -33,7 +33,7 @@ index a052a06..f497d3d 100644
  
  win-armv7: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-windows-armv7 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=armv7-w64-mingw32- OS_NAME=Windows OS_ARCH=armv7'
-@@ -136,10 +137,10 @@ win-arm64: $(SQLITE_UNPACKED) jni-header
+@@ -137,10 +138,10 @@ win-arm64: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-windows-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-w64-mingw32- OS_NAME=Windows OS_ARCH=aarch64'
  
  linux32: $(SQLITE_UNPACKED) jni-header
@@ -46,7 +46,7 @@ index a052a06..f497d3d 100644
  
  freebsd32: $(SQLITE_UNPACKED) jni-header
  	docker run $(DOCKER_RUN_OPTS) -v $$PWD:/workdir empterdose/freebsd-cross-build:9.3 sh -c 'apk add bash; apk add openjdk8; apk add perl; make clean-native native OS_NAME=FreeBSD OS_ARCH=x86 CROSS_PREFIX=i386-freebsd9-'
-@@ -166,31 +167,31 @@ linux-armv6: $(SQLITE_UNPACKED) jni-header
+@@ -167,31 +168,31 @@ linux-armv6: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-armv6-lts -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=armv6-unknown-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armv6'
  
  linux-armv7: $(SQLITE_UNPACKED) jni-header
@@ -74,20 +74,21 @@ index a052a06..f497d3d 100644
 +	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work 05nelsonm/build-env.android.x86_64:$(TAG_BUILD_ENV) bash -c 'make clean-native native CROSS_PREFIX=$$CROSS_TRIPLE- OS_NAME=Linux-Android OS_ARCH=x86_64'
  
  linux-ppc64: $(SQLITE_UNPACKED) jni-header
- 	./docker/dockcross-ppc64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64'
+-	./docker/dockcross-ppc64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64'
++	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work 05nelsonm/build-env.linux-libc.ppc64le:$(TAG_BUILD_ENV) bash -c 'make clean-native native CROSS_PREFIX=$$CROSS_TRIPLE- OS_NAME=Linux OS_ARCH=ppc64'
  
  mac64: $(SQLITE_UNPACKED) jni-header
 -	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/workdir -e CROSS_TRIPLE=x86_64-apple-darwin multiarch/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=x86_64
-+	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work 05nelsonm/build-env.macos.x86_64:$(TAG_BUILD_ENV) bash -c 'make clean-native native CROSS_PREFIX=$$CROSS_TRIPLE- OS_NAME=Mac OS_ARCH=x86_64'
++	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work 05nelsonm/build-env.macos-lts.x86_64:$(TAG_BUILD_ENV) bash -c 'make clean-native native CROSS_PREFIX=$$CROSS_TRIPLE- OS_NAME=Mac OS_ARCH=x86_64'
  
  mac-arm64: $(SQLITE_UNPACKED) jni-header
 -	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/workdir -e CROSS_TRIPLE=aarch64-apple-darwin gotson/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=aarch64 CROSS_PREFIX="/usr/osxcross/bin/aarch64-apple-darwin20.4-"
-+	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work 05nelsonm/build-env.macos.aarch64:$(TAG_BUILD_ENV) bash -c 'make clean-native native CROSS_PREFIX=$$CROSS_TRIPLE- OS_NAME=Mac OS_ARCH=aarch64'
++	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work 05nelsonm/build-env.macos-lts.aarch64:$(TAG_BUILD_ENV) bash -c 'make clean-native native CROSS_PREFIX=$$CROSS_TRIPLE- OS_NAME=Mac OS_ARCH=aarch64'
  
  # deprecated
  mac32: $(SQLITE_UNPACKED) jni-header
 diff --git a/Makefile.common b/Makefile.common
-index 9863d9a..82ecb74 100644
+index c6e4ff0..6f9a654 100644
 --- a/Makefile.common
 +++ b/Makefile.common
 @@ -128,29 +128,29 @@ Linux-armv7_LIBNAME   := libsqlitejdbc.so
@@ -168,8 +169,8 @@ index 9863d9a..82ecb74 100644
  Windows-x86_64_CC           := $(CROSS_PREFIX)gcc
  Windows-x86_64_STRIP        := $(CROSS_PREFIX)strip
  Windows-x86_64_CCFLAGS      := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -Os -msse4.2 -maes
--Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc -lquadmath
-+Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -Wl,--no-insert-timestamp -shared -static-libgcc -lquadmath
+-Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc
++Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -Wl,--no-insert-timestamp -shared -static-libgcc
  Windows-x86_64_LIBNAME      := sqlitejdbc.dll
  Windows-x86_64_SQLITE_FLAGS :=
  

@@ -15,7 +15,6 @@
  **/
 package io.toxicity.sqlite.mc.driver.internal
 
-import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import io.matthewnelson.encoding.base64.Base64
 import io.matthewnelson.encoding.core.use
 import io.matthewnelson.encoding.core.util.LineBreakOutFeed
@@ -26,16 +25,6 @@ import java.sql.SQLException
 import java.util.Properties
 
 internal class JDBCMCProperties private constructor(
-
-    /**
-     * [JdbcSqliteDriver] only accepts [JdbcSqliteDriver.IN_MEMORY] in order
-     * to use a non-threaded connection manager (i.e. a static connection).
-     * This is to work around such issues.
-     *
-     * See https://github.com/cashapp/sqldelight/pull/4656
-     * */
-    internal val ephemeralUrlSuffix: String,
-
     private val keyPragma: MutableMCPragmas?,
     @Volatile
     private var rekeyPragma: MutableMCPragmas?,
@@ -211,17 +200,13 @@ internal class JDBCMCProperties private constructor(
             keyPragma: MutableMCPragmas,
             rekeyPragma: MutableMCPragmas?,
         ): JDBCMCProperties = JDBCMCProperties(
-            ephemeralUrlSuffix = "",
             keyPragma = keyPragma,
             rekeyPragma = rekeyPragma,
         )
 
         @JvmStatic
         @JvmSynthetic
-        internal fun of(
-            ephemeralUrlSuffix: String
-        ): JDBCMCProperties = JDBCMCProperties(
-            ephemeralUrlSuffix = ephemeralUrlSuffix,
+        internal fun of(): JDBCMCProperties = JDBCMCProperties(
             keyPragma = null,
             rekeyPragma = null,
         )

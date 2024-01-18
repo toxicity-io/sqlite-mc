@@ -208,22 +208,7 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
             }
 
             val driver = NativeSqliteDriver(
-                databaseManager = if (!config.inMemory) {
-                    // SQLDelight work around
-                    //
-                    // See https://github.com/cashapp/sqldelight/pull/4662
-                    val copy = config.copy(inMemory = true)
-
-                    object : DatabaseManager {
-                        override val configuration: DatabaseConfiguration = copy
-                        override fun createMultiThreadedConnection(): DatabaseConnection =
-                            manager.createMultiThreadedConnection()
-                        override fun createSingleThreadedConnection(): DatabaseConnection =
-                            manager.createSingleThreadedConnection()
-                    }
-                } else {
-                    manager
-                },
+                databaseManager = manager,
                 maxReaderConnections = 1,
             )
 

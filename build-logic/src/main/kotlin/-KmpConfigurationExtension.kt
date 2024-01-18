@@ -40,12 +40,7 @@ fun KmpConfigurationExtension.configureShared(
 
         iosAll()
         tvosAll()
-
-        // watchosDeviceArm64 not supported by some libraries
-        watchosArm32()
-        watchosArm64()
-        watchosX64()
-        watchosSimulatorArm64()
+        watchosAll()
 
         common {
             sourceSetTest {
