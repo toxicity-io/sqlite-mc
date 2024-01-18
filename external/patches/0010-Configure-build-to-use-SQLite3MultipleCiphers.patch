@@ -1,17 +1,17 @@
-From 7aba89b5dfaa290fa5c9eee6e7925ff2adec0ce4 Mon Sep 17 00:00:00 2001
+From 5f837310ca1bab3886bce0a29e8e28f37c369dfd Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:12:33 -0400
 Subject: [PATCH 10/11] Configure build to use SQLite3MultipleCiphers
 
 ---
- Makefile                                 | 22 +++++++--------
- Makefile.common                          | 34 ++++++++++++------------
+ Makefile                                 | 24 +++++++++---------
+ Makefile.common                          | 32 ++++++++++++------------
  VERSION                                  |  1 +
  src/main/java/org/sqlite/core/NativeDB.c |  2 +-
  4 files changed, 30 insertions(+), 29 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 0db2eca..a052a06 100644
+index 25506ed..d963f92 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -20,7 +20,7 @@ SQLITE_OBJ?=$(SQLITE_OUT)/sqlite3.o
@@ -46,10 +46,12 @@ index 0db2eca..a052a06 100644
  	    -DSQLITE_MAX_LENGTH=2147483647 \
  	    -DSQLITE_MAX_COLUMN=32767 \
  	    -DSQLITE_MAX_SQL_LENGTH=1073741824 \
-@@ -94,10 +89,15 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+@@ -94,11 +89,16 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	    -DSQLITE_MAX_ATTACHED=125 \
  	    -DSQLITE_MAX_PAGE_COUNT=4294967294 \
- 	    -DSQLITE_DQS=0 \
+ 	    -DSQLITE_DISABLE_PAGECACHE_OVERFLOW_STATS \
+-	    -DSQLITE_DQS=0
++	    -DSQLITE_DQS=0 \
 +	    -DCODEC_TYPE=CODEC_TYPE_CHACHA20 \
 +	    -DSQLITE_ENABLE_EXTFUNC=1 \
 +	    -DSQLITE_ENABLE_REGEXP=1 \
@@ -64,7 +66,7 @@ index 0db2eca..a052a06 100644
  
  $(SQLITE_OUT)/$(LIBNAME): $(SQLITE_HEADER) $(SQLITE_OBJ) $(SRC)/org/sqlite/core/NativeDB.c $(TARGET)/common-lib/NativeDB.h
  	@mkdir -p $(@D)
-@@ -113,7 +113,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
+@@ -114,7 +114,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
  NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
  
  # For cross-compilation, install docker. See also https://github.com/dockcross/dockcross
@@ -74,7 +76,7 @@ index 0db2eca..a052a06 100644
  native: $(NATIVE_DLL)
  
 diff --git a/Makefile.common b/Makefile.common
-index 0b374bf..9863d9a 100644
+index 0b374bf..c6e4ff0 100644
 --- a/Makefile.common
 +++ b/Makefile.common
 @@ -73,28 +73,28 @@ Default_SQLITE_FLAGS  :=
@@ -181,7 +183,7 @@ index 0b374bf..9863d9a 100644
  Mac-x86_64_LIBNAME   := libsqlitejdbc.dylib
  Mac-x86_64_SQLITE_FLAGS  := 
  
-@@ -235,21 +235,21 @@ Mac-aarch64_CC        := $(CROSS_PREFIX)clang
+@@ -235,20 +235,20 @@ Mac-aarch64_CC        := $(CROSS_PREFIX)clang
  Mac-aarch64_STRIP     := $(CROSS_PREFIX)strip -x
  MAC_SDK := /usr/osxcross/SDK/MacOSX11.3.sdk
  Mac-aarch64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -mmacosx-version-min=10.9 -fvisibility=hidden -Wno-implicit-function-declaration
@@ -201,21 +203,19 @@ index 0b374bf..9863d9a 100644
  Windows-x86_64_CC           := $(CROSS_PREFIX)gcc
  Windows-x86_64_STRIP        := $(CROSS_PREFIX)strip
 -Windows-x86_64_CCFLAGS      := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -Os
--Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc
 +Windows-x86_64_CCFLAGS      := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -Os -msse4.2 -maes
-+Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc -lquadmath
+ Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc
  Windows-x86_64_LIBNAME      := sqlitejdbc.dll
  Windows-x86_64_SQLITE_FLAGS :=
- 
 diff --git a/VERSION b/VERSION
-index 58516cc..5aa310b 100644
+index 2367203..9c86b7d 100644
 --- a/VERSION
 +++ b/VERSION
 @@ -1 +1,2 @@
- version=3.43.2
-+version_mc=1.7.2
+ version=3.44.1
++version_mc=1.8.0
 diff --git a/src/main/java/org/sqlite/core/NativeDB.c b/src/main/java/org/sqlite/core/NativeDB.c
-index 111c312..a5f144c 100644
+index 7361dbc..17dab54 100644
 --- a/src/main/java/org/sqlite/core/NativeDB.c
 +++ b/src/main/java/org/sqlite/core/NativeDB.c
 @@ -18,7 +18,7 @@

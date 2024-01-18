@@ -46,6 +46,7 @@ function build { ## Build sqlite-jdbc native libs and package .jar file
   __build:clean
   mkdir -p "$DIR_UNSIGNED"
 
+  ${MAKE} clean
   ${MAKE} native-all package test
 
   cp -Rv "$DIR_JDBC/src/main/resources/org/sqlite/native/Mac/" "$DIR_UNSIGNED/"

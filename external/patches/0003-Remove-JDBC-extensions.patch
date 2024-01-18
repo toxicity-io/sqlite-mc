@@ -1,4 +1,4 @@
-From 070c2faefd3efc25062ddcceadeb6989920f18e0 Mon Sep 17 00:00:00 2001
+From 7c8031d6286e0e057484a00094ba805508ddc0f1 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:09:56 -0400
 Subject: [PATCH 03/11] Remove JDBC extensions
@@ -8,7 +8,7 @@ Subject: [PATCH 03/11] Remove JDBC extensions
  1 file changed, 1 insertion(+), 11 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 53635d2..4de7e05 100644
+index 71e4047..d890f85 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -69,18 +69,8 @@ clean: clean-native clean-java clean-tests
