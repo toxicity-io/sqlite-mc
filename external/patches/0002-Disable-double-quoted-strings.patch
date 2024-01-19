@@ -1,4 +1,4 @@
-From 6d8f0acc9e60e376c89755ee6e05c53b4edd8812 Mon Sep 17 00:00:00 2001
+From cf3e49135fe0d553daa77893cdf65d87cb87255d Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:09:39 -0400
 Subject: [PATCH 02/11] Disable double-quoted strings
@@ -12,10 +12,10 @@ Subject: [PATCH 02/11] Disable double-quoted strings
  5 files changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 18b7a6e..71e4047 100644
+index 04cba66..1fc51c9 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -104,6 +104,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+@@ -105,6 +105,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	    -DSQLITE_MAX_ATTACHED=125 \
  	    -DSQLITE_MAX_PAGE_COUNT=4294967294 \
  	    -DSQLITE_DISABLE_PAGECACHE_OVERFLOW_STATS \
@@ -61,10 +61,10 @@ index a79cd86..89dd54b 100644
              assertThat(rs.getString(1)).isEqualTo("TGCA");
              rs.close();
 diff --git a/src/test/java/org/sqlite/PrepStmtTest.java b/src/test/java/org/sqlite/PrepStmtTest.java
-index 403603c..405299c 100644
+index ee2e77e..0a296b6 100644
 --- a/src/test/java/org/sqlite/PrepStmtTest.java
 +++ b/src/test/java/org/sqlite/PrepStmtTest.java
-@@ -600,7 +600,7 @@ public class PrepStmtTest {
+@@ -605,7 +605,7 @@ public class PrepStmtTest {
      public void clearParameters() throws SQLException {
          stat.executeUpdate(
                  "create table tbl (colid integer primary key AUTOINCREMENT, col varchar)");
@@ -74,7 +74,7 @@ index 403603c..405299c 100644
  
          PreparedStatement prep = conn.prepareStatement("select colid from tbl where col = ?");
 diff --git a/src/test/java/org/sqlite/StatementTest.java b/src/test/java/org/sqlite/StatementTest.java
-index dc7a7aa..40e5cc0 100644
+index ee08f4c..b9d3e9a 100644
 --- a/src/test/java/org/sqlite/StatementTest.java
 +++ b/src/test/java/org/sqlite/StatementTest.java
 @@ -108,7 +108,7 @@ public class StatementTest {
