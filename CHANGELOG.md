@@ -7,6 +7,7 @@
      - Updates [build-env][url-build-env] from `0.1.0` to `0.1.3`
      - Migrates `linux-ppc64` build from `dockcross` to [build-env][url-build-env]
  - Updates `SQLite3MultipleCiphers` to `1.8.2` [[#106]][106] [[#107]][107]
+ - Adds support for `watchosDeviceArm64`
  - Adds support for cipher `ascon128` [[#108]][108]
 
 ## Version 2.0.0-1.7.2-0 (2024-01-18)
