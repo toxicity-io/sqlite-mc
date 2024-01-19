@@ -1,4 +1,4 @@
-From 3a767c2ee4f3e336b7ada6840511b07b0e875787 Mon Sep 17 00:00:00 2001
+From 72bbc5a456c7c28519609fdbf6c26903c7bcadc5 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:11:28 -0400
 Subject: [PATCH 07/11] Disable mac shared lib adhoc signing
@@ -8,10 +8,10 @@ Subject: [PATCH 07/11] Disable mac shared lib adhoc signing
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index bcf88f4..30ea6e4 100644
+index 4f43de9..8ea1e4b 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -114,7 +114,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
+@@ -115,7 +115,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
  NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
  
  # For cross-compilation, install docker. See also https://github.com/dockcross/dockcross

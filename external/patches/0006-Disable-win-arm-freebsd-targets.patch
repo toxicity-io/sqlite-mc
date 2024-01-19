@@ -1,4 +1,4 @@
-From dfa1c70cc842b1a878a9e53d0e4c0b014147c17a Mon Sep 17 00:00:00 2001
+From ee5efa5826c1be1f7216e0860d50022cd3588f2d Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Fri, 13 Oct 2023 07:10:57 -0400
 Subject: [PATCH 06/11] Disable win-arm/freebsd targets
@@ -8,10 +8,10 @@ Subject: [PATCH 06/11] Disable win-arm/freebsd targets
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index d890f85..bcf88f4 100644
+index e1c88b9..4f43de9 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -114,7 +114,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
+@@ -115,7 +115,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
  NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
  
  # For cross-compilation, install docker. See also https://github.com/dockcross/dockcross
