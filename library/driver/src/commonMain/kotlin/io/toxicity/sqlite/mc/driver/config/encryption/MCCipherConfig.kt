@@ -49,6 +49,7 @@ public sealed class MCCipherConfig(
             is MCSqlCipherConfig -> config.apply(pragmas, addAll)
             is MCWxAES128Config -> config.apply(pragmas, addAll)
             is MCWxAES256Config -> config.apply(pragmas, addAll)
+            is MCAscon128Config -> config.apply(pragmas, addAll)
         }
     }
 
@@ -126,6 +127,13 @@ public sealed class MCCipherConfig(
         }
     }
 
+    private fun MCAscon128Config.apply(pragmas: MutableMCPragmas, addAll: Boolean) {
+        val config = MCAscon128Config.Default
+        if (addAll || kdfIter != config.kdfIter) {
+            MCPragma.KDF_ITER.put(pragmas, kdfIter)
+        }
+    }
+
     final override fun equals(other: Any?): Boolean {
         return when (this) {
             is MCChaCha20Config -> {
@@ -163,6 +171,12 @@ public sealed class MCCipherConfig(
                 && other.legacyPageSize == legacyPageSize
                 && other.kdfIter == kdfIter
             }
+            is MCAscon128Config -> {
+                other is MCAscon128Config
+                && other.legacy == legacy
+                && other.legacyPageSize == legacyPageSize
+                && other.kdfIter == kdfIter
+            }
         }
     }
 
@@ -196,6 +210,11 @@ public sealed class MCCipherConfig(
                 result = result * 31 + legacyPageSize.hashCode()
             }
             is MCWxAES256Config -> {
+                result = result * 31 + legacy.hashCode()
+                result = result * 31 + legacyPageSize.hashCode()
+                result = result * 31 + kdfIter.hashCode()
+            }
+            is MCAscon128Config -> {
                 result = result * 31 + legacy.hashCode()
                 result = result * 31 + legacyPageSize.hashCode()
                 result = result * 31 + kdfIter.hashCode()
@@ -277,6 +296,17 @@ public sealed class MCCipherConfig(
                     appendLine(legacyPageSize)
                 }
                 is MCWxAES256Config -> {
+                    appendIndent(MCPragma.LEGACY)
+                    appendColon()
+                    appendLine(legacy)
+                    appendIndent(MCPragma.LEGACY_PAGE_SIZE)
+                    appendColon()
+                    appendLine(legacyPageSize)
+                    appendIndent(MCPragma.KDF_ITER)
+                    appendColon()
+                    appendLine(kdfIter)
+                }
+                is MCAscon128Config -> {
                     appendIndent(MCPragma.LEGACY)
                     appendColon()
                     appendLine(legacy)

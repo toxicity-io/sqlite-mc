@@ -67,7 +67,7 @@ public class MCRC4Config private constructor(
     }
 
     /**
-     * [System.Data.SQLite: RC4]https://utelle.github.io/SQLite3MultipleCiphers/docs/ciphers/cipher_sds_rc4/)
+     * [System.Data.SQLite: RC4](https://utelle.github.io/SQLite3MultipleCiphers/docs/ciphers/cipher_sds_rc4/)
      *
      * Nobody should use this, but it's here...
      *

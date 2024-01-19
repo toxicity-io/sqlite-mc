@@ -36,6 +36,15 @@ class EncryptionConfigUnitTest {
     }
 
     @Test
+    fun givenConfig_whenAscon128Default_thenCipherIsSet() {
+        val config = EncryptionConfig.new(other = null) {
+            ascon128 { default() }
+        }
+
+        assertEquals(MCAscon128Config.Default, config.cipherConfig)
+    }
+
+    @Test
     fun givenConfig_whenChaCha20Default_thenCipherIsSet() {
         val config = EncryptionConfig.new(other = null) {
             chaCha20 { default() }

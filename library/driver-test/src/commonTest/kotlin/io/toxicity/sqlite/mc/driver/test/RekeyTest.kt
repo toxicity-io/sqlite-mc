@@ -55,6 +55,11 @@ abstract class RekeyTest: TestHelperNonEphemeral() {
             Triple(keyRawWithSalt, keyPassphrase) { encryption { sqlCipher { v4() } } },
             Triple(keyRawWithSalt, keyPassphrase) { encryption { chaCha20 { default() } } },
             Triple(keyRawWithSalt, keyPassphrase) { encryption { chaCha20 { sqleet() } } },
+
+            Triple(keyPassphrase, Key.passphrase("new password")) { encryption { ascon128 { default() } } },
+            Triple(keyPassphrase, Key.passphrase("new password")) { encryption { rc4 { default() } } },
+            Triple(keyPassphrase, Key.passphrase("new password")) { encryption { wxAES128 { default() } } },
+            Triple(keyPassphrase, Key.passphrase("new password")) { encryption { wxAES256 { default() } } },
         ).forEach { (key1, key2, filesystem) ->
             testLogger("RUN - ${i++}")
 

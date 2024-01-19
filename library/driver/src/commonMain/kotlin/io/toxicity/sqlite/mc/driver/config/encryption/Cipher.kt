@@ -32,6 +32,7 @@ public sealed class Cipher private constructor(
     public object CHACHA20: Cipher(name = "chacha20", id = 3)
     public object SQLCIPHER: Cipher(name = "sqlcipher", id = 4)
     public object RC4: Cipher(name = "rc4", id = 5)
+    public object ASCON128: Cipher(name = "ascon128", id = 6)
 
     final override fun toString(): String = name
     final override fun compareTo(other: Cipher): Int = id - other.id
@@ -51,6 +52,7 @@ public sealed class Cipher private constructor(
                 name.equals(CHACHA20.name, ignoreCase = true) -> CHACHA20
                 name.equals(SQLCIPHER.name, ignoreCase = true) -> SQLCIPHER
                 name.equals(RC4.name, ignoreCase = true) -> RC4
+                name.equals(ASCON128.name, ignoreCase = true) -> ASCON128
                 else -> null
             }
         }
@@ -68,6 +70,7 @@ public sealed class Cipher private constructor(
                 CHACHA20.id -> CHACHA20
                 SQLCIPHER.id -> SQLCIPHER
                 RC4.id -> RC4
+                ASCON128.id -> ASCON128
                 else -> null
             }
         }

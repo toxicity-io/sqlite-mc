@@ -29,6 +29,7 @@ class MCCipherConfigUnitTest {
     fun givenConfig_whenDefaultNoChanges_thenContainsCipherAndLegacy() {
         val list = mutableListOf<MutableMCPragmas>()
 
+        list.addPragmas { ascon128 { default() } }
         list.addPragmas { chaCha20 { default() } }
         list.addPragmas { rc4 { default() } }
         list.addPragmas { sqlCipher { default() } }
@@ -46,6 +47,7 @@ class MCCipherConfigUnitTest {
     fun givenConfig_whenLegacyNoChanges_thenContainsLegacy() {
         val list = mutableListOf<MutableMCPragmas>()
 
+        list.addPragmas { ascon128 { default() } }
         list.addPragmas { chaCha20 { sqleet() } }
 
         // rc4 is always in legacy mode

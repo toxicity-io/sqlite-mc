@@ -209,6 +209,24 @@ public class EncryptionConfig private constructor(
         }
 
         @MCConfigDsl
+        public fun ascon128(
+            block: MCAscon128Config.Options.() -> Unit,
+        ): Builder {
+            MCAscon128Config.Options { cipherConfig = it }.apply(block)
+            return this
+        }
+
+        @MCConfigDsl
+        @JvmOverloads
+        public fun ascon128(
+            other: MCAscon128Config,
+            block: MCAscon128Config.Builder.() -> Unit = {},
+        ): Builder {
+            MCAscon128Config.Builder(other).apply(block)
+            return this
+        }
+
+        @MCConfigDsl
         public fun chaCha20(
             block: MCChaCha20Config.Options.() -> Unit,
         ): Builder {
