@@ -197,8 +197,12 @@ database encryption.
           }
       }
     
-      // Other cipher choices that shouldn't be utilized for
-      // new databases, but are there for migration purposes.
+      // Other cipher choices
+      //
+      // ascon128 { default() }
+      //
+      // The following should not be utilized for new databases,
+      // but are there for migration purposes.
       //
       // rc4 { default() }
       // wxAES128 { default() }
@@ -374,7 +378,7 @@ I'm guessing this is not really a factor on iOS."
    ```kotlin
    plugins {
        // Provides the SQLDelight gradle plugin automatically and applies it
-       id("io.toxicity.sqlite-mc") version("2.0.0-1.7.2-0")
+       id("io.toxicity.sqlite-mc") version("2.0.1-1.8.2-0")
    }
 
    // Will automatically:
@@ -394,7 +398,7 @@ I'm guessing this is not really a factor on iOS."
        //
        // This is simply the desktop binary resources needed for
        // JDBC to operate locally on the machine.
-       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.0-1.7.2-0")
+       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.1-1.8.2-0")
    }
    ```
 

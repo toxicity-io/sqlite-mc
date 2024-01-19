@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 2.0.1-1.8.2-0 (2024-01-19)
+ - Updates `SqlDelight` to `2.0.1` [[#106]][106]
+ - Updates `sqlite-jdbc` to `3.45.0.0` [[#106]][106] [[#107]][107]
+ - Updates `SQLite3MultipleCiphers` to `1.8.2` [[#106]][106] [[#107]][107]
+ - Adds support for cipher `ascon128` [[#108]][108]
+
 ## Version 2.0.0-1.7.2-0 (2024-01-18)
  - Adds usage of [immutable][url-immutable] library for publicly exposed collections/maps [[#103]][103]
 
@@ -32,3 +38,6 @@
 [95]: https://github.com/toxicity-io/sqlite-mc/pull/95
 [96]: https://github.com/toxicity-io/sqlite-mc/pull/96
 [103]: https://github.com/toxicity-io/sqlite-mc/pull/103
+[106]: https://github.com/toxicity-io/sqlite-mc/pull/106
+[107]: https://github.com/toxicity-io/sqlite-mc/pull/107
+[108]: https://github.com/toxicity-io/sqlite-mc/pull/108
