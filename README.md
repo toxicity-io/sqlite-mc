@@ -403,7 +403,7 @@ I'm guessing this is not really a factor on iOS."
    ```
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.0--1.7.2--0-blue.svg?style=flat
+[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.1--1.8.2--0-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->

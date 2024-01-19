@@ -2,7 +2,10 @@
 
 ## Version 2.0.1-1.8.2-0 (2024-01-19)
  - Updates `SqlDelight` to `2.0.1` [[#106]][106]
+     - Increases minimum JDK version for `gradle-plugin` from `11` to `17`
  - Updates `sqlite-jdbc` to `3.45.0.0` [[#106]][106] [[#107]][107]
+     - Updates [build-env][url-build-env] from `0.1.0` to `0.1.3`
+     - Migrates `linux-ppc64` build from `dockcross` to [build-env][url-build-env]
  - Updates `SQLite3MultipleCiphers` to `1.8.2` [[#106]][106] [[#107]][107]
  - Adds support for cipher `ascon128` [[#108]][108]
 
