@@ -16,23 +16,24 @@
 package io.toxicity.sqlite.mc.driver.config.encryption
 
 import io.toxicity.sqlite.mc.driver.MCCipherConfigDsl
+import io.toxicity.sqlite.mc.driver.config.encryption.MCChaCha20Config.Companion.Default
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmSynthetic
 
 /**
- * Config for wxSQLite3: AES 256 Bit
+ * Config for Ascon: Ascon-128 v1.2
  *
  * @see [Builder]
  * */
-public class MCWxAES256Config private constructor(
+public class MCAscon128Config private constructor(
     legacy: Int,
     legacyPageSize: Int,
     @JvmField
     public val kdfIter: Int,
 ): MCCipherConfig(
-    cipher = Cipher.AES256CBC,
+    cipher = Cipher.ASCON128,
     legacy = legacy,
     legacyPageSize = legacyPageSize,
 ) {
@@ -41,7 +42,7 @@ public class MCWxAES256Config private constructor(
 
         /** Default config */
         @JvmField
-        public val Default: MCWxAES256Config = Builder(null).apply { default() }.build()
+        public val Default: MCAscon128Config = Builder(null).apply { default() }.build()
     }
 
     // This forces API consumers to declare a setting to start off at before
@@ -52,7 +53,7 @@ public class MCWxAES256Config private constructor(
     // changing on a dependency update (new crypto or something).
     @MCCipherConfigDsl
     public class Options internal constructor(
-        private val setCipher: (MCWxAES256Config) -> Unit,
+        private val setCipher: (MCAscon128Config) -> Unit,
     ) {
 
         /**
@@ -68,37 +69,21 @@ public class MCWxAES256Config private constructor(
     }
 
     /**
-     * [wxSQLite3: AES 256 Bit](https://utelle.github.io/SQLite3MultipleCiphers/docs/ciphers/cipher_aes256cbc/)
+     * [Ascon: Ascon-128 v1.2](https://utelle.github.io/SQLite3MultipleCiphers/docs/ciphers/cipher_ascon/)
      *
      * @see [default]
      * */
     @MCCipherConfigDsl
-    public class Builder internal constructor(other: MCWxAES256Config?) {
-
-        @get:JvmName("legacy")
-        public var legacy: Int = 0
-            private set
+    public class Builder internal constructor(other: MCAscon128Config?) {
 
         /**
          * [PRAGMA legacy](https://utelle.github.io/SQLite3MultipleCiphers/docs/configuration/config_sql_pragmas/#pragma-legacy)
          *
-         * Default: 0 (false)
-         * Min: 0 (false)
-         * Max: 1 (true)
-         *
-         * @throws [IllegalArgumentException] if not within 0 and 1
+         * Default: 0
+         * Min: 0
+         * Max 0
          * */
-        @MCCipherConfigDsl
-        @Throws(IllegalArgumentException::class)
-        public fun legacy(value: Int): Builder {
-            require(value in 0..1) { "must be 0 (false) or 1 (true)" }
-            legacy = value
-            return this
-        }
-
-        @get:JvmName("legacyPageSize")
-        public var legacyPageSize: Int = 0
-            private set
+        private val legacy: Int = 0
 
         /**
          * [PRAGMA legacy_page_size](https://utelle.github.io/SQLite3MultipleCiphers/docs/configuration/config_sql_pragmas/#pragma-legacy_page_size)
@@ -108,25 +93,18 @@ public class MCWxAES256Config private constructor(
          * Max: 65536
          *
          * **NOTE:** must be powers of 2 (e.g. 512, 1024, 4096, 8192, ...)
-         *
-         * @throws [IllegalArgumentException] if not 0, not within 512 and 65536, else not a power of 2
          * */
-        @MCCipherConfigDsl
-        @Throws(IllegalArgumentException::class)
-        public fun legacyPageSize(value: Int): Builder {
-            value.checkLegacyPageSize()
-            legacyPageSize = value
-            return this
-        }
+        private val legacyPageSize: Int = 4096
+
 
         @get:JvmName("kdfIter")
-        public var kdfIter: Int = 4001
+        public var kdfIter: Int = 64007
             private set
 
         /**
          * [PRAGMA kdf_iter](https://utelle.github.io/SQLite3MultipleCiphers/docs/configuration/config_sql_pragmas/#pragma-kdf_iter)
          *
-         * Default: 4001
+         * Default: 64007
          * Min: 1
          * Max: 2147483647
          *
@@ -142,25 +120,20 @@ public class MCWxAES256Config private constructor(
 
         init {
             if (other != null) {
-                legacy = other.legacy
-                legacyPageSize = other.legacyPageSize
                 kdfIter = other.kdfIter
             }
         }
-
         /**
          * Apply default settings
          *
          * @see [Default]
          * */
         public fun default() {
-            legacy = 0
-            legacyPageSize = 0
-            kdfIter = 4001
+            kdfIter = 64007
         }
 
         @JvmSynthetic
-        internal fun build(): MCWxAES256Config = MCWxAES256Config(
+        internal fun build(): MCAscon128Config = MCAscon128Config(
             legacy = legacy,
             legacyPageSize = legacyPageSize,
             kdfIter = kdfIter,

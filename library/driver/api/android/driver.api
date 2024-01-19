@@ -238,6 +238,10 @@ public final class io/toxicity/sqlite/mc/driver/config/encryption/Cipher$AES256C
 	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher$AES256CBC;
 }
 
+public final class io/toxicity/sqlite/mc/driver/config/encryption/Cipher$ASCON128 : io/toxicity/sqlite/mc/driver/config/encryption/Cipher {
+	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher$ASCON128;
+}
+
 public final class io/toxicity/sqlite/mc/driver/config/encryption/Cipher$CHACHA20 : io/toxicity/sqlite/mc/driver/config/encryption/Cipher {
 	public static final field INSTANCE Lio/toxicity/sqlite/mc/driver/config/encryption/Cipher$CHACHA20;
 }
@@ -274,6 +278,10 @@ public final class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionConf
 }
 
 public class io/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder {
+	public final fun ascon128 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;
+	public final fun ascon128 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;
+	public final fun ascon128 (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;
+	public static synthetic fun ascon128$default (Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;Lio/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;
 	public final fun chaCha20 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;
 	public final fun chaCha20 (Lio/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config;Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;
 	public final fun chaCha20 (Lkotlin/jvm/functions/Function1;)Lio/toxicity/sqlite/mc/driver/config/encryption/EncryptionConfig$Builder;
@@ -384,6 +392,28 @@ public final class io/toxicity/sqlite/mc/driver/config/encryption/Key$Companion 
 	public final fun raw ([B[B)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
 	public final fun raw ([B[BZ)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
 	public static synthetic fun raw$default (Lio/toxicity/sqlite/mc/driver/config/encryption/Key$Companion;[B[BZILjava/lang/Object;)Lio/toxicity/sqlite/mc/driver/config/encryption/Key;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config : io/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig {
+	public static final field Companion Lio/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config$Companion;
+	public static final field Default Lio/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config;
+	public final field kdfIter I
+	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config$Builder {
+	public final fun default ()V
+	public final fun kdfIter ()I
+	public final fun kdfIter (I)Lio/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config$Builder;
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config$Companion {
+}
+
+public final class io/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config$Options {
+	public final fun default ()V
+	public final fun default (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun default$default (Lio/toxicity/sqlite/mc/driver/config/encryption/MCAscon128Config$Options;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public final class io/toxicity/sqlite/mc/driver/config/encryption/MCChaCha20Config : io/toxicity/sqlite/mc/driver/config/encryption/MCCipherConfig {
