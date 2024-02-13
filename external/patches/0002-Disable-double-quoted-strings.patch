@@ -1,7 +1,7 @@
-From cf3e49135fe0d553daa77893cdf65d87cb87255d Mon Sep 17 00:00:00 2001
+From 24788ad43d56e2b04d47cb933080cc954f58bea5 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Fri, 13 Oct 2023 07:09:39 -0400
-Subject: [PATCH 02/11] Disable double-quoted strings
+Date: Tue, 13 Feb 2024 05:29:59 -0500
+Subject: [PATCH 2/8] Disable double-quoted strings
 
 ---
  Makefile                                    | 1 +
@@ -74,7 +74,7 @@ index ee2e77e..0a296b6 100644
  
          PreparedStatement prep = conn.prepareStatement("select colid from tbl where col = ?");
 diff --git a/src/test/java/org/sqlite/StatementTest.java b/src/test/java/org/sqlite/StatementTest.java
-index ee08f4c..b9d3e9a 100644
+index ebb50ec..b81349c 100644
 --- a/src/test/java/org/sqlite/StatementTest.java
 +++ b/src/test/java/org/sqlite/StatementTest.java
 @@ -108,7 +108,7 @@ public class StatementTest {
