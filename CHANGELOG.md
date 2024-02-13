@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 2.0.1-1.8.3-0 (2024-02-13)
+ - Updates `sqlite-jdbc` to `3.45.1.0` [[#110]][110]
+ - Updates `SQLite3MultipleCiphers` to `1.8.3` [[#110]][110]
+
 ## Version 2.0.1-1.8.2-0 (2024-01-19)
  - Updates `SqlDelight` to `2.0.1` [[#106]][106]
      - Increases minimum JDK version for `gradle-plugin` from `11` to `17`
