@@ -49,3 +49,4 @@
 [106]: https://github.com/toxicity-io/sqlite-mc/pull/106
 [107]: https://github.com/toxicity-io/sqlite-mc/pull/107
 [108]: https://github.com/toxicity-io/sqlite-mc/pull/108
+[110]: https://github.com/toxicity-io/sqlite-mc/pull/110
