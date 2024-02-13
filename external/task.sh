@@ -40,6 +40,7 @@ function build { ## Build sqlite-jdbc native libs and package .jar file
   cd "$DIR_JDBC"
   trap '__build:git:stash' EXIT SIGINT
   __build:git:apply_patches
+  rm -rf "$DIR_JDBC/src/main/resources/org/sqlite/native"
 
   . "$DIR_JDBC/VERSION"
 
