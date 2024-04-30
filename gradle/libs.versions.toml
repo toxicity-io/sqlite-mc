@@ -21,7 +21,7 @@ okio = "3.7.0"
 
 sql-delight-dialect = "sqlite-3-38-dialect"
 sql-delight = "2.0.1"
-sql-jdbc-xerial = "3.45.1.0"
+sql-jdbc-xerial = "3.45.2.0"
 slf4j = "1.7.36"
 
 [libraries]
