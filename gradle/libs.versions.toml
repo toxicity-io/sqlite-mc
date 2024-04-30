@@ -3,24 +3,25 @@ androidx-startup = "1.1.1"
 androidx-test-core = "1.5.0"
 androidx-test-runner = "1.5.2"
 
-encoding = "2.1.0"
+encoding = "2.2.1"
 
 gradle-android = "8.1.4"
-gradle-binary-compat = "0.13.2"
+gradle-binary-compat = "0.14.0"
 gradle-build-config = "4.1.2"
 gradle-cklib = "0.3.0"
-gradle-kmp-configuration = "0.1.7"
-gradle-kotlin = "1.9.21"
-gradle-maven-publish = "0.25.3"
+gradle-kmp-configuration = "0.2.1"
+gradle-kotlin = "1.9.23"
+gradle-maven-publish = "0.27.0"
 
-immutable = "0.1.0"
+immutable = "0.1.2"
 
-kotlinx-coroutines = "1.7.3"
+kotlinx-coroutines = "1.8.0"
 
-okio = "3.7.0"
+# Only for tests
+okio = "3.9.0"
 
 sql-delight-dialect = "sqlite-3-38-dialect"
-sql-delight = "2.0.1"
+sql-delight = "2.0.2"
 sql-jdbc-xerial = "3.45.2.0"
 slf4j = "1.7.36"
 
@@ -43,6 +44,7 @@ immutable-collections = { module = "io.matthewnelson.immutable:collections", ver
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 
+# Only for tests
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 
 sql-delight-driver-jvm = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sql-delight" }
