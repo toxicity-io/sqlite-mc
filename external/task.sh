@@ -124,18 +124,21 @@ function sign:macos { ## Sign and notarize macOS libs. 2 ARGS - [1]: /path/to/ke
   done
 }
 
-function sign:mingw { ## Sign Windows libs.            2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
-  # shellcheck disable=SC2128
-  if [ $# -ne 2 ]; then
-    echo 1>&2 "Usage: $0 $FUNCNAME 2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer"
-    exit 3
-  fi
+# shellcheck disable=SC2154
+function sign:mingw { ## Sign Windows libs. (see windows.pkcs11.sample)
+  . "$DIR_SCRIPT/windows.pkcs11"
 
-  local file_key="$1"
-  local file_cert="$2"
-  __require:file_exists "$file_key"
-  __require:file_exists "$file_cert"
+  __require:file_exists "$gen_pkcs11engine_path" "windows.pkcs11[gen_pkcs11engine_path] file does not exist"
+  __require:file_exists "$gen_pkcs11module_path" "windows.pkcs11[gen_pkcs11module_path] file does not exist"
+  __require:var_set "$gen_model" "windows.pkcs11[gen_model] not set"
+  __require:var_set "$gen_manufacturer" "windows.pkcs11[gen_manufacturer] not set"
+  __require:var_set "$gen_serial" "windows.pkcs11[gen_serial] not set"
+  __require:var_set "$gen_ts" "windows.pkcs11[gen_ts] not set"
+  __require:file_exists "$gen_cert_path" "windows.pkcs11[gen_cert_path] file does not exist"
+  __require:var_set "$gen_id" "windows.pkcs11[gen_id] not set"
   __require:cmd "$OSSLSIGNCODE" "osslsigncode"
+
+  local pkcs11_url="pkcs11:model=$gen_model;manufacturer=$gen_manufacturer;serial=$gen_serial;id=$gen_id;type=private"
 
   mkdir -p "$DIR_SIGNED"
   rm -rf "$DIR_SIGNED/Windows"
@@ -147,9 +150,12 @@ function sign:mingw { ## Sign Windows libs.            2 ARGS - [1]: /path/to/fi
 
     mkdir -p "$DIR_SIGNED/Windows/$arch_name"
 
-    ${OSSLSIGNCODE} sign -certs "$file_cert" \
-      -key "$file_key" \
-      -t "http://timestamp.comodoca.com" \
+    ${OSSLSIGNCODE} sign \
+      -pkcs11engine "$gen_pkcs11engine_path" \
+      -pkcs11module "$gen_pkcs11module_path" \
+      -key "$pkcs11_url" \
+      -certs "$gen_cert_path" \
+      -ts "$gen_ts" \
       -in "$dir_arch/sqlitejdbc.dll" \
       -out "$DIR_SIGNED/Windows/$arch_name/sqlitejdbc.dll"
   done
@@ -204,6 +210,15 @@ function __build:git:stash {
 }
 
 function __require:cmd {
+  if [ -n "$1" ]; then
+    return 0
+  fi
+
+  echo 1>&2 "ERROR: $2 is required to run this script"
+  exit 3
+}
+
+function __require:var_set {
   if [ -n "$1" ]; then
     return 0
   fi
