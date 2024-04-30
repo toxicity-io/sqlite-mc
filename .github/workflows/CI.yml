@@ -52,7 +52,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: >
           ./gradlew check --stacktrace
-          -PKMP_TARGETS="JVM,JS,IOS_ARM32,IOS_ARM64,IOS_X64,IOS_SIMULATOR_ARM64,MACOS_ARM64,MACOS_X64,TVOS_ARM64,TVOS_X64,TVOS_SIMULATOR_ARM64,WATCHOS_ARM32,WATCHOS_ARM64,WATCHOS_DEVICE_ARM64,WATCHOS_X64,WATCHOS_X86,WATCHOS_SIMULATOR_ARM64,WASM,WASM_32"
+          -PKMP_TARGETS="JVM,JS,IOS_ARM64,IOS_X64,IOS_SIMULATOR_ARM64,MACOS_ARM64,MACOS_X64,TVOS_ARM64,TVOS_X64,TVOS_SIMULATOR_ARM64,WATCHOS_ARM32,WATCHOS_ARM64,WATCHOS_DEVICE_ARM64,WATCHOS_X64,WATCHOS_SIMULATOR_ARM64,WASM_JS,WASM_WASI"
       - name: Run macOS JVM Tests
         if: matrix.os == 'macos-11'
         run: >
@@ -62,7 +62,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: >
           ./gradlew check --stacktrace
-          -PKMP_TARGETS="ANDROID,JVM,JS,ANDROID_ARM32,ANDROID_ARM64,ANDROID_X64,ANDROID_X86,LINUX_ARM32HFP,LINUX_ARM64,LINUX_MIPS32,LINUX_MIPSEL32,LINUX_X64,MINGW_X64,WASM,WASM_32"
+          -PKMP_TARGETS="JVM,JS,ANDROID,ANDROID_ARM32,ANDROID_ARM64,ANDROID_X64,ANDROID_X86,LINUX_ARM64,LINUX_X64,WASM_JS,WASM_WASI"
       - name: Run Linux JVM Tests
         if: matrix.os == 'ubuntu-20.04'
         run: >
@@ -72,7 +72,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: >
           ./gradlew check --stacktrace
-          -PKMP_TARGETS="JVM,JS,MINGW_X64,MINGW_X86,WASM,WASM_32"
+          -PKMP_TARGETS="JVM,JS,MINGW_X64,WASM_JS,WASM_WASI"
       - name: Run Windows JVM Tests
         if: matrix.os == 'windows-2019'
         run: >
@@ -80,16 +80,21 @@ jobs:
           -PKMP_TARGETS="JVM"
 
   emulator:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
         api-level: [ 21, 23, 26, 29 ]
-        arch: [ x86_64 ]
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
@@ -108,5 +113,4 @@ jobs:
         with:
           emulator-boot-timeout: 300 # 5 minutes
           api-level: ${{ matrix.api-level }}
-          arch: ${{ matrix.arch }}
           script: ./gradlew :library:driver-test:connectedCheck -PKMP_TARGETS="ANDROID,JVM"
