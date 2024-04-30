@@ -1,0 +1,34 @@
+# Environment variables for code signing windows binaries
+# using pkcs11 + HSM + osslsigncode via task "sign:mingw"
+#
+# 1. Copy this file to external/codesign/windows.pkcs11
+# 2. complete TODO
+# 3. apt install osslsigncode libengine-pkcs11-openssl ykcs11
+# 4. ./external/task.sh sign:mingw
+#
+# All variables are prefixed with "gen_" to ensure no
+# clashes with system environment variables occur.
+
+# Path to the pkcs11 engine (e.g. "/usr/lib/x86_64-linux-gnu/engines-3/pkcs11.so")
+gen_pkcs11engine_path="TODO"
+
+# Path to the pkcs11 module (e.g. "/usr/lib/x86_64-linux-gnu/libykcs11.so")
+gen_pkcs11module_path="TODO"
+
+# The HSM Model (e.g. "YubiKey%20YK5")
+gen_model="TODO"
+
+# The HSM Manufacturer (e.g. "Yubico%20(www.yubico.com)")
+gen_manufacturer="TODO"
+
+# The HSM Serial (e.g. "123456")
+gen_serial="TODO"
+
+# The timestamping server url (e.g. "http://ts.ssl.com")
+gen_ts="TODO"
+
+# The absolute path to the .crt (e.g. "/home/matt/path/to/my_cert.pem")
+gen_cert_path="TODO"
+
+# Change if not slot 1
+gen_id="%01"
