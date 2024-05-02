@@ -156,6 +156,7 @@ function sign:mingw { ## Sign Windows libs. (see windows.pkcs11.sample)
       -key "$pkcs11_url" \
       -certs "$gen_cert_path" \
       -ts "$gen_ts" \
+      -h "sha256" \
       -in "$dir_arch/sqlitejdbc.dll" \
       -out "$DIR_SIGNED/Windows/$arch_name/sqlitejdbc.dll"
   done
