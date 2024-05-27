@@ -5,24 +5,24 @@ androidx-test-runner = "1.5.2"
 
 encoding = "2.2.1"
 
-gradle-android = "8.1.4"
+gradle-android = "8.2.2"
 gradle-binary-compat = "0.14.0"
 gradle-build-config = "4.1.2"
-gradle-cklib = "0.3.0"
+gradle-cklib = "0.3.1"
 gradle-kmp-configuration = "0.2.1"
 gradle-kotlin = "1.9.23"
-gradle-maven-publish = "0.27.0"
+gradle-maven-publish = "0.28.0"
 
 immutable = "0.1.2"
 
-kotlinx-coroutines = "1.8.0"
+kotlinx-coroutines = "1.8.1"
 
 # Only for tests
 okio = "3.9.0"
 
 sql-delight-dialect = "sqlite-3-38-dialect"
 sql-delight = "2.0.2"
-sql-jdbc-xerial = "3.45.2.0"
+sql-jdbc-xerial = "3.46.0.0"
 slf4j = "1.7.36"
 
 [libraries]

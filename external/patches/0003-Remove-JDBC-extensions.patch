@@ -1,6 +1,6 @@
-From baeea259e50db5971566a94447bd23a79d2dbe2e Mon Sep 17 00:00:00 2001
+From 9c51967a1c2d986b9849b0c76f3956f0696e7f99 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Tue, 30 Apr 2024 15:12:47 -0400
+Date: Mon, 27 May 2024 17:25:13 -0400
 Subject: [PATCH 3/8] Remove JDBC extensions
 
 ---
