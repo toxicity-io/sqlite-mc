@@ -1,6 +1,6 @@
-From 885d5d84a00f8ecede915bd9897909931c8f09a8 Mon Sep 17 00:00:00 2001
+From cb3613338dcd1d39832f18b55581e6d1a072d1c6 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Tue, 30 Apr 2024 15:12:48 -0400
+Date: Mon, 27 May 2024 17:25:14 -0400
 Subject: [PATCH 4/8] Add Linux-Musl definitions
 
 ---
