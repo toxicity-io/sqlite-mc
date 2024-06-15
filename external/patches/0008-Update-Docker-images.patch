@@ -1,6 +1,6 @@
-From 2dd297135472d0998d5d18ecadffdc03de5905d7 Mon Sep 17 00:00:00 2001
+From e8cb89eb6bb0d2c2f818953ce4d07ac194f32cf4 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Mon, 27 May 2024 17:26:14 -0400
+Date: Sat, 15 Jun 2024 07:21:44 -0400
 Subject: [PATCH 8/8] Update Docker images
 
 ---
