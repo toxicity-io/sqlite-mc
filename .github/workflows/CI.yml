@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, macos-11, ubuntu-latest, ubuntu-20.04, windows-latest, windows-2019 ]
+        os: [ macos-latest, ubuntu-latest, ubuntu-20.04, windows-latest, windows-2019 ]
 
     runs-on: ${{ matrix.os }}
 
@@ -53,11 +53,6 @@ jobs:
         run: >
           ./gradlew check --stacktrace
           -PKMP_TARGETS="JVM,JS,IOS_ARM64,IOS_X64,IOS_SIMULATOR_ARM64,MACOS_ARM64,MACOS_X64,TVOS_ARM64,TVOS_X64,TVOS_SIMULATOR_ARM64,WATCHOS_ARM32,WATCHOS_ARM64,WATCHOS_DEVICE_ARM64,WATCHOS_X64,WATCHOS_SIMULATOR_ARM64,WASM_JS,WASM_WASI"
-      - name: Run macOS JVM Tests
-        if: matrix.os == 'macos-11'
-        run: >
-          ./gradlew check --stacktrace
-          -PKMP_TARGETS="JVM"
       - name: Run Linux Tests
         if: matrix.os == 'ubuntu-latest'
         run: >
