@@ -1,6 +1,6 @@
-From e8cb89eb6bb0d2c2f818953ce4d07ac194f32cf4 Mon Sep 17 00:00:00 2001
+From bfa506b800741aefbb689ae49837a79561b248e4 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Sat, 15 Jun 2024 07:21:44 -0400
+Date: Wed, 21 Aug 2024 12:11:50 -0400
 Subject: [PATCH 8/8] Update Docker images
 
 ---
@@ -12,7 +12,7 @@ Subject: [PATCH 8/8] Update Docker images
  5 files changed, 31 insertions(+), 37 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index d2fa264..c1713bf 100644
+index 07e6510..23666a9 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -21,6 +21,7 @@ SQLITE_ARCHIVE:=$(TARGET)/$(sqlite)-amal.zip
@@ -49,7 +49,7 @@ index d2fa264..c1713bf 100644
  
  freebsd32: $(SQLITE_UNPACKED) jni-header
  	docker run $(DOCKER_RUN_OPTS) -v $$PWD:/workdir empterdose/freebsd-cross-build:9.3 sh -c 'apk add bash; apk add openjdk8; apk add perl; make clean-native native OS_NAME=FreeBSD OS_ARCH=x86 CROSS_PREFIX=i386-freebsd9-'
-@@ -167,31 +168,31 @@ linux-armv6: $(SQLITE_UNPACKED) jni-header
+@@ -167,34 +168,34 @@ linux-armv6: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-armv6-lts -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=armv6-unknown-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armv6'
  
  linux-armv7: $(SQLITE_UNPACKED) jni-header
@@ -80,6 +80,9 @@ index d2fa264..c1713bf 100644
 -	./docker/dockcross-ppc64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64'
 +	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work 05nelsonm/build-env.linux-libc.ppc64le:$(TAG_BUILD_ENV) bash -c 'make clean-native native CROSS_PREFIX=$$CROSS_TRIPLE- OS_NAME=Linux OS_ARCH=ppc64'
  
+ linux-riscv64: $(SQLITE_UNPACKED) jni-header
+ 	./docker/dockcross-riscv64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=riscv64-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=riscv64'
+ 
  mac64: $(SQLITE_UNPACKED) jni-header
 -	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/workdir -e CROSS_TRIPLE=x86_64-apple-darwin multiarch/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=x86_64
 +	docker run $(DOCKER_RUN_OPTS) -u $(U_ID):$(G_ID) -v $$PWD:/work 05nelsonm/build-env.macos-lts.x86_64:$(TAG_BUILD_ENV) bash -c 'make clean-native native CROSS_PREFIX=$$CROSS_TRIPLE- OS_NAME=Mac OS_ARCH=x86_64'
@@ -91,7 +94,7 @@ index d2fa264..c1713bf 100644
  # deprecated
  mac32: $(SQLITE_UNPACKED) jni-header
 diff --git a/Makefile.common b/Makefile.common
-index c6e4ff0..6f9a654 100644
+index 9bc779e..855e31f 100644
 --- a/Makefile.common
 +++ b/Makefile.common
 @@ -128,29 +128,29 @@ Linux-armv7_LIBNAME   := libsqlitejdbc.so
@@ -132,7 +135,7 @@ index c6e4ff0..6f9a654 100644
  Linux-Android-x86_64_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-soname,libsqlitejdbc.so
  Linux-Android-x86_64_LIBNAME   := libsqlitejdbc.so
  Linux-Android-x86_64_SQLITE_FLAGS  :=
-@@ -218,23 +218,16 @@ HPUX-ia64_32_LINKFLAGS	:= -b
+@@ -225,23 +225,16 @@ HPUX-ia64_32_LINKFLAGS	:= -b
  HPUX-ia64_32_LIBNAME	:= libsqlitejdbc.so
  HPUX-ia64_32_SQLITE_FLAGS :=
  
@@ -160,7 +163,7 @@ index c6e4ff0..6f9a654 100644
  Mac-aarch64_LINKFLAGS  := -dynamiclib -framework Security
  Mac-aarch64_LIBNAME    := libsqlitejdbc.dylib
  Mac-aarch64_SQLITE_FLAGS := 
-@@ -242,14 +235,14 @@ Mac-aarch64_SQLITE_FLAGS :=
+@@ -249,14 +242,14 @@ Mac-aarch64_SQLITE_FLAGS :=
  Windows-x86_CC           := $(CROSS_PREFIX)gcc
  Windows-x86_STRIP        := $(CROSS_PREFIX)strip
  Windows-x86_CCFLAGS      := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -Os -msse4.2 -maes

@@ -1,6 +1,6 @@
-From a9f15c2b688eb45c2c909170d6f3fcdb5b8db057 Mon Sep 17 00:00:00 2001
+From dd490870c001345f763529761661b8a371ee4144 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Mon, 27 May 2024 17:25:15 -0400
+Date: Wed, 21 Aug 2024 12:11:48 -0400
 Subject: [PATCH 6/8] Disable macOS adhoc signing
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 6/8] Disable macOS adhoc signing
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index 4f43de9..8ea1e4b 100644
+index 3898179..561ad4c 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -115,7 +115,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
