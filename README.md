@@ -373,12 +373,12 @@ I'm guessing this is not really a factor on iOS."
 
 <!-- TAG_VERSION -->
 
-1. Remove `SQLDelight` gradle plugin and drivers from your project
+1. Remove `SQLDelight` gradle plugin and driver dependencies from your project
 2. Apply the `sqlite-mc` gradle plugin.
    ```kotlin
    plugins {
        // Provides the SQLDelight gradle plugin automatically and applies it
-       id("io.toxicity.sqlite-mc") version("2.0.2-1.8.6-0")
+       id("io.toxicity.sqlite-mc") version("2.0.2-1.8.7-0")
    }
 
    // Will automatically:
@@ -398,12 +398,12 @@ I'm guessing this is not really a factor on iOS."
        //
        // This is simply the desktop binary resources needed for
        // JDBC to operate locally on the machine.
-       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.2-1.8.6-0")
+       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.2-1.8.7-0")
    }
    ```
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.2--1.8.6--0-blue.svg?style=flat
+[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.2--1.8.7--0-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
