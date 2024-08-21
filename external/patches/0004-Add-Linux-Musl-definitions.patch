@@ -1,6 +1,6 @@
-From cb3613338dcd1d39832f18b55581e6d1a072d1c6 Mon Sep 17 00:00:00 2001
+From 0328e3006287191efa330362e78f3e095dfcf065 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Mon, 27 May 2024 17:25:14 -0400
+Date: Wed, 21 Aug 2024 12:11:46 -0400
 Subject: [PATCH 4/8] Add Linux-Musl definitions
 
 ---
@@ -8,15 +8,15 @@ Subject: [PATCH 4/8] Add Linux-Musl definitions
  1 file changed, 22 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.common b/Makefile.common
-index c435e7c..0b374bf 100644
+index fb5dd48..2f99457 100644
 --- a/Makefile.common
 +++ b/Makefile.common
 @@ -52,7 +52,7 @@ endif
  
  # os=Default is meant to be generic unix/linux
  
--known_targets := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-Android-arm Linux-Android-aarch64 Linux-Android-x86 Linux-Android-x86_64 Linux-ppc64 Mac-x86 Mac-x86_64 Mac-aarch64 DragonFly-x86_64 FreeBSD-x86 FreeBSD-x86_64 FreeBSD-aarch64 OpenBSD-x86_64 Windows-x86 Windows-x86_64 Windows-armv7 Windows-aarch64 SunOS-sparcv9 HPUX-ia64_32
-+known_targets := Linux-x86 Linux-x86_64 Linux-Musl-x86 Linux-Musl-x86_64 Linux-Musl-aarch64 Linux-arm Linux-armv6 Linux-armv7 Linux-Android-arm Linux-Android-aarch64 Linux-Android-x86 Linux-Android-x86_64 Linux-ppc64 Mac-x86 Mac-x86_64 Mac-aarch64 DragonFly-x86_64 FreeBSD-x86 FreeBSD-x86_64 FreeBSD-aarch64 OpenBSD-x86_64 Windows-x86 Windows-x86_64 Windows-armv7 Windows-aarch64 SunOS-sparcv9 HPUX-ia64_32
+-known_targets := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-Android-arm Linux-Android-aarch64 Linux-Android-x86 Linux-Android-x86_64 Linux-ppc64 Linux-riscv64 Mac-x86 Mac-x86_64 Mac-aarch64 DragonFly-x86_64 FreeBSD-x86 FreeBSD-x86_64 FreeBSD-aarch64 OpenBSD-x86_64 Windows-x86 Windows-x86_64 Windows-armv7 Windows-aarch64 SunOS-sparcv9 HPUX-ia64_32
++known_targets := Linux-x86 Linux-x86_64 Linux-Musl-x86 Linux-Musl-x86_64 Linux-Musl-aarch64 Linux-arm Linux-armv6 Linux-armv7 Linux-Android-arm Linux-Android-aarch64 Linux-Android-x86 Linux-Android-x86_64 Linux-ppc64 Linux-riscv64 Mac-x86 Mac-x86_64 Mac-aarch64 DragonFly-x86_64 FreeBSD-x86 FreeBSD-x86_64 FreeBSD-aarch64 OpenBSD-x86_64 Windows-x86 Windows-x86_64 Windows-armv7 Windows-aarch64 SunOS-sparcv9 HPUX-ia64_32
  target := $(OS_NAME)-$(OS_ARCH)
  
  ifeq (,$(findstring $(strip $(target)),$(known_targets)))

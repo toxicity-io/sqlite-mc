@@ -1,6 +1,6 @@
-From b79a4d9c5354a9c9b29916f744837186a647bac1 Mon Sep 17 00:00:00 2001
+From 8a3bc05b0c08d4c9d4270633a4ea8912dec7e7eb Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Mon, 27 May 2024 17:25:12 -0400
+Date: Wed, 21 Aug 2024 12:11:45 -0400
 Subject: [PATCH 2/8] Disable double-quoted strings
 
 ---
@@ -12,7 +12,7 @@ Subject: [PATCH 2/8] Disable double-quoted strings
  5 files changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 04cba66..1fc51c9 100644
+index 605990f..5297c5c 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -105,6 +105,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)

@@ -1,6 +1,6 @@
-From a6dc225be95b2194e210d220703cdf4c82300854 Mon Sep 17 00:00:00 2001
+From ab4fc3549cc16c2f688360fcae3ecd3bf7a1ed80 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Mon, 27 May 2024 17:25:11 -0400
+Date: Wed, 21 Aug 2024 12:11:44 -0400
 Subject: [PATCH 1/8] Add user/group ids to docker build
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 1/8] Add user/group ids to docker build
  1 file changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index b32d85f..04cba66 100644
+index a698f26..605990f 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -29,6 +29,9 @@ SQLITE_INCLUDE := $(shell dirname "$(SQLITE_HEADER)")
@@ -47,8 +47,8 @@ index b32d85f..04cba66 100644
  
  linux-musl-arm64: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-musl-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-linux-musl- OS_NAME=Linux-Musl OS_ARCH=aarch64'
-@@ -195,14 +198,14 @@ linux-ppc64: $(SQLITE_UNPACKED) jni-header
- 	./docker/dockcross-ppc64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64'
+@@ -198,14 +201,14 @@ linux-riscv64: $(SQLITE_UNPACKED) jni-header
+ 	./docker/dockcross-riscv64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=riscv64-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=riscv64'
  
  mac64: $(SQLITE_UNPACKED) jni-header
 -	docker run $(DOCKER_RUN_OPTS) -v $$PWD:/workdir -e CROSS_TRIPLE=x86_64-apple-darwin multiarch/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=x86_64
