@@ -1,6 +1,6 @@
-From ab4fc3549cc16c2f688360fcae3ecd3bf7a1ed80 Mon Sep 17 00:00:00 2001
+From 727163e68f85df3b5de5daa17e84d6f21b9cf483 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 21 Aug 2024 12:11:44 -0400
+Date: Wed, 23 Oct 2024 09:51:18 -0400
 Subject: [PATCH 1/8] Add user/group ids to docker build
 
 ---
