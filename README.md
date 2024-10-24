@@ -409,8 +409,8 @@ I'm guessing this is not really a factor on iOS."
 <!-- TAG_DEPENDENCIES -->
 [badge-kotlin]: https://img.shields.io/badge/kotlin-1.9.24-blue.svg?logo=kotlin
 [badge-coroutines]: https://img.shields.io/badge/coroutines-1.8.1-blue.svg?logo=kotlin
-[badge-encoding]: https://img.shields.io/badge/encoding-2.2.1-blue.svg?style=flat
-[badge-immutable]: https://img.shields.io/badge/immutable-0.1.3-blue.svg?style=flat
+[badge-encoding]: https://img.shields.io/badge/encoding-2.2.2-blue.svg?style=flat
+[badge-immutable]: https://img.shields.io/badge/immutable-0.1.4-blue.svg?style=flat
 [badge-sqldelight]: https://img.shields.io/badge/SQLDelight-2.0.2-blue.svg?style=flat
 [badge-sqlite]: https://img.shields.io/badge/SQLite3-3.47.0-blue.svg?style=flat
 [badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.9.0-blue.svg?style=flat
