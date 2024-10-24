@@ -22,7 +22,6 @@ import io.toxicity.sqlite.mc.driver.config.MCPragma
 import io.toxicity.sqlite.mc.driver.config.MutableMCPragmas
 import io.toxicity.sqlite.mc.driver.internal.ext.appendColon
 import kotlin.jvm.JvmField
-import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 
 public sealed class MCCipherConfig(
@@ -324,7 +323,6 @@ public sealed class MCCipherConfig(
 
     protected companion object {
 
-        @JvmStatic
         @Suppress("NOTHING_TO_INLINE")
         @Throws(IllegalArgumentException::class)
         internal inline fun Int.checkLegacyPageSize() {
@@ -337,7 +335,6 @@ public sealed class MCCipherConfig(
             }
         }
 
-        @JvmStatic
         @Suppress("NOTHING_TO_INLINE")
         @Throws(IllegalArgumentException::class)
         internal inline fun Int.checkKdfIter() {

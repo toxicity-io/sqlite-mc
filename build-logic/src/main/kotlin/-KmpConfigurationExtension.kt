@@ -25,6 +25,10 @@ fun KmpConfigurationExtension.configureShared(
     action: (Action<KmpConfigurationContainerDsl>)? = null,
 ) {
     configure {
+        options {
+            useUniqueModuleNames = true
+        }
+
         jvm {
             kotlinJvmTarget = JavaVersion.VERSION_1_8
             compileSourceCompatibility = JavaVersion.VERSION_1_8
