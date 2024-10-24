@@ -1,7 +1,7 @@
-From 8a3bc05b0c08d4c9d4270633a4ea8912dec7e7eb Mon Sep 17 00:00:00 2001
+From 1477083c5ffffc750791cd6e86efa36201e4be42 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 21 Aug 2024 12:11:45 -0400
-Subject: [PATCH 2/8] Disable double-quoted strings
+Date: Wed, 23 Oct 2024 09:51:18 -0400
+Subject: [PATCH 2/9] Disable double-quoted strings
 
 ---
  Makefile                                    | 1 +
@@ -61,10 +61,10 @@ index a79cd86..89dd54b 100644
              assertThat(rs.getString(1)).isEqualTo("TGCA");
              rs.close();
 diff --git a/src/test/java/org/sqlite/PrepStmtTest.java b/src/test/java/org/sqlite/PrepStmtTest.java
-index ee2e77e..0a296b6 100644
+index 1bf609d..fee401d 100644
 --- a/src/test/java/org/sqlite/PrepStmtTest.java
 +++ b/src/test/java/org/sqlite/PrepStmtTest.java
-@@ -605,7 +605,7 @@ public class PrepStmtTest {
+@@ -635,7 +635,7 @@ public class PrepStmtTest {
      public void clearParameters() throws SQLException {
          stat.executeUpdate(
                  "create table tbl (colid integer primary key AUTOINCREMENT, col varchar)");
@@ -74,10 +74,10 @@ index ee2e77e..0a296b6 100644
  
          PreparedStatement prep = conn.prepareStatement("select colid from tbl where col = ?");
 diff --git a/src/test/java/org/sqlite/StatementTest.java b/src/test/java/org/sqlite/StatementTest.java
-index 172a2f2..40b8a2b 100644
+index e8c891a..7419bbd 100644
 --- a/src/test/java/org/sqlite/StatementTest.java
 +++ b/src/test/java/org/sqlite/StatementTest.java
-@@ -108,7 +108,7 @@ public class StatementTest {
+@@ -106,7 +106,7 @@ public class StatementTest {
  
      @Test
      public void stringRS() throws SQLException {

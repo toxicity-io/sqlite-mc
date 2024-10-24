@@ -1,7 +1,7 @@
-From bfa506b800741aefbb689ae49837a79561b248e4 Mon Sep 17 00:00:00 2001
+From 76c7db1b1c28fd12f5027bfd74b3bff3fcc7f862 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 21 Aug 2024 12:11:50 -0400
-Subject: [PATCH 8/8] Update Docker images
+Date: Wed, 23 Oct 2024 09:51:24 -0400
+Subject: [PATCH 8/9] Update Docker images
 
 ---
  Makefile                    | 27 ++++++++++++++-------------
@@ -12,14 +12,14 @@ Subject: [PATCH 8/8] Update Docker images
  5 files changed, 31 insertions(+), 37 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 07e6510..23666a9 100644
+index 07e6510..bb2e184 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -21,6 +21,7 @@ SQLITE_ARCHIVE:=$(TARGET)/$(sqlite)-amal.zip
  SQLITE_UNPACKED:=$(TARGET)/sqlite-unpack.log
  SQLITE_SOURCE?=$(TARGET)/$(SQLITE_AMAL_PREFIX)
  SQLITE_HEADER?=$(SQLITE_SOURCE)/sqlite3mc_amalgamation.h
-+TAG_BUILD_ENV=0.1.3
++TAG_BUILD_ENV=0.2.0
  ifneq ($(SQLITE_SOURCE),$(TARGET)/$(SQLITE_AMAL_PREFIX))
  	created := $(shell touch $(SQLITE_UNPACKED))
  endif

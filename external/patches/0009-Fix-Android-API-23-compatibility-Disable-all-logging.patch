@@ -1,0 +1,343 @@
+From 55581073ccaf5512541571097b3507b18441c9e0 Mon Sep 17 00:00:00 2001
+From: Matthew Nelson <developer@matthewnelson.io>
+Date: Wed, 23 Oct 2024 22:25:40 -0400
+Subject: [PATCH 9/9] Fix Android API 23- compatibility (Disable all logging)
+
+---
+ src/main/java/org/sqlite/JDBC.java            |  8 ++--
+ .../java/org/sqlite/SQLiteJDBCLoader.java     | 42 +++++++++----------
+ src/main/java/org/sqlite/core/NativeDB.java   | 26 ++++++------
+ .../sqlite/jdbc3/JDBC3DatabaseMetaData.java   | 24 +++++------
+ .../java/org/sqlite/jdbc3/JDBC3Statement.java | 14 +++----
+ src/main/java/org/sqlite/util/OSInfo.java     | 22 +++++-----
+ 6 files changed, 68 insertions(+), 68 deletions(-)
+
+diff --git a/src/main/java/org/sqlite/JDBC.java b/src/main/java/org/sqlite/JDBC.java
+index 9c4813a..4c73cf4 100644
+--- a/src/main/java/org/sqlite/JDBC.java
++++ b/src/main/java/org/sqlite/JDBC.java
+@@ -19,18 +19,18 @@ package org.sqlite;
+ import java.sql.*;
+ import java.util.Properties;
+ import org.sqlite.jdbc4.JDBC4Connection;
+-import org.sqlite.util.Logger;
+-import org.sqlite.util.LoggerFactory;
++//import org.sqlite.util.Logger;
++//import org.sqlite.util.LoggerFactory;
+ 
+ public class JDBC implements Driver {
+-    private static final Logger logger = LoggerFactory.getLogger(JDBC.class);
++//    private static final Logger logger = LoggerFactory.getLogger(JDBC.class);
+     public static final String PREFIX = "jdbc:sqlite:";
+ 
+     static {
+         try {
+             DriverManager.registerDriver(new JDBC());
+         } catch (SQLException e) {
+-            logger.error(() -> "Could not register driver", e);
++//            logger.error(() -> "Could not register driver", e);
+         }
+     }
+ 
+diff --git a/src/main/java/org/sqlite/SQLiteJDBCLoader.java b/src/main/java/org/sqlite/SQLiteJDBCLoader.java
+index cfd41ab..d736344 100644
+--- a/src/main/java/org/sqlite/SQLiteJDBCLoader.java
++++ b/src/main/java/org/sqlite/SQLiteJDBCLoader.java
+@@ -41,8 +41,8 @@ import java.util.Properties;
+ import java.util.UUID;
+ import java.util.stream.Stream;
+ import org.sqlite.util.LibraryLoaderUtil;
+-import org.sqlite.util.Logger;
+-import org.sqlite.util.LoggerFactory;
++//import org.sqlite.util.Logger;
++//import org.sqlite.util.LoggerFactory;
+ import org.sqlite.util.OSInfo;
+ import org.sqlite.util.StringUtils;
+ 
+@@ -58,7 +58,7 @@ import org.sqlite.util.StringUtils;
+  * @author leo
+  */
+ public class SQLiteJDBCLoader {
+-    private static final Logger logger = LoggerFactory.getLogger(SQLiteJDBCLoader.class);
++//    private static final Logger logger = LoggerFactory.getLogger(SQLiteJDBCLoader.class);
+ 
+     private static final String LOCK_EXT = ".lck";
+     private static boolean extracted = false;
+@@ -102,12 +102,12 @@ public class SQLiteJDBCLoader {
+                                     try {
+                                         Files.delete(nativeLib);
+                                     } catch (Exception e) {
+-                                        logger.error(() -> "Failed to delete old native lib", e);
++//                                        logger.error(() -> "Failed to delete old native lib", e);
+                                     }
+                                 }
+                             });
+         } catch (IOException e) {
+-            logger.error(() -> "Failed to open directory", e);
++//            logger.error(() -> "Failed to open directory", e);
+         }
+     }
+ 
+@@ -223,7 +223,7 @@ public class SQLiteJDBCLoader {
+             }
+             return loadNativeLibrary(targetFolder, extractedLibFileName);
+         } catch (IOException e) {
+-            logger.error(() -> "Unexpected IOException", e);
++//            logger.error(() -> "Unexpected IOException", e);
+             return false;
+         }
+     }
+@@ -247,7 +247,7 @@ public class SQLiteJDBCLoader {
+             connection.setUseCaches(false);
+             return connection.getInputStream();
+         } catch (IOException e) {
+-            logger.error(() -> "Could not connect", e);
++//            logger.error(() -> "Could not connect", e);
+             return null;
+         }
+     }
+@@ -268,12 +268,12 @@ public class SQLiteJDBCLoader {
+                 return true;
+             } catch (UnsatisfiedLinkError e) {
+ 
+-                logger.error(
+-                        () ->
+-                                MessageFormat.format(
+-                                        "Failed to load native library: {0}. osinfo: {1}",
+-                                        name, OSInfo.getNativeLibFolderPathForCurrentOS()),
+-                        e);
++//                logger.error(
++//                        () ->
++//                                MessageFormat.format(
++//                                        "Failed to load native library: {0}. osinfo: {1}",
++//                                        name, OSInfo.getNativeLibFolderPathForCurrentOS()),
++//                        e);
+                 return false;
+             }
+ 
+@@ -287,7 +287,7 @@ public class SQLiteJDBCLoader {
+             System.loadLibrary(LibraryLoaderUtil.NATIVE_LIB_BASE_NAME);
+             return true;
+         } catch (UnsatisfiedLinkError e) {
+-            logger.error(() -> "Failed to load native library through System.loadLibrary", e);
++//            logger.error(() -> "Failed to load native library through System.loadLibrary", e);
+             return false;
+         }
+     }
+@@ -420,13 +420,13 @@ public class SQLiteJDBCLoader {
+                 // inline creation of logger to avoid build-time initialization of the logging
+                 // framework in native-image
+                 URL finalVersionFile = versionFile;
+-                LoggerFactory.getLogger(VersionHolder.class)
+-                        .error(
+-                                () ->
+-                                        MessageFormat.format(
+-                                                "Could not read version from file: {0}",
+-                                                finalVersionFile),
+-                                e);
++//                LoggerFactory.getLogger(VersionHolder.class)
++//                        .error(
++//                                () ->
++//                                        MessageFormat.format(
++//                                                "Could not read version from file: {0}",
++//                                                finalVersionFile),
++//                                e);
+             }
+             VERSION = version;
+         }
+diff --git a/src/main/java/org/sqlite/core/NativeDB.java b/src/main/java/org/sqlite/core/NativeDB.java
+index a71e8ea..b563484 100644
+--- a/src/main/java/org/sqlite/core/NativeDB.java
++++ b/src/main/java/org/sqlite/core/NativeDB.java
+@@ -26,12 +26,12 @@ import org.sqlite.Function;
+ import org.sqlite.ProgressHandler;
+ import org.sqlite.SQLiteConfig;
+ import org.sqlite.SQLiteJDBCLoader;
+-import org.sqlite.util.Logger;
+-import org.sqlite.util.LoggerFactory;
++//import org.sqlite.util.Logger;
++//import org.sqlite.util.LoggerFactory;
+ 
+ /** This class provides a thin JNI layer over the SQLite3 C API. */
+ public final class NativeDB extends DB {
+-    private static final Logger logger = LoggerFactory.getLogger(NativeDB.class);
++//    private static final Logger logger = LoggerFactory.getLogger(NativeDB.class);
+     private static final int DEFAULT_BACKUP_BUSY_SLEEP_TIME_MILLIS = 100;
+     private static final int DEFAULT_BACKUP_NUM_BUSY_BEFORE_FAIL = 3;
+     private static final int DEFAULT_PAGES_PER_BACKUP_STEP = 100;
+@@ -91,11 +91,11 @@ public final class NativeDB extends DB {
+     /** @see org.sqlite.core.DB#_exec(java.lang.String) */
+     @Override
+     public synchronized int _exec(String sql) throws SQLException {
+-        logger.trace(
+-                () ->
+-                        MessageFormat.format(
+-                                "DriverManager [{0}] [SQLite EXEC] {1}",
+-                                Thread.currentThread().getName(), sql));
++//        logger.trace(
++//                () ->
++//                        MessageFormat.format(
++//                                "DriverManager [{0}] [SQLite EXEC] {1}",
++//                                Thread.currentThread().getName(), sql));
+         return _exec_utf8(stringToUtf8ByteArray(sql));
+     }
+ 
+@@ -127,11 +127,11 @@ public final class NativeDB extends DB {
+     /** @see org.sqlite.core.DB#prepare(java.lang.String) */
+     @Override
+     protected synchronized SafeStmtPtr prepare(String sql) throws SQLException {
+-        logger.trace(
+-                () ->
+-                        MessageFormat.format(
+-                                "DriverManager [{0}] [SQLite EXEC] {1}",
+-                                Thread.currentThread().getName(), sql));
++//        logger.trace(
++//                () ->
++//                        MessageFormat.format(
++//                                "DriverManager [{0}] [SQLite EXEC] {1}",
++//                                Thread.currentThread().getName(), sql));
+         return new SafeStmtPtr(this, prepare_utf8(stringToUtf8ByteArray(sql)));
+     }
+ 
+diff --git a/src/main/java/org/sqlite/jdbc3/JDBC3DatabaseMetaData.java b/src/main/java/org/sqlite/jdbc3/JDBC3DatabaseMetaData.java
+index 086fcbc..bd1ba88 100644
+--- a/src/main/java/org/sqlite/jdbc3/JDBC3DatabaseMetaData.java
++++ b/src/main/java/org/sqlite/jdbc3/JDBC3DatabaseMetaData.java
+@@ -25,8 +25,8 @@ import org.sqlite.SQLiteConnection;
+ import org.sqlite.core.CoreDatabaseMetaData;
+ import org.sqlite.core.CoreStatement;
+ import org.sqlite.jdbc3.JDBC3DatabaseMetaData.ImportedKeyFinder.ForeignKey;
+-import org.sqlite.util.Logger;
+-import org.sqlite.util.LoggerFactory;
++//import org.sqlite.util.Logger;
++//import org.sqlite.util.LoggerFactory;
+ import org.sqlite.util.QueryUtils;
+ import org.sqlite.util.StringUtils;
+ 
+@@ -964,14 +964,14 @@ public abstract class JDBC3DatabaseMetaData extends CoreDatabaseMetaData {
+                         try {
+                             rsColAutoinc.close();
+                         } catch (Exception e) {
+-                            LogHolder.logger.error(() -> "Could not close ResultSet", e);
++//                            LogHolder.logger.error(() -> "Could not close ResultSet", e);
+                         }
+                     }
+                     if (statColAutoinc != null) {
+                         try {
+                             statColAutoinc.close();
+                         } catch (Exception e) {
+-                            LogHolder.logger.error(() -> "Could not close statement", e);
++//                            LogHolder.logger.error(() -> "Could not close statement", e);
+                         }
+                     }
+                 }
+@@ -1125,7 +1125,7 @@ public abstract class JDBC3DatabaseMetaData extends CoreDatabaseMetaData {
+                 try {
+                     rs.close();
+                 } catch (Exception e) {
+-                    LogHolder.logger.error(() -> "Could not close ResultSet", e);
++//                    LogHolder.logger.error(() -> "Could not close ResultSet", e);
+                 }
+             }
+         }
+@@ -2243,11 +2243,11 @@ public abstract class JDBC3DatabaseMetaData extends CoreDatabaseMetaData {
+         return name;
+     }
+ 
+-    /**
+-     * Class-wrapper around the logger object to avoid build-time initialization of the logging
+-     * framework in native-image
+-     */
+-    private static class LogHolder {
+-        private static final Logger logger = LoggerFactory.getLogger(JDBC3DatabaseMetaData.class);
+-    }
++//    /**
++//     * Class-wrapper around the logger object to avoid build-time initialization of the logging
++//     * framework in native-image
++//     */
++//    private static class LogHolder {
++//        private static final Logger logger = LoggerFactory.getLogger(JDBC3DatabaseMetaData.class);
++//    }
+ }
+diff --git a/src/main/java/org/sqlite/jdbc3/JDBC3Statement.java b/src/main/java/org/sqlite/jdbc3/JDBC3Statement.java
+index 1af5694..958527c 100644
+--- a/src/main/java/org/sqlite/jdbc3/JDBC3Statement.java
++++ b/src/main/java/org/sqlite/jdbc3/JDBC3Statement.java
+@@ -15,8 +15,8 @@ import org.sqlite.SQLiteConnection;
+ import org.sqlite.core.CoreStatement;
+ import org.sqlite.core.DB;
+ import org.sqlite.core.DB.ProgressObserver;
+-import org.sqlite.util.Logger;
+-import org.sqlite.util.LoggerFactory;
++//import org.sqlite.util.Logger;
++//import org.sqlite.util.LoggerFactory;
+ 
+ public abstract class JDBC3Statement extends CoreStatement {
+ 
+@@ -98,13 +98,13 @@ public abstract class JDBC3Statement extends CoreStatement {
+     }
+ 
+     static class BackupObserver implements ProgressObserver {
+-        private static final Logger logger = LoggerFactory.getLogger(BackupObserver.class);
++//        private static final Logger logger = LoggerFactory.getLogger(BackupObserver.class);
+ 
+         public void progress(int remaining, int pageCount) {
+-            logger.info(
+-                    () ->
+-                            MessageFormat.format(
+-                                    "remaining:{0}, page count:{1}", remaining, pageCount));
++//            logger.info(
++//                    () ->
++//                            MessageFormat.format(
++//                                    "remaining:{0}, page count:{1}", remaining, pageCount));
+         }
+     }
+ 
+diff --git a/src/main/java/org/sqlite/util/OSInfo.java b/src/main/java/org/sqlite/util/OSInfo.java
+index 731a155..8f80716 100644
+--- a/src/main/java/org/sqlite/util/OSInfo.java
++++ b/src/main/java/org/sqlite/util/OSInfo.java
+@@ -161,7 +161,7 @@ public class OSInfo {
+         try {
+             return processRunner.runAndWaitFor("uname -m");
+         } catch (Throwable e) {
+-            LogHolder.logger.error(() -> "Error while running uname -m", e);
++//            LogHolder.logger.error(() -> "Error while running uname -m", e);
+             return "unknown";
+         }
+     }
+@@ -228,9 +228,9 @@ public class OSInfo {
+                         return "armv7";
+                     }
+                 } else {
+-                    LogHolder.logger.warn(
+-                            () ->
+-                                    "readelf not found. Cannot check if running on an armhf system, armel architecture will be presumed");
++//                    LogHolder.logger.warn(
++//                            () ->
++//                                    "readelf not found. Cannot check if running on an armhf system, armel architecture will be presumed");
+                 }
+             } catch (IOException | InterruptedException e) {
+                 // ignored: fall back to "arm" arch (soft-float ABI)
+@@ -279,11 +279,11 @@ public class OSInfo {
+         return archName.replaceAll("\\W", "");
+     }
+ 
+-    /**
+-     * Class-wrapper around the logger object to avoid build-time initialization of the logging
+-     * framework in native-image
+-     */
+-    private static class LogHolder {
+-        private static final Logger logger = LoggerFactory.getLogger(OSInfo.class);
+-    }
++//    /**
++//     * Class-wrapper around the logger object to avoid build-time initialization of the logging
++//     * framework in native-image
++//     */
++//    private static class LogHolder {
++//        private static final Logger logger = LoggerFactory.getLogger(OSInfo.class);
++//    }
+ }
+-- 
+2.34.1
+

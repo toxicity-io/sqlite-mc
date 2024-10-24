@@ -1,7 +1,7 @@
-From f1ded894f65ecc0d6de72900ccd2b737db8bd8bb Mon Sep 17 00:00:00 2001
+From cea74e728aa76b5e588003b962256df25ce3612f Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 21 Aug 2024 12:11:49 -0400
-Subject: [PATCH 7/8] Configure build to use SQLite3MultipleCiphers
+Date: Wed, 23 Oct 2024 09:51:23 -0400
+Subject: [PATCH 7/9] Configure build to use SQLite3MultipleCiphers
 
 ---
  Makefile                                 | 25 +++++++++---------
@@ -209,12 +209,12 @@ index 2f99457..9bc779e 100644
  Windows-x86_64_LIBNAME      := sqlitejdbc.dll
  Windows-x86_64_SQLITE_FLAGS :=
 diff --git a/VERSION b/VERSION
-index d30720f..a7d7bf2 100644
+index e54c168..a36200c 100644
 --- a/VERSION
 +++ b/VERSION
 @@ -1 +1,2 @@
- version=3.46.1
-+version_mc=1.8.7
+ version=3.47.0
++version_mc=1.9.0
 diff --git a/src/main/java/org/sqlite/core/NativeDB.c b/src/main/java/org/sqlite/core/NativeDB.c
 index 7361dbc..17dab54 100644
 --- a/src/main/java/org/sqlite/core/NativeDB.c

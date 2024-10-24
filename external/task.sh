@@ -72,18 +72,22 @@ function build { ## Build sqlite-jdbc native libs and package .jar file
   done
 }
 
-function sign:macos { ## Sign and notarize macOS libs. 2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store/connect/api_key.json
+function sign:macos { ## 2 ARGS - [1]: smartcard-slot (e.g. 9c)  [2]: /path/to/app/store/connect/api_key.json
   # shellcheck disable=SC2128
   if [ $# -ne 2 ]; then
-    echo 1>&2 "Usage: $0 $FUNCNAME 2 ARGS - [1]: /path/to/key.p12 [2]: /path/to/app/store/connect/api_key.json"
+    echo 1>&2 "Usage: $0 $FUNCNAME 2 ARGS - [1]: smartcard-slot (e.g. 9c)  [2]: /path/to/app/store/connect/api_key.json"
     exit 3
   fi
 
-  local file_key_p12="$1"
+  local smartcard_slot="$1"
   local file_key_api="$2"
-  __require:file_exists "$file_key_p12"
+  __require:var_set "$smartcard_slot"
   __require:file_exists "$file_key_api"
   __require:cmd "$RCODESIGN" "rcodesign"
+
+  local hsm_pin=
+  __sign:input:hsm_pin
+  __require:var_set "$hsm_pin"
 
   mkdir -p "$DIR_SIGNED"
   rm -rf "$DIR_SIGNED/Mac"
@@ -113,11 +117,19 @@ function sign:macos { ## Sign and notarize macOS libs. 2 ARGS - [1]: /path/to/ke
     cp "$dir_arch/libsqlitejdbc.dylib" "$dir_bundle_macos/sqlite-mc-driver.program"
     mv "$dir_arch/libsqlitejdbc.dylib" "$dir_bundle_libs/"
 
-    ${RCODESIGN} sign --p12-file "$file_key_p12" --code-signature-flags runtime "$dir_bundle"
+    ${RCODESIGN} sign \
+      --smartcard-slot "$smartcard_slot" \
+      --smartcard-pin "$hsm_pin" \
+      --code-signature-flags runtime \
+      --code-signature-flags "Contents/MacOS/sqlite-jdbc/libsqlitejdbc.dylib:runtime" \
+      "$dir_bundle"
 
     sleep 1
 
-    ${RCODESIGN} notary-submit --api-key-path "$file_key_api" --staple "$dir_bundle"
+    ${RCODESIGN} notary-submit \
+      --api-key-path "$file_key_api" \
+      --staple \
+      "$dir_bundle"
 
     mv -v "$dir_bundle_libs/libsqlitejdbc.dylib" "$dir_arch"
     rm -rf "$dir_bundle"
@@ -140,6 +152,10 @@ function sign:mingw { ## Sign Windows libs. (see windows.pkcs11.sample)
 
   local pkcs11_url="pkcs11:model=$gen_model;manufacturer=$gen_manufacturer;serial=$gen_serial;id=$gen_id;type=private"
 
+  local hsm_pin=
+  __sign:input:hsm_pin
+  __require:var_set "$hsm_pin"
+
   mkdir -p "$DIR_SIGNED"
   rm -rf "$DIR_SIGNED/Windows"
   trap 'rm -rf "$DIR_SIGNED/Windows"' SIGINT ERR
@@ -157,6 +173,7 @@ function sign:mingw { ## Sign Windows libs. (see windows.pkcs11.sample)
       -certs "$gen_cert_path" \
       -ts "$gen_ts" \
       -h "sha256" \
+      -pass "$hsm_pin" \
       -in "$dir_arch/sqlitejdbc.dll" \
       -out "$DIR_SIGNED/Windows/$arch_name/sqlitejdbc.dll"
   done
@@ -235,6 +252,14 @@ function __require:file_exists {
 
   echo 1>&2 "File does not exist $1"
   exit 3
+}
+
+# Use local hsm_pin to capture input
+function __sign:input:hsm_pin {
+  echo -n "
+    Enter HSM PIN: "
+  read -s hsm_pin
+  echo ""
 }
 
 # Run
