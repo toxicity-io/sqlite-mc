@@ -25,7 +25,6 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlPreparedStatement
 import io.toxicity.sqlite.mc.driver.config.*
 import io.toxicity.sqlite.mc.driver.config.MutableMCPragmas
-import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 
 public expect sealed class PlatformDriver(args: Args): SqlDriver {
@@ -55,12 +54,10 @@ public expect sealed class PlatformDriver(args: Args): SqlDriver {
 
     protected companion object {
 
-        @JvmStatic
         @JvmSynthetic
         @Throws(IllegalArgumentException::class, IllegalStateException::class)
         internal fun FactoryConfig.create(keyPragma: MutableMCPragmas, rekeyPragma: MutableMCPragmas?): Args
 
-        @JvmStatic
         @JvmSynthetic
         @Throws(IllegalStateException::class)
         internal fun FactoryConfig.create(opt: EphemeralOpt): Args

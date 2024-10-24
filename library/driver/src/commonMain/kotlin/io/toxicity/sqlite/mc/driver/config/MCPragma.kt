@@ -20,12 +20,10 @@ package io.toxicity.sqlite.mc.driver.config
 import app.cash.sqldelight.db.SqlCursor
 import io.matthewnelson.immutable.collections.immutableSetOf
 import io.matthewnelson.immutable.collections.toImmutableList
-import io.matthewnelson.immutable.collections.toImmutableSet
 import io.toxicity.sqlite.mc.driver.MCConfigDsl
 import io.toxicity.sqlite.mc.driver.config.encryption.*
 import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
 import kotlin.jvm.JvmField
-import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 
 public abstract class MCPragma<FieldType: Any> private constructor(
@@ -130,7 +128,6 @@ public abstract class MCPragma<FieldType: Any> private constructor(
 
     internal companion object {
 
-        @JvmStatic
         @get:JvmSynthetic
         internal val ALL: Set<MCPragma<*>> by lazy {
             immutableSetOf(

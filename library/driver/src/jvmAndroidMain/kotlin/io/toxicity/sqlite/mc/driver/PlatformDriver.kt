@@ -112,7 +112,6 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
 
     protected actual companion object {
 
-        @JvmStatic
         @JvmSynthetic
         @Throws(IllegalArgumentException::class, IllegalStateException::class)
         internal actual fun FactoryConfig.create(keyPragma: MutableMCPragmas, rekeyPragma: MutableMCPragmas?): Args {
@@ -140,7 +139,6 @@ public actual sealed class PlatformDriver actual constructor(private val args: A
             return Args(properties, driver, logger?.let { LogSqliteDriver(driver, it) })
         }
 
-        @JvmStatic
         @JvmSynthetic
         @Throws(IllegalStateException::class)
         internal actual fun FactoryConfig.create(opt: EphemeralOpt): Args {
