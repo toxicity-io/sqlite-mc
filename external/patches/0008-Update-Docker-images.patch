@@ -1,7 +1,7 @@
 From 76c7db1b1c28fd12f5027bfd74b3bff3fcc7f862 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Wed, 23 Oct 2024 09:51:24 -0400
-Subject: [PATCH 8/8] Update Docker images
+Subject: [PATCH 8/9] Update Docker images
 
 ---
  Makefile                    | 27 ++++++++++++++-------------

@@ -98,7 +98,6 @@ kmpConfiguration {
 
                         api(libs.sql.delight.driver.jdbc)
                         compileOnly(jdbcRepack.depSQLiteJDBC)
-                        implementation(libs.slf4j.api)
 
                         compileOnly(jdbcRepack.depSQLDelightDriver)
                         implementation(files(jdbcRepack.jarSQLDelightDriver))

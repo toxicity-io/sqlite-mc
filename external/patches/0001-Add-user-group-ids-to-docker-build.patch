@@ -1,7 +1,7 @@
 From 727163e68f85df3b5de5daa17e84d6f21b9cf483 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Wed, 23 Oct 2024 09:51:18 -0400
-Subject: [PATCH 1/8] Add user/group ids to docker build
+Subject: [PATCH 1/9] Add user/group ids to docker build
 
 ---
  Makefile | 17 ++++++++++-------

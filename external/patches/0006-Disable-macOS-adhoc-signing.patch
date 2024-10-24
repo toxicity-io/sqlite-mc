@@ -1,7 +1,7 @@
 From e49f26a511ad73df588bef2d0a58626b914c27f1 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
 Date: Wed, 23 Oct 2024 09:51:22 -0400
-Subject: [PATCH 6/8] Disable macOS adhoc signing
+Subject: [PATCH 6/9] Disable macOS adhoc signing
 
 ---
  Makefile | 2 +-
