@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## Version 2.0.2-1.9.0-0 (2024-10-26)
+ - Updates `SQLite3` to `3.47.0` [[#127]][127]
+     - `sqlite-jdbc` to `3.47.0.0`
+     - `SQLite3MultipleCiphers` to `1.9.0`
+ - Fixes multiplatform metadata manifest `unique_name` parameter for all source sets to be truly unique [[#128]][128]
+ - Updates Android/JVM `.kotlin_module` with truly unique file name [[#128]][128]
+ - Updates dependencies [[#128]][128]
+     - `androidx.startup` to `1.2.0`
+     - `encoding` to `2.2.2`
+     - `immutable` to `0.1.4`
+
 ## Version 2.0.2-1.8.7-0 (2024-08-21)
  - Updates `SQLite3` to `3.46.1` [[#123]][123]
      - `sqlite-jdbc` to `3.46.1.0`
@@ -87,3 +98,5 @@
 [119]: https://github.com/toxicity-io/sqlite-mc/pull/119
 [121]: https://github.com/toxicity-io/sqlite-mc/pull/121
 [123]: https://github.com/toxicity-io/sqlite-mc/pull/123
+[127]: https://github.com/toxicity-io/sqlite-mc/pull/127
+[128]: https://github.com/toxicity-io/sqlite-mc/pull/128
