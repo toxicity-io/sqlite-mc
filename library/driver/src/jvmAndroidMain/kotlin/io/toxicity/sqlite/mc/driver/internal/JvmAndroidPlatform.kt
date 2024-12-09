@@ -15,11 +15,6 @@
  **/
 package io.toxicity.sqlite.mc.driver.internal
 
-import org.sqlite.util.LoggerFactory
 import java.io.File
 
 internal expect val DEFAULT_DATABASES_DIR: File?
-
-private fun LoggerFactory.ll() {
-
-}
