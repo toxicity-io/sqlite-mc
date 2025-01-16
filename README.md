@@ -301,6 +301,7 @@ Versioning follows the following pattern of `SQLDelight` - `SQLite3MultipleCiphe
 `SQLITE_ENABLE_REGEXP=1`  
 `SQLITE_TEMP_STORE=2`  
 `SQLITE_USE_URI=1`  
+`WXSQLITE3_HAVE_CIPHER_AEGIS=0`  
 
 **Jvm**
 
@@ -409,13 +410,13 @@ I'm guessing this is not really a factor on iOS."
 <!-- TAG_DEPENDENCIES -->
 [badge-kotlin]: https://img.shields.io/badge/kotlin-1.9.24-blue.svg?logo=kotlin
 [badge-coroutines]: https://img.shields.io/badge/coroutines-1.8.1-blue.svg?logo=kotlin
-[badge-encoding]: https://img.shields.io/badge/encoding-2.2.2-blue.svg?style=flat
+[badge-encoding]: https://img.shields.io/badge/encoding-2.3.1-blue.svg?style=flat
 [badge-immutable]: https://img.shields.io/badge/immutable-0.1.4-blue.svg?style=flat
 [badge-sqldelight]: https://img.shields.io/badge/SQLDelight-2.0.2-blue.svg?style=flat
-[badge-sqlite]: https://img.shields.io/badge/SQLite3-3.47.1-blue.svg?style=flat
-[badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-1.9.1-blue.svg?style=flat
+[badge-sqlite]: https://img.shields.io/badge/SQLite3-3.47.2-blue.svg?style=flat
+[badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-2.0.1-blue.svg?style=flat
 [badge-sqliter]: https://img.shields.io/badge/SQLiter-1.3.1-blue.svg?style=flat
-[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.47.1.0-blue.svg?style=flat
+[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.47.2.0-blue.svg?style=flat
 
 <!-- TAG_PLATFORMS -->
 [badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2021]-6EDB8D.svg?style=flat

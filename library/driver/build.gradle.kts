@@ -310,6 +310,7 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             "-DSQLITE_ENABLE_REGEXP=1",
             "-DSQLITE_TEMP_STORE=2",
             "-DSQLITE_USE_URI=1",
+            "-DWXSQLITE3_HAVE_CIPHER_AEGIS=0",
         ).let { compilerArgs.addAll(it) }
 
         // Linker (llvm-link) options
