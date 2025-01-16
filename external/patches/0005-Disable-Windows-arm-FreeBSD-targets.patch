@@ -1,7 +1,7 @@
-From ba0831afff517eb257a0d53348dccc0cafee413a Mon Sep 17 00:00:00 2001
+From b4e48a62191afc983979412c409a558fb85304e0 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Mon, 9 Dec 2024 02:59:11 -0500
-Subject: [PATCH 5/9] Disable Windows arm & FreeBSD targets
+Date: Thu, 16 Jan 2025 06:29:33 -0500
+Subject: [PATCH 05/10] Disable Windows arm & FreeBSD targets
 
 ---
  Makefile | 2 +-
