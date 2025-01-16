@@ -3,7 +3,7 @@ androidx-startup = "1.2.0"
 androidx-test-core = "1.6.1"
 androidx-test-runner = "1.6.2"
 
-encoding = "2.3.0"
+encoding = "2.3.1"
 
 gradle-android = "8.2.2"
 gradle-binary-compat = "0.16.3"
@@ -22,7 +22,7 @@ okio = "3.9.0"
 
 sql-delight-dialect = "sqlite-3-38-dialect"
 sql-delight = "2.0.2"
-sql-jdbc-xerial = "3.47.1.0"
+sql-jdbc-xerial = "3.47.2.0"
 
 [libraries]
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup" }
