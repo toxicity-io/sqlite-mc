@@ -1,6 +1,6 @@
-From f400f30d18ceae00c85350ed5f8d3d4688376a48 Mon Sep 17 00:00:00 2001
+From 76e4d699bb5cf28a95a5366ecce5ddaf281f997d Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Thu, 16 Jan 2025 06:29:31 -0500
+Date: Thu, 16 Jan 2025 07:51:29 -0500
 Subject: [PATCH 02/10] Disable double-quoted strings
 
 ---
@@ -12,10 +12,10 @@ Subject: [PATCH 02/10] Disable double-quoted strings
  5 files changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 605990f..5297c5c 100644
+index af2ffa5..4156840 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -105,6 +105,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+@@ -106,6 +106,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	    -DSQLITE_MAX_ATTACHED=125 \
  	    -DSQLITE_MAX_PAGE_COUNT=4294967294 \
  	    -DSQLITE_DISABLE_PAGECACHE_OVERFLOW_STATS \

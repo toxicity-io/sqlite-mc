@@ -1,6 +1,6 @@
-From 75d67a6ac90884b4586b0906859279781bdc7177 Mon Sep 17 00:00:00 2001
+From 126c1ae17bd16d4208849943b524c398b41946b1 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Thu, 16 Jan 2025 06:29:30 -0500
+Date: Thu, 16 Jan 2025 07:51:28 -0500
 Subject: [PATCH 01/10] Add user/group ids to docker build
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 01/10] Add user/group ids to docker build
  1 file changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index a698f26..605990f 100644
+index c3d16d7..af2ffa5 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -29,6 +29,9 @@ SQLITE_INCLUDE := $(shell dirname "$(SQLITE_HEADER)")
@@ -20,8 +20,8 @@ index a698f26..605990f 100644
 +
  $(SQLITE_ARCHIVE):
  	@mkdir -p $(@D)
- 	curl -L --max-redirs 0 -f -o$@ https://www.sqlite.org/2024/$(SQLITE_AMAL_PREFIX).zip || \
-@@ -144,10 +147,10 @@ win-arm64: $(SQLITE_UNPACKED) jni-header
+ 	curl -L --max-redirs 0 -f -o$@ https://www.sqlite.org/2025/$(SQLITE_AMAL_PREFIX).zip || \
+@@ -145,10 +148,10 @@ win-arm64: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-windows-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-w64-mingw32- OS_NAME=Windows OS_ARCH=aarch64'
  
  linux32: $(SQLITE_UNPACKED) jni-header
@@ -34,7 +34,7 @@ index a698f26..605990f 100644
  
  freebsd32: $(SQLITE_UNPACKED) jni-header
  	docker run $(DOCKER_RUN_OPTS) -v $$PWD:/workdir empterdose/freebsd-cross-build:9.3 sh -c 'apk add bash; apk add openjdk8; apk add perl; make clean-native native OS_NAME=FreeBSD OS_ARCH=x86 CROSS_PREFIX=i386-freebsd9-'
-@@ -159,10 +162,10 @@ freebsd-arm64: $(SQLITE_UNPACKED) jni-header
+@@ -160,10 +163,10 @@ freebsd-arm64: $(SQLITE_UNPACKED) jni-header
  	docker run $(DOCKER_RUN_OPTS) -v $$PWD:/workdir gotson/freebsd-cross-build:aarch64-11.4 sh -c 'make clean-native native OS_NAME=FreeBSD OS_ARCH=aarch64 CROSS_PREFIX=aarch64-unknown-freebsd11-'
  
  linux-musl32: $(SQLITE_UNPACKED) jni-header
@@ -47,7 +47,7 @@ index a698f26..605990f 100644
  
  linux-musl-arm64: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-musl-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-linux-musl- OS_NAME=Linux-Musl OS_ARCH=aarch64'
-@@ -198,14 +201,14 @@ linux-riscv64: $(SQLITE_UNPACKED) jni-header
+@@ -199,14 +202,14 @@ linux-riscv64: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-riscv64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=riscv64-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=riscv64'
  
  mac64: $(SQLITE_UNPACKED) jni-header
