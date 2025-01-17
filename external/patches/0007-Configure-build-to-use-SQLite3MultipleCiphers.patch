@@ -1,17 +1,17 @@
-From 43aa1dc071d2d8baa44074e417ed1eb788a07ffc Mon Sep 17 00:00:00 2001
+From 79e0fc6c46dd543bd878340720e274e8a074b977 Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Thu, 16 Jan 2025 06:29:35 -0500
+Date: Thu, 16 Jan 2025 07:51:33 -0500
 Subject: [PATCH 07/10] Configure build to use SQLite3MultipleCiphers
 
 ---
- Makefile                                 | 25 +++++++++---------
+ Makefile                                 | 26 +++++++++----------
  Makefile.common                          | 32 ++++++++++++------------
  VERSION                                  |  1 +
  src/main/java/org/sqlite/core/NativeDB.c |  2 +-
- 4 files changed, 30 insertions(+), 30 deletions(-)
+ 4 files changed, 30 insertions(+), 31 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 561ad4c..07e6510 100644
+index fc1f668..07e6510 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -20,7 +20,7 @@ SQLITE_OBJ?=$(SQLITE_OUT)/sqlite3.o
@@ -23,10 +23,11 @@ index 561ad4c..07e6510 100644
  ifneq ($(SQLITE_SOURCE),$(TARGET)/$(SQLITE_AMAL_PREFIX))
  	created := $(shell touch $(SQLITE_UNPACKED))
  endif
-@@ -34,13 +34,7 @@ G_ID:=$(shell id -g)
+@@ -34,14 +34,7 @@ G_ID:=$(shell id -g)
  
  $(SQLITE_ARCHIVE):
  	@mkdir -p $(@D)
+-	curl -L --max-redirs 0 -f -o$@ https://www.sqlite.org/2025/$(SQLITE_AMAL_PREFIX).zip || \
 -	curl -L --max-redirs 0 -f -o$@ https://www.sqlite.org/2024/$(SQLITE_AMAL_PREFIX).zip || \
 -	curl -L --max-redirs 0 -f -o$@ https://www.sqlite.org/2023/$(SQLITE_AMAL_PREFIX).zip || \
 -	curl -L --max-redirs 0 -f -o$@ https://www.sqlite.org/2022/$(SQLITE_AMAL_PREFIX).zip || \
@@ -38,7 +39,7 @@ index 561ad4c..07e6510 100644
  
  $(SQLITE_UNPACKED): $(SQLITE_ARCHIVE)
  	unzip -qo $< -d $(TARGET)/tmp.$(version)
-@@ -87,7 +81,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+@@ -88,7 +81,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	    -DSQLITE_DEFAULT_MEMSTATUS=0 \
  	    -DSQLITE_DEFAULT_FILE_PERMISSIONS=0666 \
  	    -DSQLITE_MAX_VARIABLE_NUMBER=250000 \
@@ -47,7 +48,7 @@ index 561ad4c..07e6510 100644
  	    -DSQLITE_MAX_LENGTH=2147483647 \
  	    -DSQLITE_MAX_COLUMN=32767 \
  	    -DSQLITE_MAX_SQL_LENGTH=1073741824 \
-@@ -95,11 +89,16 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+@@ -96,11 +89,16 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	    -DSQLITE_MAX_ATTACHED=125 \
  	    -DSQLITE_MAX_PAGE_COUNT=4294967294 \
  	    -DSQLITE_DISABLE_PAGECACHE_OVERFLOW_STATS \
@@ -67,7 +68,7 @@ index 561ad4c..07e6510 100644
  
  $(SQLITE_OUT)/$(LIBNAME): $(SQLITE_HEADER) $(SQLITE_OBJ) $(SRC)/org/sqlite/core/NativeDB.c $(TARGET)/common-lib/NativeDB.h
  	@mkdir -p $(@D)
-@@ -115,7 +114,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
+@@ -116,7 +114,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
  NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
  
  # For cross-compilation, install docker. See also https://github.com/dockcross/dockcross
@@ -209,12 +210,12 @@ index 2f99457..9bc779e 100644
  Windows-x86_64_LIBNAME      := sqlitejdbc.dll
  Windows-x86_64_SQLITE_FLAGS :=
 diff --git a/VERSION b/VERSION
-index 0f283db..460b5dd 100644
+index e969a37..b8e0aca 100644
 --- a/VERSION
 +++ b/VERSION
 @@ -1 +1,2 @@
- version=3.47.2
-+version_mc=2.0.1
+ version=3.48.0
++version_mc=2.0.2
 diff --git a/src/main/java/org/sqlite/core/NativeDB.c b/src/main/java/org/sqlite/core/NativeDB.c
 index 7361dbc..17dab54 100644
 --- a/src/main/java/org/sqlite/core/NativeDB.c

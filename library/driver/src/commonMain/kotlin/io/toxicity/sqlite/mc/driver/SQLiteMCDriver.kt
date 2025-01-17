@@ -36,7 +36,6 @@ import kotlin.jvm.JvmField
  * See: [SQLite3MultipleCiphers](https://github.com/utelle/SQLite3MultipleCiphers)
  *
  * @see [Factory]
- * @see [MCConfigQueries]
  * */
 public class SQLiteMCDriver private constructor(
     @JvmField
