@@ -22,7 +22,6 @@ import io.matthewnelson.immutable.collections.immutableSetOf
 import io.matthewnelson.immutable.collections.toImmutableList
 import io.toxicity.sqlite.mc.driver.MCConfigDsl
 import io.toxicity.sqlite.mc.driver.config.encryption.*
-import io.toxicity.sqlite.mc.driver.internal.ext.buildMCConfigSQL
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmSynthetic
 
@@ -175,9 +174,11 @@ internal inline fun mutableMCPragmas(): MutableMCPragmas = mutableMapOf()
 @Throws(IllegalArgumentException::class)
 internal fun MCPragmas.toMCSQLStatements(): List<String> {
 
-    val cipher = get(MCPragma.CIPHER)?.let { Cipher.valueOf(it) }
+    get(MCPragma.CIPHER)?.let { Cipher.valueOf(it) }
         ?: throw IllegalArgumentException("cipher is a required parameter")
+
     require(containsKey(MCPragma.LEGACY)) { "legacy is a required parameter" }
+
     val isRekey = containsKey(MCPragma.RE_KEY)
     require(isRekey || containsKey(MCPragma.KEY)) { "key or rekey is a required parameter" }
 
@@ -187,7 +188,7 @@ internal fun MCPragmas.toMCSQLStatements(): List<String> {
     // necessary if the cipher type is changing, but
     // including them doesn't hurt and ensures that
     // everything is executing the same every the time.
-    val rekeyNonTransient = mutableListOf<String>()
+    val rekeyNonTransient = ArrayList<String>(if (isRekey) 2 + size else 0)
 
     return buildList {
         if (isRekey) {
@@ -203,26 +204,17 @@ internal fun MCPragmas.toMCSQLStatements(): List<String> {
             add("PRAGMA journal_mode = DELETE")
         }
 
+        val schemaName = if (isRekey) "temp" else "main"
+
         for (mcPragma in MCPragma.ALL) {
             val value = get(mcPragma) ?: continue
 
             val sql = when (mcPragma) {
                 is MCPragma.CIPHER -> {
                     if (isRekey) {
-                        // e.g. SELECT sqlite3mc_config('default:cipher', 'chacha20');
-                        mcPragma.name.buildMCConfigSQL(
-                            transient = false,
-                            arg2 = value,
-                            arg3 = null
-                        ).let { rekeyNonTransient.add(it) }
+                        "PRAGMA main.${mcPragma.name} = $value".let { rekeyNonTransient.add(it) }
                     }
-
-                    // e.g. SELECT sqlite3mc_config('cipher', 'chacha20');
-                    mcPragma.name.buildMCConfigSQL(
-                        transient = isRekey,
-                        arg2 = value,
-                        arg3 = null,
-                    )
+                    "PRAGMA $schemaName.${mcPragma.name} = $value"
                 }
 
                 is MCPragma.KEY,
@@ -233,24 +225,11 @@ internal fun MCPragmas.toMCSQLStatements(): List<String> {
                     "PRAGMA ${mcPragma.name} = $value"
                 }
                 else -> {
-                    val arg3 = value.toIntOrNull()
-                        ?: throw IllegalArgumentException("wtf???")
-
+                    val integer = value.toIntOrNull() ?: throw IllegalArgumentException("wtf???")
                     if (isRekey) {
-                        // e.g. SELECT sqlite3mc_config('chacha20', 'default:kdf_iter', 200_000);
-                        cipher.name.buildMCConfigSQL(
-                            transient = false,
-                            arg2 = mcPragma.name,
-                            arg3 = arg3
-                        ).let { rekeyNonTransient.add(it) }
+                        "PRAGMA main.${mcPragma.name} = $integer".let { rekeyNonTransient.add(it) }
                     }
-
-                    // e.g. SELECT sqlite3mc_config('chacha20', 'kdf_iter', 200_000);
-                    cipher.name.buildMCConfigSQL(
-                        transient = isRekey,
-                        arg2 = mcPragma.name,
-                        arg3 = arg3
-                    )
+                    "PRAGMA $schemaName.${mcPragma.name} = $integer"
                 }
             }
 
