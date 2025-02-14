@@ -1,6 +1,6 @@
-From 10355be79c2527c055a441b269aab0c7a8590d0f Mon Sep 17 00:00:00 2001
+From f1de4e6bd2f36303862f43da38e0e2b908b1bb4e Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Thu, 16 Jan 2025 07:51:35 -0500
+Date: Fri, 14 Feb 2025 06:41:34 -0500
 Subject: [PATCH 09/10] Fix Android API 23- compatibility (Disable all logging)
 
 ---

@@ -1,6 +1,6 @@
-From 143c0e0ed49aaa0336d0146924ae86c462c72aea Mon Sep 17 00:00:00 2001
+From ada06c8b00d66e94d2345204084ab3362fc1752e Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Thu, 16 Jan 2025 07:51:32 -0500
+Date: Fri, 14 Feb 2025 06:40:35 -0500
 Subject: [PATCH 06/10] Disable macOS adhoc signing
 
 ---
