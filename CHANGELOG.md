@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 2.0.2-2.0.3-0 (2025-02-14)
+ - Updates `SQLite3` to `3.49.0` [[#136]][136]
+     - `sqlite-jdbc` to `3.49.0.0`
+     - `SQLite3MultipleCiphers` to `2.0.3`
+
 ## Version 2.0.2-2.0.2-0 (2025-01-17)
  - Updates `SQLite3` to `3.48.0` [[#133]][133]
      - `sqlite-jdbc` to `3.48.0.0`
@@ -120,3 +125,4 @@
 [130]: https://github.com/toxicity-io/sqlite-mc/pull/130
 [131]: https://github.com/toxicity-io/sqlite-mc/pull/131
 [133]: https://github.com/toxicity-io/sqlite-mc/pull/133
+[136]: https://github.com/toxicity-io/sqlite-mc/pull/136

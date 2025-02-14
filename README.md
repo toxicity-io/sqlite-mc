@@ -380,7 +380,7 @@ I'm guessing this is not really a factor on iOS."
    ```kotlin
    plugins {
        // Provides the SQLDelight gradle plugin automatically and applies it
-       id("io.toxicity.sqlite-mc") version("2.0.2-2.0.2-0")
+       id("io.toxicity.sqlite-mc") version("2.0.2-2.0.3-0")
    }
 
    // Will automatically:
@@ -400,12 +400,12 @@ I'm guessing this is not really a factor on iOS."
        //
        // This is simply the desktop binary resources needed for
        // JDBC to operate locally on the machine.
-       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.2-2.0.2-0")
+       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.2-2.0.3-0")
    }
    ```
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.2--2.0.2--0-blue.svg?style=flat
+[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.2--2.0.3--0-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
@@ -414,10 +414,10 @@ I'm guessing this is not really a factor on iOS."
 [badge-encoding]: https://img.shields.io/badge/encoding-2.3.1-blue.svg?style=flat
 [badge-immutable]: https://img.shields.io/badge/immutable-0.1.4-blue.svg?style=flat
 [badge-sqldelight]: https://img.shields.io/badge/SQLDelight-2.0.2-blue.svg?style=flat
-[badge-sqlite]: https://img.shields.io/badge/SQLite3-3.48.0-blue.svg?style=flat
-[badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-2.0.2-blue.svg?style=flat
+[badge-sqlite]: https://img.shields.io/badge/SQLite3-3.49.0-blue.svg?style=flat
+[badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-2.0.3-blue.svg?style=flat
 [badge-sqliter]: https://img.shields.io/badge/SQLiter-1.3.1-blue.svg?style=flat
-[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.48.0.0-blue.svg?style=flat
+[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.49.0.0-blue.svg?style=flat
 
 <!-- TAG_PLATFORMS -->
 [badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2021]-6EDB8D.svg?style=flat
