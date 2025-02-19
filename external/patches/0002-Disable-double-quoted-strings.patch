@@ -1,6 +1,6 @@
-From 80eff2abbe41fe9ab88d6d4ddecfd5e70360d281 Mon Sep 17 00:00:00 2001
+From 9bc1716fa19721d375f105971a66705b3511714f Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Fri, 14 Feb 2025 06:40:31 -0500
+Date: Wed, 19 Feb 2025 06:24:20 -0500
 Subject: [PATCH 02/10] Disable double-quoted strings
 
 ---
