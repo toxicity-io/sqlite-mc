@@ -1,6 +1,6 @@
-From 55040c67627374a4664a18c222b1a8f1a73e8eae Mon Sep 17 00:00:00 2001
+From 9b9ef046e81873cf5028f59b90d34c13823bd96a Mon Sep 17 00:00:00 2001
 From: Matthew Nelson <developer@matthewnelson.io>
-Date: Fri, 14 Feb 2025 06:41:35 -0500
+Date: Wed, 19 Feb 2025 06:25:04 -0500
 Subject: [PATCH 10/10] Disable cipher AEGIS
 
 ---
