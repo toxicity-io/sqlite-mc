@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-latest, ubuntu-latest, ubuntu-20.04, windows-latest, windows-2019 ]
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Repository
@@ -37,23 +37,11 @@ jobs:
           ./gradlew check --stacktrace
           -PKMP_TARGETS="JVM,JS,ANDROID,ANDROID_ARM32,ANDROID_ARM64,ANDROID_X64,ANDROID_X86,LINUX_ARM64,LINUX_X64,WASM_JS,WASM_WASI"
 
-      - name: Run Linux JVM Tests
-        if: matrix.os == 'ubuntu-20.04'
-        run: >
-          ./gradlew check --stacktrace
-          -PKMP_TARGETS="JVM"
-
       - name: Run Windows Tests
         if: matrix.os == 'windows-latest'
         run: >
           ./gradlew check --stacktrace
           -PKMP_TARGETS="JVM,JS,MINGW_X64,WASM_JS,WASM_WASI"
-
-      - name: Run Windows JVM Tests
-        if: matrix.os == 'windows-2019'
-        run: >
-          ./gradlew check --stacktrace
-          -PKMP_TARGETS="JVM"
 
       - name: Upload Test Reports
         uses: actions/upload-artifact@v4
