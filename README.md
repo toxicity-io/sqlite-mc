@@ -380,7 +380,7 @@ I'm guessing this is not really a factor on iOS."
    ```kotlin
    plugins {
        // Provides the SQLDelight gradle plugin automatically and applies it
-       id("io.toxicity.sqlite-mc") version("2.0.2-2.0.4-0")
+       id("io.toxicity.sqlite-mc") version("2.0.2-2.1.0-0")
    }
 
    // Will automatically:
@@ -400,12 +400,12 @@ I'm guessing this is not really a factor on iOS."
        //
        // This is simply the desktop binary resources needed for
        // JDBC to operate locally on the machine.
-       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.2-2.0.4-0")
+       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.0.2-2.1.0-0")
    }
    ```
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.2--2.0.4--0-blue.svg?style=flat
+[badge-latest-release]: https://img.shields.io/badge/latest--release-2.0.2--2.1.0--0-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
