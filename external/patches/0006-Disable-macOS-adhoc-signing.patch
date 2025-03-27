@@ -1,7 +1,7 @@
-From 99ab25390e680f9f79ee3c9216e6bc8f5cc83ed3 Mon Sep 17 00:00:00 2001
-From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 19 Feb 2025 06:24:24 -0500
-Subject: [PATCH 06/10] Disable macOS adhoc signing
+From a3ed30311f836d11b0c7d8d181addad7d68e4fdd Mon Sep 17 00:00:00 2001
+From: Toxicity <contact@toxicity.io>
+Date: Thu, 27 Mar 2025 11:09:09 -0400
+Subject: [PATCH 6/9] Disable macOS adhoc signing
 
 ---
  Makefile | 2 +-

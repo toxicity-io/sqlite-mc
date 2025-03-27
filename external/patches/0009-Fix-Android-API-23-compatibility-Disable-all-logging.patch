@@ -1,7 +1,7 @@
-From be22cbba29cc63e8c7c8b6442503af0336d463ca Mon Sep 17 00:00:00 2001
-From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 19 Feb 2025 06:25:03 -0500
-Subject: [PATCH 09/10] Fix Android API 23- compatibility (Disable all logging)
+From dc6d8007a4c90ecdb2461862c6d04708e9d1c5f3 Mon Sep 17 00:00:00 2001
+From: Toxicity <contact@toxicity.io>
+Date: Thu, 27 Mar 2025 11:09:11 -0400
+Subject: [PATCH 9/9] Fix Android API 23- compatibility (Disable all logging)
 
 ---
  src/main/java/org/sqlite/JDBC.java            |  8 ++--
