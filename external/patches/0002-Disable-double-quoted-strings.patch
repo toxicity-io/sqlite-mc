@@ -1,7 +1,7 @@
-From 9bc1716fa19721d375f105971a66705b3511714f Mon Sep 17 00:00:00 2001
-From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 19 Feb 2025 06:24:20 -0500
-Subject: [PATCH 02/10] Disable double-quoted strings
+From e1985e5516402e611075643a8abbcc399f0c5f42 Mon Sep 17 00:00:00 2001
+From: Toxicity <contact@toxicity.io>
+Date: Thu, 27 Mar 2025 11:09:05 -0400
+Subject: [PATCH 2/9] Disable double-quoted strings
 
 ---
  Makefile                                    | 1 +

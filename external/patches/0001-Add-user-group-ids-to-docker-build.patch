@@ -1,7 +1,7 @@
-From 2533fd0dc894262001b7aad4afbebae424614917 Mon Sep 17 00:00:00 2001
-From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 19 Feb 2025 06:24:19 -0500
-Subject: [PATCH 01/10] Add user/group ids to docker build
+From 38ce407b45f089277a650720c69914d827cc2597 Mon Sep 17 00:00:00 2001
+From: Toxicity <contact@toxicity.io>
+Date: Thu, 27 Mar 2025 11:09:04 -0400
+Subject: [PATCH 1/9] Add user/group ids to docker build
 
 ---
  Makefile | 17 ++++++++++-------

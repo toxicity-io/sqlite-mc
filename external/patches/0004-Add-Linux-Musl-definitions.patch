@@ -1,7 +1,7 @@
-From 44fb98400b65199a90970c6fb4d6fde17415d118 Mon Sep 17 00:00:00 2001
-From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 19 Feb 2025 06:24:22 -0500
-Subject: [PATCH 04/10] Add Linux-Musl definitions
+From decea549f9bdb643bbc79b23e102cc467f96b351 Mon Sep 17 00:00:00 2001
+From: Toxicity <contact@toxicity.io>
+Date: Thu, 27 Mar 2025 11:09:07 -0400
+Subject: [PATCH 4/9] Add Linux-Musl definitions
 
 ---
  Makefile.common | 23 ++++++++++++++++++++++-

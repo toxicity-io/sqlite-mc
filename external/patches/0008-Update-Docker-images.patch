@@ -1,7 +1,7 @@
-From e7e4320a0d0eeea06b2e87e828a8ced557db8da1 Mon Sep 17 00:00:00 2001
-From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 19 Feb 2025 06:25:02 -0500
-Subject: [PATCH 08/10] Update Docker images
+From 837b73ccbdbf2df87efdcd42fcbf0b5c7f825ad7 Mon Sep 17 00:00:00 2001
+From: Toxicity <contact@toxicity.io>
+Date: Thu, 27 Mar 2025 11:09:10 -0400
+Subject: [PATCH 8/9] Update Docker images
 
 ---
  Makefile                    | 27 ++++++++++++++-------------
@@ -12,18 +12,18 @@ Subject: [PATCH 08/10] Update Docker images
  5 files changed, 31 insertions(+), 37 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 07e6510..bb2e184 100644
+index fb4a084..64b901d 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -21,6 +21,7 @@ SQLITE_ARCHIVE:=$(TARGET)/$(sqlite)-amal.zip
  SQLITE_UNPACKED:=$(TARGET)/sqlite-unpack.log
  SQLITE_SOURCE?=$(TARGET)/$(SQLITE_AMAL_PREFIX)
  SQLITE_HEADER?=$(SQLITE_SOURCE)/sqlite3mc_amalgamation.h
-+TAG_BUILD_ENV=0.2.0
++TAG_BUILD_ENV=0.3.0
  ifneq ($(SQLITE_SOURCE),$(TARGET)/$(SQLITE_AMAL_PREFIX))
  	created := $(shell touch $(SQLITE_UNPACKED))
  endif
-@@ -125,10 +126,10 @@ $(NATIVE_DLL): $(SQLITE_OUT)/$(LIBNAME)
+@@ -126,10 +127,10 @@ $(NATIVE_DLL): $(SQLITE_OUT)/$(LIBNAME)
  	cp $< $(NATIVE_TARGET_DIR)/$(LIBNAME)
  
  win32: $(SQLITE_UNPACKED) jni-header
@@ -36,7 +36,7 @@ index 07e6510..bb2e184 100644
  
  win-armv7: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-windows-armv7 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=armv7-w64-mingw32- OS_NAME=Windows OS_ARCH=armv7'
-@@ -137,10 +138,10 @@ win-arm64: $(SQLITE_UNPACKED) jni-header
+@@ -138,10 +139,10 @@ win-arm64: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-windows-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-w64-mingw32- OS_NAME=Windows OS_ARCH=aarch64'
  
  linux32: $(SQLITE_UNPACKED) jni-header
@@ -49,7 +49,7 @@ index 07e6510..bb2e184 100644
  
  freebsd32: $(SQLITE_UNPACKED) jni-header
  	docker run $(DOCKER_RUN_OPTS) -v $$PWD:/workdir empterdose/freebsd-cross-build:9.3 sh -c 'apk add bash; apk add openjdk8; apk add perl; make clean-native native OS_NAME=FreeBSD OS_ARCH=x86 CROSS_PREFIX=i386-freebsd9-'
-@@ -167,34 +168,34 @@ linux-armv6: $(SQLITE_UNPACKED) jni-header
+@@ -168,34 +169,34 @@ linux-armv6: $(SQLITE_UNPACKED) jni-header
  	./docker/dockcross-armv6-lts -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=armv6-unknown-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armv6'
  
  linux-armv7: $(SQLITE_UNPACKED) jni-header
@@ -94,7 +94,7 @@ index 07e6510..bb2e184 100644
  # deprecated
  mac32: $(SQLITE_UNPACKED) jni-header
 diff --git a/Makefile.common b/Makefile.common
-index 9bc779e..855e31f 100644
+index 9bc779e..fe71aa1 100644
 --- a/Makefile.common
 +++ b/Makefile.common
 @@ -128,29 +128,29 @@ Linux-armv7_LIBNAME   := libsqlitejdbc.so
@@ -113,7 +113,7 @@ index 9bc779e..855e31f 100644
 -Linux-Android-aarch64_STRIP     := $(CROSS_ROOT)/bin/llvm-strip
 -Linux-Android-aarch64_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(CROSS_ROOT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog
 +Linux-Android-aarch64_STRIP     := $(CROSS_PREFIX)strip
-+Linux-Android-aarch64_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(PATH_PREBUILT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog -march=armv8-a+crypto -mfpu=crypto-neon-fp-armv8
++Linux-Android-aarch64_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(PATH_PREBUILT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog
  Linux-Android-aarch64_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-soname,libsqlitejdbc.so
  Linux-Android-aarch64_LIBNAME   := libsqlitejdbc.so
  Linux-Android-aarch64_SQLITE_FLAGS  :=
@@ -181,38 +181,38 @@ index 9bc779e..855e31f 100644
  Windows-x86_64_SQLITE_FLAGS :=
  
 diff --git a/docker/dockcross-armv5 b/docker/dockcross-armv5
-index 1961108..3348ac6 100755
+index 1961108..4046004 100755
 --- a/docker/dockcross-armv5
 +++ b/docker/dockcross-armv5
 @@ -1,6 +1,6 @@
  #!/usr/bin/env bash
  
 -DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-armv5:latest
-+DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-armv5:20240104-6eda627
++DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-armv5:20250324-a3b42cd
  
  #------------------------------------------------------------------------------
  # Helpers
 diff --git a/docker/dockcross-armv6-lts b/docker/dockcross-armv6-lts
-index 7f2010e..3f1b6ed 100755
+index 7f2010e..7e2e6b5 100755
 --- a/docker/dockcross-armv6-lts
 +++ b/docker/dockcross-armv6-lts
 @@ -1,6 +1,6 @@
  #!/usr/bin/env bash
  
 -DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-armv6-lts:latest
-+DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-armv6-lts:20240104-6eda627
++DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-armv6-lts:20250324-a3b42cd
  
  #------------------------------------------------------------------------------
  # Helpers
 diff --git a/docker/dockcross-musl-arm64 b/docker/dockcross-musl-arm64
-index 9f974d7..5f72def 100755
+index 9f974d7..6488c70 100755
 --- a/docker/dockcross-musl-arm64
 +++ b/docker/dockcross-musl-arm64
 @@ -1,6 +1,6 @@
  #!/usr/bin/env bash
  
 -DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-arm64-musl:latest
-+DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-arm64-musl:20231110-9476e91
++DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-arm64-musl:20250324-a3b42cd
  
  #------------------------------------------------------------------------------
  # Helpers

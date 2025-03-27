@@ -1,17 +1,17 @@
-From bffea7d0b6c390ed3577efaf88f4ec7e2c73b52a Mon Sep 17 00:00:00 2001
-From: Matthew Nelson <developer@matthewnelson.io>
-Date: Wed, 19 Feb 2025 06:24:59 -0500
-Subject: [PATCH 07/10] Configure build to use SQLite3MultipleCiphers
+From 9fe847d3fd41985879698f87cba44a713d5ce77a Mon Sep 17 00:00:00 2001
+From: Toxicity <contact@toxicity.io>
+Date: Thu, 27 Mar 2025 11:09:10 -0400
+Subject: [PATCH 7/9] Configure build to use SQLite3MultipleCiphers
 
 ---
- Makefile                                 | 26 +++++++++----------
+ Makefile                                 | 27 ++++++++++----------
  Makefile.common                          | 32 ++++++++++++------------
  VERSION                                  |  1 +
  src/main/java/org/sqlite/core/NativeDB.c |  2 +-
- 4 files changed, 30 insertions(+), 31 deletions(-)
+ 4 files changed, 31 insertions(+), 31 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index fc1f668..07e6510 100644
+index fc1f668..fb4a084 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -20,7 +20,7 @@ SQLITE_OBJ?=$(SQLITE_OUT)/sqlite3.o
@@ -48,7 +48,7 @@ index fc1f668..07e6510 100644
  	    -DSQLITE_MAX_LENGTH=2147483647 \
  	    -DSQLITE_MAX_COLUMN=32767 \
  	    -DSQLITE_MAX_SQL_LENGTH=1073741824 \
-@@ -96,11 +89,16 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
+@@ -96,11 +89,17 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
  	    -DSQLITE_MAX_ATTACHED=125 \
  	    -DSQLITE_MAX_PAGE_COUNT=4294967294 \
  	    -DSQLITE_DISABLE_PAGECACHE_OVERFLOW_STATS \
@@ -59,6 +59,7 @@ index fc1f668..07e6510 100644
 +	    -DSQLITE_ENABLE_REGEXP=1 \
 +	    -DSQLITE_TEMP_STORE=2 \
 +	    -DSQLITE_USE_URI=1 \
++	    -DWXSQLITE3_HAVE_CIPHER_AEGIS=0 \
  	    $(SQLITE_FLAGS) \
 -	    $(SQLITE_OUT)/sqlite3.c
 +	    $(SQLITE_OUT)/sqlite3mc_amalgamation.c
@@ -68,7 +69,7 @@ index fc1f668..07e6510 100644
  
  $(SQLITE_OUT)/$(LIBNAME): $(SQLITE_HEADER) $(SQLITE_OBJ) $(SRC)/org/sqlite/core/NativeDB.c $(TARGET)/common-lib/NativeDB.h
  	@mkdir -p $(@D)
-@@ -116,7 +114,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
+@@ -116,7 +115,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)
  NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
  
  # For cross-compilation, install docker. See also https://github.com/dockcross/dockcross
@@ -210,12 +211,12 @@ index 2f99457..9bc779e 100644
  Windows-x86_64_LIBNAME      := sqlitejdbc.dll
  Windows-x86_64_SQLITE_FLAGS :=
 diff --git a/VERSION b/VERSION
-index d88dea7..416bba3 100644
+index d88dea7..db6faf0 100644
 --- a/VERSION
 +++ b/VERSION
 @@ -1 +1,2 @@
  version=3.49.1
-+version_mc=2.0.4
++version_mc=2.1.0
 diff --git a/src/main/java/org/sqlite/core/NativeDB.c b/src/main/java/org/sqlite/core/NativeDB.c
 index 7361dbc..17dab54 100644
 --- a/src/main/java/org/sqlite/core/NativeDB.c
