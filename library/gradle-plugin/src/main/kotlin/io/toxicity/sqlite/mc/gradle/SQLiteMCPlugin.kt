@@ -59,6 +59,8 @@ abstract class SQLiteMCPlugin internal constructor(): Plugin<Project> {
 
         // TODO: Add android-unit-test dependency to android source sets (if available)
 
+        if (!isMultiplatform) return
+
         extensions
             .findByType(KotlinMultiplatformExtension::class.java)
             ?.linkSQLite3MultipleCiphers()

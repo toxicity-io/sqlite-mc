@@ -1,0 +1,12 @@
+# This is here to add the cinterop task generated as a dependency
+# of CKLib's CompileToBitcode task for all relevant KotlinNativeTarget
+# such that the necessary kotlin native dependencies (LLVM, sysroot, etc.)
+# are downloaded for that KotlinNativeTarget before CompileToBitcode is
+# executed. See: https://github.com/touchlab/cklib/issues/5
+package = io.toxicity.sqlite.mc.driver.test
+---
+static int
+download_kn_dependencies_for_cklib()
+{
+  return 0;
+}

@@ -20,6 +20,7 @@ import io.matthewnelson.kmp.configuration.extension.container.target.KmpConfigur
 import io.matthewnelson.kmp.configuration.extension.container.target.TargetAndroidContainer
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
+import org.gradle.api.tasks.compile.AbstractCompile
 
 fun KmpConfigurationExtension.configureShared(
     action: (Action<KmpConfigurationContainerDsl>)? = null,
@@ -30,9 +31,23 @@ fun KmpConfigurationExtension.configureShared(
         }
 
         jvm {
+            // TODO: Remove once gradle-kmp-configuration-plugin is updated to 0.4.1+
+            target {
+                val targetName = name
+                project.tasks.withType(AbstractCompile::class.java) {
+                    val task = this
+                    if (!task.name.startsWith("compile$targetName", ignoreCase = true)) return@withType
+                    when {
+                        task.name.endsWith("MainJava") -> {}
+                        task.name.endsWith("TestJava") -> {}
+                        else -> return@withType
+                    }
+                    task.sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+                    task.targetCompatibility = JavaVersion.VERSION_1_8.toString()
+                }
+            }
+
             kotlinJvmTarget = JavaVersion.VERSION_1_8
-            compileSourceCompatibility = JavaVersion.VERSION_1_8
-            compileTargetCompatibility = JavaVersion.VERSION_1_8
         }
 
         // Just use JVM. Not dealing with native desktop

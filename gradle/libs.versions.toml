@@ -5,22 +5,22 @@ androidx-test-runner        = "1.6.2"
 
 encoding                    = "2.3.1"
 
-gradle-android              = "8.2.2"
-gradle-binary-compat        = "0.16.3"
-gradle-build-config         = "4.1.2"
-gradle-cklib                = "0.3.1"
-gradle-kmp-configuration    = "0.3.2"
-gradle-kotlin               = "1.9.24"
-gradle-maven-publish        = "0.30.0"
+gradle-android              = "8.5.2"
+gradle-binary-compat        = "0.17.0"
+gradle-build-config         = "5.5.4"
+gradle-cklib                = "0.3.3"
+gradle-kmp-configuration    = "0.3.2" # TODO: Remove supplemental 0.4.1 fix from build-logic/..../-KmpConfigurationExtension.kt
+gradle-kotlin               = "2.0.21"
+gradle-maven-publish        = "0.32.0"
 
 immutable                   = "0.1.4"
 
-kotlinx-coroutines          = "1.8.1"
+kotlinx-coroutines          = "1.9.0"
 
-okio                        = "3.9.0"
+okio                        = "3.9.1"
 
 sql-delight-dialect         = "sqlite-3-38-dialect"
-sql-delight                 = "2.0.2"
+sql-delight                 = "2.1.0"
 sql-jdbc-xerial             = "3.49.1.0"
 
 [libraries]

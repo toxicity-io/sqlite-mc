@@ -19,7 +19,6 @@
 package io.toxicity.sqlite.mc.driver.config
 
 import io.toxicity.sqlite.mc.driver.SQLiteMCDriver
-import kotlin.jvm.JvmField
 
 /**
  * The directory in which databases reside.
@@ -45,7 +44,6 @@ import kotlin.jvm.JvmField
  * */
 public expect class DatabasesDir(path: String?) {
 
-    @JvmField
     public val path: String?
 
     public constructor()
