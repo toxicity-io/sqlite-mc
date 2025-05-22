@@ -20,7 +20,7 @@ kotlinx-coroutines          = "1.9.0"
 okio                        = "3.9.1"
 
 sql-delight-dialect         = "sqlite-3-38-dialect"
-sql-delight                 = "2.0.2"
+sql-delight                 = "2.1.0"
 sql-jdbc-xerial             = "3.49.1.0"
 
 [libraries]
