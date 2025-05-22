@@ -18,7 +18,6 @@
 package io.toxicity.sqlite.mc.driver.config
 
 import io.toxicity.sqlite.mc.driver.MCConfigDsl
-import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 
@@ -33,7 +32,6 @@ public expect class PlatformConfig {
 
     public companion object {
 
-        @JvmField
         public val Default: PlatformConfig
 
         @JvmStatic

@@ -3,11 +3,4 @@ build/
 *.iml
 .idea/
 local.properties
-
-# TODO: Remove
-app-server/
-shared/mgmt-api-exposed/
-shared/mgmt-api-mgmt/
-shared/mgmt-core/
-shared/mgmt-encryption-key/
-shared/mgmt-ui/
+.kotlin/
