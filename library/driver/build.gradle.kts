@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.Architecture.*
 import org.jetbrains.kotlin.konan.target.Family.*
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.KonanTarget.*
-import org.jetbrains.kotlin.konan.target.Xcode
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -63,8 +60,8 @@ kmpConfiguration {
 
             sourceSetMain {
                 dependencies {
-                    implementation(files(jdbcRepack.jarSQLiteJDBCAndroid))
                     implementation(libs.androidx.startup.runtime)
+                    implementation(files(jdbcRepack.jarSQLiteJDBCAndroid))
                 }
             }
         }
@@ -78,12 +75,7 @@ kmpConfiguration {
         }
 
         common {
-            pluginIds("publication")
-
-            // cklib cannot be applied on windows
-            if (!HostManager.hostIsMingw) {
-                pluginIds(libs.plugins.cklib.get().pluginId)
-            }
+            pluginIds("publication", libs.plugins.cklib.get().pluginId)
 
             sourceSetMain {
                 dependencies {
@@ -96,36 +88,37 @@ kmpConfiguration {
         }
 
         kotlin {
-            sourceSets {
-                findByName("jvmAndroidMain")?.apply {
-                    dependencies {
-                        implementation(libs.encoding.base64)
+            sourceSets.findByName("jvmAndroidMain")?.apply {
+                dependencies {
+                    api(libs.sql.delight.driver.jdbc)
 
-                        api(libs.sql.delight.driver.jdbc)
-                        compileOnly(jdbcRepack.depSQLiteJDBC)
+                    compileOnly(jdbcRepack.depSQLiteJDBC)
+                    compileOnly(jdbcRepack.depSQLDelightDriver)
 
-                        compileOnly(jdbcRepack.depSQLDelightDriver)
-                        implementation(files(jdbcRepack.jarSQLDelightDriver))
-                    }
-                }
-
-                findByName("nativeMain")?.apply {
-                    dependencies {
-                        implementation(libs.sql.delight.driver.native)
-                    }
+                    implementation(libs.encoding.base64)
+                    implementation(files(jdbcRepack.jarSQLDelightDriver))
                 }
             }
+        }
 
-            tasks.withType<Jar> {
+        kotlin {
+            sourceSets.findByName("nativeMain")?.apply {
+                dependencies {
+                    implementation(libs.sql.delight.driver.native)
+                }
+            }
+        }
+
+        kotlin {
+            project.tasks.withType<Jar> {
                 if (name != "jvmJar") return@withType
                 from(zipTree(jdbcRepack.jarSQLiteJDBCJvm))
                 from(zipTree(jdbcRepack.jarSQLDelightDriver))
             }
+        }
 
-            // Only configure if cklib is applied (i.e. not Windows)
-            if (!plugins.hasPlugin(libs.plugins.cklib.get().pluginId)) return@kotlin
-
-            extensions.configure<CompileToBitcodeExtension>("cklib") {
+        kotlin {
+            project.extensions.configure<CompileToBitcodeExtension>("cklib") {
                 config.kotlinVersion = libs.versions.gradle.kotlin.get()
                 createSqlite3mc()
             }
@@ -134,12 +127,6 @@ kmpConfiguration {
 }
 
 fun CompileToBitcodeExtension.createSqlite3mc() {
-    val xcode = if (HostManager.hostIsMac) {
-        Xcode.findCurrent()
-    } else {
-        null
-    }
-
     create("sqlite3mc") {
         language = C
         srcDirs = project.files(file("sqlite3mc"))
@@ -161,71 +148,6 @@ fun CompileToBitcodeExtension.createSqlite3mc() {
             )
             else -> null
         }?.let { compilerArgs.addAll(it) }
-
-        if (xcode != null) {
-            when (kt) {
-                // iOS
-                IOS_ARM64 -> listOf(
-                    "-isysroot",
-                    xcode.iphoneosSdk,
-                )
-                IOS_SIMULATOR_ARM64 -> listOf(
-                    "-isysroot",
-                    xcode.iphonesimulatorSdk,
-                )
-                IOS_X64 -> listOf(
-                    "-isysroot",
-                    xcode.iphoneosSdk,
-                )
-
-                // macOS
-                MACOS_ARM64 -> listOf(
-                    "-isysroot",
-                    xcode.macosxSdk,
-                )
-                MACOS_X64 -> listOf(
-                    "-isysroot",
-                    xcode.macosxSdk,
-                )
-
-                // tvOS
-                TVOS_ARM64 -> listOf(
-                    "-isysroot",
-                    xcode.appletvosSdk,
-                )
-                TVOS_SIMULATOR_ARM64 -> listOf(
-                    "-isysroot",
-                    xcode.appletvsimulatorSdk,
-                )
-                TVOS_X64 -> listOf(
-                    "-isysroot",
-                    xcode.appletvosSdk,
-                )
-
-                // watchOS
-                WATCHOS_ARM32 -> listOf(
-                    "-isysroot",
-                    xcode.watchosSdk,
-                )
-                WATCHOS_ARM64 -> listOf(
-                    "-isysroot",
-                    xcode.watchosSdk,
-                )
-                WATCHOS_DEVICE_ARM64 -> listOf(
-                    "-isysroot",
-                    xcode.watchosSdk,
-                )
-                WATCHOS_SIMULATOR_ARM64 -> listOf(
-                    "-isysroot",
-                    xcode.watchsimulatorSdk,
-                )
-                WATCHOS_X64 -> listOf(
-                    "-isysroot",
-                    xcode.watchosSdk,
-                )
-                else -> null
-            }?.let { compilerArgs.addAll(it) }
-        }
 
         // Warning/Error suppression flags
         listOf(
