@@ -54,6 +54,11 @@ kmpConfiguration {
                         abiFilters.add("x86_64")
                     }
                 }
+
+                lint {
+                    // androidx.startup.InitializationProvider "missing", but really not.
+                    disable.add("MissingClass")
+                }
             }
 
             sourceSetMain {
