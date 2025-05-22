@@ -17,7 +17,7 @@ immutable                   = "0.1.4"
 
 kotlinx-coroutines          = "1.9.0"
 
-okio                        = "3.9.0"
+okio                        = "3.9.1"
 
 sql-delight-dialect         = "sqlite-3-38-dialect"
 sql-delight                 = "2.0.2"
