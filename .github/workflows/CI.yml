@@ -56,7 +56,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [ 21, 23, 24, 26, 29 ]
+        api-level: [ 21, 23, 24, 26, 29, 30, 31, 32, 33, 34 ]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -81,6 +81,7 @@ jobs:
         with:
           emulator-boot-timeout: 300 # 5 minutes
           api-level: ${{ matrix.api-level }}
+          arch: x86_64
           script: ./gradlew :library:driver-test:connectedCheck -PKMP_TARGETS="ANDROID,JVM"
 
       - name: Upload Test Reports
