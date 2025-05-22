@@ -15,7 +15,7 @@ gradle-maven-publish        = "0.32.0"
 
 immutable                   = "0.1.4"
 
-kotlinx-coroutines          = "1.8.1"
+kotlinx-coroutines          = "1.9.0"
 
 okio                        = "3.9.0"
 
