@@ -135,7 +135,7 @@ kmpConfiguration {
                     val kt = KonanTarget.predefinedTargets[target]!!
 
                     // Add as dependency so any kotlin native tooling is downloaded
-                    // before the CompileToBitcode gets executed.
+                    // before the CompileToBitcode task is executed.
                     cinteropTaskInfo.forEach { (taskName, target) ->
                         if (target != kt) return@forEach
                         this.dependsOn(taskName)
@@ -158,26 +158,19 @@ kmpConfiguration {
                     }?.let { compilerArgs.addAll(it) }
 
                     // Warning/Error suppression flags
-                    when (kt.family) {
-                        OSX, IOS, TVOS, WATCHOS -> listOf(
-                            "-Wno-missing-braces",
-                            "-Wno-missing-field-initializers",
-                            "-Wno-sign-compare",
-                            "-Wno-unused-command-line-argument",
-                            "-Wno-unused-function",
-                            "-Wno-unused-parameter",
-                            "-Wno-unused-variable",
+                    buildList {
+                        add("-Wno-sign-compare")
+                        add("-Wno-unused-function")
+                        add("-Wno-unused-parameter")
+                        add("-Wno-unused-variable")
+
+                        if (kt.family.isAppleFamily) {
+                            add("-Wno-missing-braces")
+                            add("-Wno-missing-field-initializers")
+                            add("-Wno-unused-command-line-argument")
                             // disable warning about gethostuuid being deprecated on darwin
-                            "-Wno-#warnings",
-                        )
-                        LINUX -> listOf(
-                            "-Wno-sign-compare",
-                            "-Wno-unused-function",
-                            "-Wno-unused-parameter",
-                            "-Wno-unused-variable",
-                        )
-                        ANDROID -> listOf()
-                        MINGW -> listOf()
+                            add("-Wno-#warnings")
+                        }
                     }.let { compilerArgs.addAll(it) }
 
                     // SQLITE flags
