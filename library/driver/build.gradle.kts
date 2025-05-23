@@ -144,7 +144,6 @@ kmpConfiguration {
                     // -O3 set automatically for C language
 
                     listOf(
-                        "-fembed-bitcode",
                         "-fvisibility=hidden",
                     ).let { compilerArgs.addAll(it) }
 
