@@ -31,3 +31,16 @@ tasks.withType<KotlinCompile> {
         jvmTarget.set(JvmTarget.JVM_1_8)
     }
 }
+
+tasks.getByName("clean") {
+    doLast {
+        projectDir
+            .resolve("src")
+            .resolve("main")
+            .resolve("resources")
+            .resolve("org")
+            .resolve("sqlite")
+            .resolve("native")
+            .deleteRecursively()
+    }
+}

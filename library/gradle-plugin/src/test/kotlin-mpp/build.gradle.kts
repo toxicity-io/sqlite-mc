@@ -25,9 +25,15 @@ kmpConfiguration {
     configure {
         jvm()
 
+        linuxAll()
+        mingwAll()
+
+        // Local publications will not be present unless the host is macOS
         if (HostManager.hostIsMac) {
-            iosX64()
-            watchosArm64()
+            iosAll()
+            macosAll()
+            tvosAll()
+            watchosAll()
         }
 
         kotlin {

@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import org.jetbrains.kotlin.konan.target.HostManager
-
 plugins {
     alias(libs.plugins.kotlin.multiplatform) apply(false)
     alias(libs.plugins.sqlitemc)
@@ -25,10 +23,12 @@ kmpConfiguration {
     configure {
         jvm()
 
-        if (HostManager.hostIsMac) {
-            iosX64()
-            watchosSimulatorArm64()
-        }
+        iosAll()
+        linuxAll()
+        macosAll()
+        mingwAll()
+        tvosAll()
+        watchosAll()
 
         kotlin {
             sqliteMC {

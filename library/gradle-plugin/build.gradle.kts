@@ -63,22 +63,8 @@ buildConfig {
 }
 
 tasks.named<Test>("test") {
-    project(":library:driver")
-        .tasks
-        .names
-        .forEach {
-            when (it) {
-                "publishJvmPublicationToInstallLocallyRepository",
-                "publishKotlinMultiplatformPublicationToInstallLocallyRepository",
-                "publishIosX64PublicationToInstallLocallyRepository",
-                "publishWatchosArm64PublicationToInstallLocallyRepository",
-                "publishWatchosSimulatorArm64PublicationToInstallLocallyRepository",
-                -> dependsOn(":library:driver:$it")
-                else -> {}
-            }
-        }
-
     dependsOn(
+        ":library:driver:publishAllPublicationsToInstallLocallyRepository",
         ":library:android-unit-test:publishAllPublicationsToInstallLocallyRepository",
         ":library:gradle-plugin:publishAllPublicationsToInstallLocallyRepository",
     )

@@ -135,7 +135,7 @@ kmpConfiguration {
                     val kt = KonanTarget.predefinedTargets[target]!!
 
                     // Add as dependency so any kotlin native tooling is downloaded
-                    // before the CompileToBitcode gets executed.
+                    // before the CompileToBitcode task is executed.
                     cinteropTaskInfo.forEach { (taskName, target) ->
                         if (target != kt) return@forEach
                         this.dependsOn(taskName)
@@ -158,20 +158,20 @@ kmpConfiguration {
                     }?.let { compilerArgs.addAll(it) }
 
                     // Warning/Error suppression flags
-                    listOf(
-                        "-Wno-missing-braces",
-                        "-Wno-missing-field-initializers",
-                        "-Wno-sign-compare",
-                        "-Wno-unused-command-line-argument",
-                        "-Wno-unused-function",
-                        "-Wno-unused-parameter",
-                        "-Wno-unused-variable",
-                    ).let { compilerArgs.addAll(it) }
+                    buildList {
+                        add("-Wno-sign-compare")
+                        add("-Wno-unused-function")
+                        add("-Wno-unused-parameter")
+                        add("-Wno-unused-variable")
 
-                    if (kt.family.isAppleFamily) {
-                        // disable warning about gethostuuid being deprecated on darwin
-                        compilerArgs.add("-Wno-#warnings")
-                    }
+                        if (kt.family.isAppleFamily) {
+                            add("-Wno-missing-braces")
+                            add("-Wno-missing-field-initializers")
+                            add("-Wno-unused-command-line-argument")
+                            // disable warning about gethostuuid being deprecated on darwin
+                            add("-Wno-#warnings")
+                        }
+                    }.let { compilerArgs.addAll(it) }
 
                     // SQLITE flags
                     when (kt.family) {
@@ -258,6 +258,16 @@ kmpConfiguration {
     }
 }
 
+tasks.getByName("clean") {
+    doLast {
+        projectDir
+            .resolve("src")
+            .resolve("androidMain")
+            .resolve("jniLibs")
+            .deleteRecursively()
+    }
+}
+
 /**
  * Repack dependency jar files.
  *
@@ -331,6 +341,7 @@ private class JdbcRepack {
         // Only want the jar file and not xerial/sqlite-jdbc dependency
         // b/c we're using a custom build which uses SQLite3MultipleCiphers
         private val repackSQLDelightDriver by lazy {
+            @Suppress("RemoveRedundantCallsOfConversionMethods")
             val jarFile = configJDBCRepack.files.first { file ->
                 file.absolutePath.contains(depSQLDelightDriver.group.toString())
                 && file.name == depSQLDelightDriver.toJarFileName()

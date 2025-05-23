@@ -15,19 +15,19 @@
 ![badge-platform-android]
 ![badge-platform-jvm]
 ![badge-platform-ios]
+![badge-platform-linux]
+![badge-platform-macos]
 ![badge-platform-tvos]
 ![badge-platform-watchos]
+![badge-platform-windows]
 ![badge-support-apple-silicon]
+![badge-support-linux-arm]
 <!--
 ![badge-platform-js]
 ![badge-platform-js-node]
-![badge-platform-linux]
-![badge-platform-macos]
 ![badge-platform-wasm]
-![badge-platform-windows]
 ![badge-support-android-native]
 ![badge-support-js-ir]
-![badge-support-linux-arm]
 -->
 
 An [SQLDelight][url-sqldelight] driver that uses [SQLite3MultipleCiphers][url-sqlitemc] for 
