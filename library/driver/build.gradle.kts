@@ -331,6 +331,7 @@ private class JdbcRepack {
         // Only want the jar file and not xerial/sqlite-jdbc dependency
         // b/c we're using a custom build which uses SQLite3MultipleCiphers
         private val repackSQLDelightDriver by lazy {
+            @Suppress("RemoveRedundantCallsOfConversionMethods")
             val jarFile = configJDBCRepack.files.first { file ->
                 file.absolutePath.contains(depSQLDelightDriver.group.toString())
                 && file.name == depSQLDelightDriver.toJarFileName()
