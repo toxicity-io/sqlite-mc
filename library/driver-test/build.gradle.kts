@@ -67,7 +67,7 @@ kmpConfiguration {
         }
 
         kotlin {
-            extensions.configure<SqlDelightExtension>("sqldelight") {
+            project.extensions.configure<SqlDelightExtension>("sqldelight") {
                 linkSqlite.set(false)
 
                 targets.filterIsInstance<KotlinNativeTarget>()

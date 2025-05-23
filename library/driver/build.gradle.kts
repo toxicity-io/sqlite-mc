@@ -158,20 +158,27 @@ kmpConfiguration {
                     }?.let { compilerArgs.addAll(it) }
 
                     // Warning/Error suppression flags
-                    listOf(
-                        "-Wno-missing-braces",
-                        "-Wno-missing-field-initializers",
-                        "-Wno-sign-compare",
-                        "-Wno-unused-command-line-argument",
-                        "-Wno-unused-function",
-                        "-Wno-unused-parameter",
-                        "-Wno-unused-variable",
-                    ).let { compilerArgs.addAll(it) }
-
-                    if (kt.family.isAppleFamily) {
-                        // disable warning about gethostuuid being deprecated on darwin
-                        compilerArgs.add("-Wno-#warnings")
-                    }
+                    when (kt.family) {
+                        OSX, IOS, TVOS, WATCHOS -> listOf(
+                            "-Wno-missing-braces",
+                            "-Wno-missing-field-initializers",
+                            "-Wno-sign-compare",
+                            "-Wno-unused-command-line-argument",
+                            "-Wno-unused-function",
+                            "-Wno-unused-parameter",
+                            "-Wno-unused-variable",
+                            // disable warning about gethostuuid being deprecated on darwin
+                            "-Wno-#warnings",
+                        )
+                        LINUX -> listOf(
+                            "-Wno-sign-compare",
+                            "-Wno-unused-function",
+                            "-Wno-unused-parameter",
+                            "-Wno-unused-variable",
+                        )
+                        ANDROID -> listOf()
+                        MINGW -> listOf()
+                    }.let { compilerArgs.addAll(it) }
 
                     // SQLITE flags
                     when (kt.family) {

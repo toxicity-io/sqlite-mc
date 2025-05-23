@@ -50,14 +50,12 @@ fun KmpConfigurationExtension.configureShared(
             kotlinJvmTarget = JavaVersion.VERSION_1_8
         }
 
-        // Just use JVM. Not dealing with native desktop
-        // b/c it's a shit-show (especially Linux)
-//        linuxX64()
-//        macosArm64()
-//        macosX64()
-//        mingwX64()
-
+        // https://github.com/touchlab/SQLiter/issues/117
+//        androidNativeAll()
         iosAll()
+        linuxAll()
+        macosAll()
+        mingwAll()
         tvosAll()
         watchosAll()
 
