@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## Version 2.1.0-2.1.0-0 (2025-05-23)
+ - Updates dependencies [[#143]][143]
+     - `kotlin` to `2.0.21`
+     - `kotlinx-coroutines` to `1.9.0`
+     - `sqldelight` to `2.1.0`
+ - The following Kotlin/Native targets are now supported [[#145]][145]
+     - `linuxArm64`
+     - `linuxX64`
+     - `macosArm64`
+     - `macosX64`
+     - `mingwX64`
+ - Removes the `-fembed-bitcode` compiler flag from Kotlin/Native compilations [[#147]][147]
+
 ## Version 2.0.2-2.1.0-0 (2025-03-27)
  - Updates `SQLite3MultipleCiphers` to `2.1.0` [[#141]][141]
  - Updates [build-env][url-build-env] from `0.2.0` to `0.3.0` [[#141]][141]
@@ -137,3 +150,6 @@
 [136]: https://github.com/toxicity-io/sqlite-mc/pull/136
 [139]: https://github.com/toxicity-io/sqlite-mc/pull/139
 [141]: https://github.com/toxicity-io/sqlite-mc/pull/141
+[143]: https://github.com/toxicity-io/sqlite-mc/pull/143
+[145]: https://github.com/toxicity-io/sqlite-mc/pull/145
+[147]: https://github.com/toxicity-io/sqlite-mc/pull/147
