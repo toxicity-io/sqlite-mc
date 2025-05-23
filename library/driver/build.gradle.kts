@@ -258,6 +258,16 @@ kmpConfiguration {
     }
 }
 
+tasks.getByName("clean") {
+    doLast {
+        projectDir
+            .resolve("src")
+            .resolve("androidMain")
+            .resolve("jniLibs")
+            .deleteRecursively()
+    }
+}
+
 /**
  * Repack dependency jar files.
  *
