@@ -1,14 +1,14 @@
-From b19d95cdb2f1c540d961668deea47fa79cbdd159 Mon Sep 17 00:00:00 2001
+From 9c3ca39edd721f5691cef2440ffd51e9c19fc632 Mon Sep 17 00:00:00 2001
 From: Toxicity <contact@toxicity.io>
-Date: Thu, 27 Mar 2025 11:09:08 -0400
-Subject: [PATCH 5/9] Disable Windows arm & FreeBSD targets
+Date: Tue, 19 Aug 2025 06:38:55 -0400
+Subject: [PATCH 05/10] Disable Windows arm & FreeBSD targets
 
 ---
  Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index ddb6b21..35df43f 100644
+index ddb6b21d..35df43fd 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -116,7 +116,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)

@@ -1,14 +1,14 @@
-From 184bf497359b1579d8d9f574c992975adf6f8dee Mon Sep 17 00:00:00 2001
+From b97165dec5570c5b2c808219b25355a52b475a59 Mon Sep 17 00:00:00 2001
 From: Toxicity <contact@toxicity.io>
-Date: Thu, 27 Mar 2025 11:09:06 -0400
-Subject: [PATCH 3/9] Remove JDBC extensions
+Date: Tue, 19 Aug 2025 06:38:53 -0400
+Subject: [PATCH 03/10] Remove JDBC extensions
 
 ---
  Makefile | 12 +-----------
  1 file changed, 1 insertion(+), 11 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 4156840..ddb6b21 100644
+index 4156840e..ddb6b21d 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -71,18 +71,8 @@ clean: clean-native clean-java clean-tests

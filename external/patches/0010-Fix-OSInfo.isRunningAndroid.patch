@@ -1,0 +1,38 @@
+From 20fc9b4b11336a7435d18c6ae6cd925ea561b989 Mon Sep 17 00:00:00 2001
+From: Toxicity <contact@toxicity.io>
+Date: Tue, 19 Aug 2025 06:45:45 -0400
+Subject: [PATCH 10/10] Fix OSInfo.isRunningAndroid
+
+---
+ src/main/java/org/sqlite/util/OSInfo.java | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/src/main/java/org/sqlite/util/OSInfo.java b/src/main/java/org/sqlite/util/OSInfo.java
+index dc2e0788..6aca7fdd 100644
+--- a/src/main/java/org/sqlite/util/OSInfo.java
++++ b/src/main/java/org/sqlite/util/OSInfo.java
+@@ -119,17 +119,10 @@ public class OSInfo {
+     }
+ 
+     private static boolean isRunningAndroid() {
+-        // This file is guaranteed to be present on every android version since 1.6 (Donut, API 4),
+-        // see https://developer.android.com/ndk/guides/stable_apis#graphics
+-        // We don't use libc/libm/libdl because that has changed what directory its pointing to and
+-        // OEMs implement the symlink that allows backwards compatibility
+-        // for apps that use the old path differently, which may cause this check to fail because
+-        // of common undocumented behaviour. See
+-        // https://developer.android.com/about/versions/10/behavior-changes-all#bionic
+-        File androidGLES = new File("/system/lib/libGLESv1_CM.so");
+-        File android64GLES = new File("/system/lib64/libGLESv1_CM.so");
+-
+-        return android64GLES.exists() || androidGLES.exists();
++        File libandroid = new File("/system/lib/libandroid.so");
++        File libandroid64 = new File("/system/lib64/libandroid.so");
++
++        return libandroid64.exists() || libandroid.exists();
+     }
+ 
+     public static boolean isAndroidRuntime() {
+-- 
+2.34.1
+
