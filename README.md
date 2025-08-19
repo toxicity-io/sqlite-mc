@@ -380,7 +380,7 @@ I'm guessing this is not really a factor on iOS."
    ```kotlin
    plugins {
        // Provides the SQLDelight gradle plugin automatically and applies it
-       id("io.toxicity.sqlite-mc") version("2.1.0-2.1.0-0")
+       id("io.toxicity.sqlite-mc") version("2.1.0-2.2.3-0")
    }
 
    // Will automatically:
@@ -400,17 +400,17 @@ I'm guessing this is not really a factor on iOS."
        //
        // This is simply the desktop binary resources needed for
        // JDBC to operate locally on the machine.
-       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.1.0-2.1.0-0")
+       testImplementation("io.toxicity.sqlite-mc:android-unit-test:2.1.0-2.2.3-0")
    }
    ```
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-2.1.0--2.1.0--0-blue.svg?style=flat
+[badge-latest-release]: https://img.shields.io/badge/latest--release-2.1.0--2.2.3--0-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
 [badge-kotlin]: https://img.shields.io/badge/kotlin-2.1.21-blue.svg?logo=kotlin
-[badge-coroutines]: https://img.shields.io/badge/coroutines-1.9.0-blue.svg?logo=kotlin
+[badge-coroutines]: https://img.shields.io/badge/coroutines-1.10.2-blue.svg?logo=kotlin
 [badge-encoding]: https://img.shields.io/badge/encoding-2.4.0-blue.svg?style=flat
 [badge-immutable]: https://img.shields.io/badge/immutable-0.2.0-blue.svg?style=flat
 [badge-sqldelight]: https://img.shields.io/badge/SQLDelight-2.1.0-blue.svg?style=flat
