@@ -6,7 +6,7 @@ androidx-test-runner        = "1.7.0"
 encoding                    = "2.3.1"
 
 gradle-android              = "8.9.3"
-gradle-binary-compat        = "0.17.0"
+gradle-binary-compat        = "0.18.1"
 gradle-build-config         = "5.6.7"
 gradle-cklib                = "0.3.4"
 gradle-kmp-configuration    = "0.4.1"
