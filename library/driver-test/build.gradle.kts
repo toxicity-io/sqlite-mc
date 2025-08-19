@@ -14,7 +14,6 @@
  * limitations under the License.
  **/
 import app.cash.sqldelight.gradle.SqlDelightExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     id("configuration")

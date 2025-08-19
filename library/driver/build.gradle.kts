@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.Architecture.*
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.IOException
