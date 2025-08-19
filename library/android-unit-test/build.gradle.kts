@@ -32,7 +32,8 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-tasks.getByName("clean") {
+tasks.all {
+    if (name != "clean") return@all
     doLast {
         projectDir
             .resolve("src")

@@ -409,15 +409,15 @@ I'm guessing this is not really a factor on iOS."
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
-[badge-kotlin]: https://img.shields.io/badge/kotlin-2.0.21-blue.svg?logo=kotlin
+[badge-kotlin]: https://img.shields.io/badge/kotlin-2.1.21-blue.svg?logo=kotlin
 [badge-coroutines]: https://img.shields.io/badge/coroutines-1.9.0-blue.svg?logo=kotlin
 [badge-encoding]: https://img.shields.io/badge/encoding-2.3.1-blue.svg?style=flat
 [badge-immutable]: https://img.shields.io/badge/immutable-0.1.4-blue.svg?style=flat
 [badge-sqldelight]: https://img.shields.io/badge/SQLDelight-2.1.0-blue.svg?style=flat
 [badge-sqlite]: https://img.shields.io/badge/SQLite3-3.49.1-blue.svg?style=flat
-[badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-2.1.0-blue.svg?style=flat
+[badge-sqlitemc]: https://img.shields.io/badge/SQLite3MultipleCiphers-2.2.3-blue.svg?style=flat
 [badge-sqliter]: https://img.shields.io/badge/SQLiter-1.3.3-blue.svg?style=flat
-[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.49.1.0-blue.svg?style=flat
+[badge-sqlitejdbc]: https://img.shields.io/badge/sqlite--jdbc-3.50.3.0-blue.svg?style=flat
 
 <!-- TAG_PLATFORMS -->
 [badge-platform-android]: http://img.shields.io/badge/-android%20[minSdk%2021]-6EDB8D.svg?style=flat
