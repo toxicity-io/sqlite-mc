@@ -13,15 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+import co.touchlab.cklib.gradle.CKlibGradleExtension
 import co.touchlab.cklib.gradle.CompileToBitcode.Language.C
 import co.touchlab.cklib.gradle.CompileToBitcodeExtension
+import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.konan.target.Architecture.*
 import org.jetbrains.kotlin.konan.target.Family.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.TargetSupportException
+import org.jetbrains.kotlin.konan.util.ArchiveType
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.konan.util.DependencySource
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -37,7 +44,6 @@ private val jdbcRepack = JdbcRepack()
 
 kmpConfiguration {
     configureShared {
-
         androidLibrary(namespace = "io.toxicity.sqlite.mc.driver") {
             target { publishLibraryVariants("release") }
 
@@ -63,6 +69,12 @@ kmpConfiguration {
                 dependencies {
                     implementation(libs.androidx.startup.runtime)
                     implementation(files(jdbcRepack.jarSQLiteJDBCAndroid))
+                }
+            }
+            sourceSetTestInstrumented {
+                dependencies {
+                    implementation(libs.androidx.test.core)
+                    implementation(libs.androidx.test.runner)
                 }
             }
         }
@@ -126,7 +138,7 @@ kmpConfiguration {
             }
 
             project.extensions.configure<CompileToBitcodeExtension>("cklib") {
-                config.kotlinVersion = libs.versions.gradle.kotlin.get()
+                config.configure(libs)
 
                 create("sqlite3mc") {
                     language = C
@@ -159,6 +171,7 @@ kmpConfiguration {
                     // Warning/Error suppression flags
                     buildList {
                         add("-Wno-sign-compare")
+                        add("-Wno-unused-but-set-variable")
                         add("-Wno-unused-function")
                         add("-Wno-unused-parameter")
                         add("-Wno-unused-variable")
@@ -257,7 +270,8 @@ kmpConfiguration {
     }
 }
 
-tasks.getByName("clean") {
+tasks.all {
+    if (name != "clean") return@all
     doLast {
         projectDir
             .resolve("src")
@@ -569,4 +583,77 @@ private class JdbcRepack {
             ensureParentDirsCreated()
         }
     }
+}
+
+// CKLib uses too old of a version of LLVM for current version of Kotlin which produces errors for android
+// native due to unsupported link arguments. Below is a supplemental implementation to download and use
+// the -dev llvm compiler for the current kotlin version.
+//
+// The following info can be found in ~/.konan/kotlin-native-prebuild-{os}-{arch}-{kotlin version}/konan/konan.properties
+private object LLVM {
+    const val URL: String = "https://download.jetbrains.com/kotlin/native/resources/llvm"
+    const val VERSION: String = "16.0.0"
+
+    // llvm-{llvm version}-{arch}-{host}-dev-{id}
+    object DevID {
+        object Linux {
+            const val x86_64: Int = 80
+        }
+        object MacOS {
+            const val aarch64: Int = 65
+            const val x86_64: Int = 56
+        }
+        object MinGW {
+            const val x86_64: Int = 56
+        }
+    }
+}
+
+private fun CKlibGradleExtension.configure(libs: LibrariesForLibs) {
+    kotlinVersion = libs.versions.gradle.kotlin.get()
+    check(kotlinVersion == "2.1.21") {
+        "Kotlin version out of date! Download URLs for LLVM need to be updated for ${project.path}"
+    }
+
+    val host = HostManager.simpleOsName()
+    val arch = HostManager.hostArch()
+    val (id, archive) = when (host) {
+        "linux" -> when (arch) {
+            "x86_64" -> LLVM.DevID.Linux.x86_64 to ArchiveType.TAR_GZ
+            else -> null
+        }
+        "macos" -> when (arch) {
+            "aarch64" -> LLVM.DevID.MacOS.aarch64 to ArchiveType.TAR_GZ
+            "x86_64" -> LLVM.DevID.MacOS.x86_64 to ArchiveType.TAR_GZ
+            else -> null
+        }
+        "windows" -> when (arch) {
+            "x86_64" -> LLVM.DevID.MinGW.x86_64 to ArchiveType.ZIP
+            else -> null
+        }
+        else -> null
+    } ?: throw TargetSupportException("Unsupported host[$host] or arch[$arch]")
+
+    val llvmDev = "llvm-${LLVM.VERSION}-${arch}-${host}-dev-${id}"
+    val cklibDir = File(System.getProperty("user.home")).resolve(".cklib")
+    llvmHome = cklibDir.resolve(llvmDev).path
+
+    val source = DependencySource.Remote.Public(subDirectory = "${LLVM.VERSION}-${arch}-${host}")
+
+    DependencyProcessor(
+        dependenciesRoot = cklibDir,
+        dependenciesUrl = LLVM.URL,
+        dependencyToCandidates = mapOf(llvmDev to listOf(source)),
+        homeDependencyCache = cklibDir.resolve("cache"),
+        customProgressCallback = { _, currentBytes, totalBytes ->
+            val total = totalBytes.toString()
+            var current = currentBytes.toString()
+            while (current.length < 15 && current.length < total.length) {
+                current = " $current"
+            }
+
+            println("Downloading[$llvmDev] - $current / $total")
+        },
+        archiveType = archive,
+    ).run()
 }

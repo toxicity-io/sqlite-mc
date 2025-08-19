@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("UnstableApiUsage")
-
 import io.matthewnelson.kmp.configuration.extension.KmpConfigurationExtension
 import io.matthewnelson.kmp.configuration.extension.container.target.KmpConfigurationContainerDsl
 import io.matthewnelson.kmp.configuration.extension.container.target.TargetAndroidContainer
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
-import org.gradle.api.tasks.compile.AbstractCompile
 
 fun KmpConfigurationExtension.configureShared(
     action: (Action<KmpConfigurationContainerDsl>)? = null,
@@ -31,22 +28,8 @@ fun KmpConfigurationExtension.configureShared(
         }
 
         jvm {
-            // TODO: Remove once gradle-kmp-configuration-plugin is updated to 0.4.1+
-            target {
-                val targetName = name
-                project.tasks.withType(AbstractCompile::class.java) {
-                    val task = this
-                    if (!task.name.startsWith("compile$targetName", ignoreCase = true)) return@withType
-                    when {
-                        task.name.endsWith("MainJava") -> {}
-                        task.name.endsWith("TestJava") -> {}
-                        else -> return@withType
-                    }
-                    task.sourceCompatibility = JavaVersion.VERSION_1_8.toString()
-                    task.targetCompatibility = JavaVersion.VERSION_1_8.toString()
-                }
-            }
-
+            compileSourceCompatibility = JavaVersion.VERSION_1_8
+            compileTargetCompatibility = JavaVersion.VERSION_1_8
             kotlinJvmTarget = JavaVersion.VERSION_1_8
         }
 
@@ -75,8 +58,8 @@ fun KmpConfigurationExtension.configureShared(
 
 fun KmpConfigurationContainerDsl.androidLibrary(
     namespace: String,
-    buildTools: String? = "34.0.0",
-    compileSdk: Int = 34,
+    buildTools: String? = "35.0.1",
+    compileSdk: Int = 35,
     minSdk: Int = 21,
     javaVersion: JavaVersion = JavaVersion.VERSION_1_8,
     action: (Action<TargetAndroidContainer.Library>)? = null,
@@ -91,7 +74,7 @@ fun KmpConfigurationContainerDsl.androidLibrary(
                 this.minSdk = minSdk
 
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                testInstrumentationRunnerArguments["disableAnalytics"] = "true"
+                testInstrumentationRunnerArguments["disableAnalytics"] = true.toString()
             }
 
             buildTypes {

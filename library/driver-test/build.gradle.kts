@@ -21,17 +21,7 @@ plugins {
 
 kmpConfiguration {
     configureShared {
-
         androidLibrary(namespace = "io.toxicity.sqlite.mc.driver.test") {
-            android {
-                defaultConfig {
-                    // Work-around for installing test apk on 33+ devices, as
-                    // the minimum of 21 will fail to install.
-                    @Suppress("ExpiredTargetSdkVersion", "DEPRECATION")
-                    targetSdk = 23
-                }
-            }
-
             sourceSetTest {
                 findProject(":library:android-unit-test")?.let { androidUnitTest ->
                     dependencies {
