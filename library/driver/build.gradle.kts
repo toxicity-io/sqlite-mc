@@ -161,12 +161,17 @@ kmpConfiguration {
 
                     // Architecture specific flags
                     when (kt.architecture) {
+                        ARM64 -> listOf(
+                            "-march=armv8-a+crypto",
+                        )
+                        ARM32 -> listOf(
+                            "-mfpu=neon",
+                        )
                         X64, X86 -> listOf(
                             "-msse4.2",
                             "-maes",
                         )
-                        else -> null
-                    }?.let { compilerArgs.addAll(it) }
+                    }.let { compilerArgs.addAll(it) }
 
                     // Warning/Error suppression flags
                     buildList {
