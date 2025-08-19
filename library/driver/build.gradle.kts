@@ -44,7 +44,6 @@ private val jdbcRepack = JdbcRepack()
 
 kmpConfiguration {
     configureShared {
-
         androidLibrary(namespace = "io.toxicity.sqlite.mc.driver") {
             target { publishLibraryVariants("release") }
 
@@ -70,6 +69,12 @@ kmpConfiguration {
                 dependencies {
                     implementation(libs.androidx.startup.runtime)
                     implementation(files(jdbcRepack.jarSQLiteJDBCAndroid))
+                }
+            }
+            sourceSetTestInstrumented {
+                dependencies {
+                    implementation(libs.androidx.test.core)
+                    implementation(libs.androidx.test.runner)
                 }
             }
         }

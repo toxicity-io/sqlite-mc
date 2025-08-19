@@ -58,8 +58,8 @@ fun KmpConfigurationExtension.configureShared(
 
 fun KmpConfigurationContainerDsl.androidLibrary(
     namespace: String,
-    buildTools: String? = "34.0.0",
-    compileSdk: Int = 34,
+    buildTools: String? = "35.0.1",
+    compileSdk: Int = 35,
     minSdk: Int = 21,
     javaVersion: JavaVersion = JavaVersion.VERSION_1_8,
     action: (Action<TargetAndroidContainer.Library>)? = null,
@@ -74,7 +74,7 @@ fun KmpConfigurationContainerDsl.androidLibrary(
                 this.minSdk = minSdk
 
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                testInstrumentationRunnerArguments["disableAnalytics"] = "true"
+                testInstrumentationRunnerArguments["disableAnalytics"] = true.toString()
             }
 
             buildTypes {
