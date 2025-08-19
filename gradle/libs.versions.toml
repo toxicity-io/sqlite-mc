@@ -3,7 +3,7 @@ androidx-startup            = "1.2.0"
 androidx-test-core          = "1.7.0"
 androidx-test-runner        = "1.7.0"
 
-encoding                    = "2.3.1"
+encoding                    = "2.4.0"
 
 gradle-android              = "8.9.3"
 gradle-binary-compat        = "0.18.1"
