@@ -1,14 +1,14 @@
-From decea549f9bdb643bbc79b23e102cc467f96b351 Mon Sep 17 00:00:00 2001
+From 4a62454ad221b98f00d430ecdaa5086d04f5c7d5 Mon Sep 17 00:00:00 2001
 From: Toxicity <contact@toxicity.io>
-Date: Thu, 27 Mar 2025 11:09:07 -0400
-Subject: [PATCH 4/9] Add Linux-Musl definitions
+Date: Tue, 19 Aug 2025 06:38:54 -0400
+Subject: [PATCH 04/10] Add Linux-Musl definitions
 
 ---
  Makefile.common | 23 ++++++++++++++++++++++-
  1 file changed, 22 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.common b/Makefile.common
-index fb5dd48..2f99457 100644
+index 85b07193..5603240b 100644
 --- a/Makefile.common
 +++ b/Makefile.common
 @@ -52,7 +52,7 @@ endif

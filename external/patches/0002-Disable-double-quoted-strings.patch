@@ -1,7 +1,7 @@
-From e1985e5516402e611075643a8abbcc399f0c5f42 Mon Sep 17 00:00:00 2001
+From d3fe281b2e45fc60acec22a85744b949d1224b4e Mon Sep 17 00:00:00 2001
 From: Toxicity <contact@toxicity.io>
-Date: Thu, 27 Mar 2025 11:09:05 -0400
-Subject: [PATCH 2/9] Disable double-quoted strings
+Date: Tue, 19 Aug 2025 06:38:52 -0400
+Subject: [PATCH 02/10] Disable double-quoted strings
 
 ---
  Makefile                                    | 1 +
@@ -12,7 +12,7 @@ Subject: [PATCH 2/9] Disable double-quoted strings
  5 files changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index af2ffa5..4156840 100644
+index af2ffa5a..4156840e 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -106,6 +106,7 @@ $(SQLITE_OUT)/sqlite3.o : $(SQLITE_UNPACKED)
@@ -24,7 +24,7 @@ index af2ffa5..4156840 100644
  	    $(SQLITE_OUT)/sqlite3.c
  
 diff --git a/src/test/java/org/sqlite/BackupTest.java b/src/test/java/org/sqlite/BackupTest.java
-index f906bcf..fa76217 100644
+index f906bcf4..fa762171 100644
 --- a/src/test/java/org/sqlite/BackupTest.java
 +++ b/src/test/java/org/sqlite/BackupTest.java
 @@ -56,8 +56,8 @@ public class BackupTest {
@@ -48,7 +48,7 @@ index f906bcf..fa76217 100644
  
              File tmpFile = File.createTempFile("backup-test2", ".sqlite", tempDir);
 diff --git a/src/test/java/org/sqlite/ExtensionTest.java b/src/test/java/org/sqlite/ExtensionTest.java
-index a79cd86..89dd54b 100644
+index a79cd868..89dd54b7 100644
 --- a/src/test/java/org/sqlite/ExtensionTest.java
 +++ b/src/test/java/org/sqlite/ExtensionTest.java
 @@ -68,7 +68,7 @@ public class ExtensionTest {
@@ -61,10 +61,10 @@ index a79cd86..89dd54b 100644
              assertThat(rs.getString(1)).isEqualTo("TGCA");
              rs.close();
 diff --git a/src/test/java/org/sqlite/PrepStmtTest.java b/src/test/java/org/sqlite/PrepStmtTest.java
-index 1bf609d..fee401d 100644
+index 3dca80ed..a8c3f3dd 100644
 --- a/src/test/java/org/sqlite/PrepStmtTest.java
 +++ b/src/test/java/org/sqlite/PrepStmtTest.java
-@@ -635,7 +635,7 @@ public class PrepStmtTest {
+@@ -662,7 +662,7 @@ public class PrepStmtTest {
      public void clearParameters() throws SQLException {
          stat.executeUpdate(
                  "create table tbl (colid integer primary key AUTOINCREMENT, col varchar)");
@@ -74,7 +74,7 @@ index 1bf609d..fee401d 100644
  
          PreparedStatement prep = conn.prepareStatement("select colid from tbl where col = ?");
 diff --git a/src/test/java/org/sqlite/StatementTest.java b/src/test/java/org/sqlite/StatementTest.java
-index e8c891a..7419bbd 100644
+index e8c891ae..7419bbd7 100644
 --- a/src/test/java/org/sqlite/StatementTest.java
 +++ b/src/test/java/org/sqlite/StatementTest.java
 @@ -106,7 +106,7 @@ public class StatementTest {

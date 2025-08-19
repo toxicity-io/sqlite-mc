@@ -1,18 +1,18 @@
-From 837b73ccbdbf2df87efdcd42fcbf0b5c7f825ad7 Mon Sep 17 00:00:00 2001
+From 5451ceea92e62ecc56a6419477e3f0bbfe14a835 Mon Sep 17 00:00:00 2001
 From: Toxicity <contact@toxicity.io>
-Date: Thu, 27 Mar 2025 11:09:10 -0400
-Subject: [PATCH 8/9] Update Docker images
+Date: Tue, 19 Aug 2025 06:44:19 -0400
+Subject: [PATCH 08/10] Update Docker images
 
 ---
- Makefile                    | 27 ++++++++++++++-------------
- Makefile.common             | 35 ++++++++++++++---------------------
+ Makefile                    | 27 +++++++++++++------------
+ Makefile.common             | 40 +++++++++++++++----------------------
  docker/dockcross-armv5      |  2 +-
  docker/dockcross-armv6-lts  |  2 +-
  docker/dockcross-musl-arm64 |  2 +-
- 5 files changed, 31 insertions(+), 37 deletions(-)
+ 5 files changed, 33 insertions(+), 40 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index fb4a084..64b901d 100644
+index fb4a0849..64b901d5 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -21,6 +21,7 @@ SQLITE_ARCHIVE:=$(TARGET)/$(sqlite)-amal.zip
@@ -94,7 +94,7 @@ index fb4a084..64b901d 100644
  # deprecated
  mac32: $(SQLITE_UNPACKED) jni-header
 diff --git a/Makefile.common b/Makefile.common
-index 9bc779e..fe71aa1 100644
+index e33441ae..7858c0a7 100644
 --- a/Makefile.common
 +++ b/Makefile.common
 @@ -128,29 +128,29 @@ Linux-armv7_LIBNAME   := libsqlitejdbc.so
@@ -103,18 +103,20 @@ index 9bc779e..fe71aa1 100644
  Linux-Android-arm_CC        := $(CROSS_PREFIX)clang
 -Linux-Android-arm_STRIP     := $(CROSS_ROOT)/bin/llvm-strip
 -Linux-Android-arm_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(CROSS_ROOT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog
+-Linux-Android-arm_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-z,max-page-size=16384,-soname,libsqlitejdbc.so
 +Linux-Android-arm_STRIP     := $(CROSS_PREFIX)strip
 +Linux-Android-arm_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(PATH_PREBUILT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog
- Linux-Android-arm_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-soname,libsqlitejdbc.so
++Linux-Android-arm_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-soname,libsqlitejdbc.so
  Linux-Android-arm_LIBNAME   := libsqlitejdbc.so
  Linux-Android-arm_SQLITE_FLAGS  :=
  
  Linux-Android-aarch64_CC        := $(CROSS_PREFIX)clang
 -Linux-Android-aarch64_STRIP     := $(CROSS_ROOT)/bin/llvm-strip
 -Linux-Android-aarch64_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(CROSS_ROOT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog
+-Linux-Android-aarch64_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-z,max-page-size=16384,-soname,libsqlitejdbc.so
 +Linux-Android-aarch64_STRIP     := $(CROSS_PREFIX)strip
 +Linux-Android-aarch64_CCFLAGS   := -I$(JAVA_HOME)/include -Ilib/inc_linux -I$(PATH_PREBUILT)/sysroot/usr/include -Os -fPIC -fvisibility=hidden -fPIE -pie -lm -lc -landroid -ldl -llog
- Linux-Android-aarch64_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-soname,libsqlitejdbc.so
++Linux-Android-aarch64_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-soname,libsqlitejdbc.so
  Linux-Android-aarch64_LIBNAME   := libsqlitejdbc.so
  Linux-Android-aarch64_SQLITE_FLAGS  :=
  
@@ -135,10 +137,11 @@ index 9bc779e..fe71aa1 100644
  Linux-Android-x86_64_LINKFLAGS := $(Default_LINKFLAGS) -Wl,-soname,libsqlitejdbc.so
  Linux-Android-x86_64_LIBNAME   := libsqlitejdbc.so
  Linux-Android-x86_64_SQLITE_FLAGS  :=
-@@ -225,23 +225,16 @@ HPUX-ia64_32_LINKFLAGS	:= -b
+@@ -224,24 +224,16 @@ HPUX-ia64_32_CCFLAGS	:= -Ilib/inc_linux +Osize +z -Bhidden
+ HPUX-ia64_32_LINKFLAGS	:= -b
  HPUX-ia64_32_LIBNAME	:= libsqlitejdbc.so
  HPUX-ia64_32_SQLITE_FLAGS :=
- 
+-
 -Mac-x86_64_CC        := gcc -arch $(OS_ARCH) 
 -Mac-x86_64_STRIP     := strip -x
 -MAC_SDK := /Developer/SDKs/MacOSX10.10.sdk
@@ -149,7 +152,7 @@ index 9bc779e..fe71aa1 100644
 +Mac-x86_64_CC        := $(CROSS_PREFIX)clang
 +Mac-x86_64_STRIP     := $(CROSS_PREFIX)strip -x
 +Mac-x86_64_CCFLAGS    := -I$(PATH_SDK)/System/Library/Frameworks/JavaNativeFoundation.framework/Headers -Ilib/inc_mac -Os -fPIC -fvisibility=hidden -Wno-implicit-function-declaration -msse4.2 -maes
- Mac-x86_64_LINKFLAGS := -dynamiclib -framework Security
+ Mac-x86_64_LINKFLAGS := -dynamiclib
  Mac-x86_64_LIBNAME   := libsqlitejdbc.dylib
  Mac-x86_64_SQLITE_FLAGS  := 
  
@@ -160,10 +163,10 @@ index 9bc779e..fe71aa1 100644
 -MAC_SDK := /usr/osxcross/SDK/MacOSX11.3.sdk
 -Mac-aarch64_CCFLAGS    := -I$(MAC_SDK)/System/Library/Frameworks/JavaVM.framework/Headers -Ilib/inc_mac -Os -fPIC -mmacosx-version-min=10.9 -fvisibility=hidden -Wno-implicit-function-declaration
 +Mac-aarch64_CCFLAGS    := -I$(PATH_SDK)/System/Library/Frameworks/JavaNativeFoundation.framework/Headers -Ilib/inc_mac -Os -fPIC -fvisibility=hidden -Wno-implicit-function-declaration
- Mac-aarch64_LINKFLAGS  := -dynamiclib -framework Security
+ Mac-aarch64_LINKFLAGS  := -dynamiclib
  Mac-aarch64_LIBNAME    := libsqlitejdbc.dylib
  Mac-aarch64_SQLITE_FLAGS := 
-@@ -249,14 +242,14 @@ Mac-aarch64_SQLITE_FLAGS :=
+@@ -249,14 +241,14 @@ Mac-aarch64_SQLITE_FLAGS :=
  Windows-x86_CC           := $(CROSS_PREFIX)gcc
  Windows-x86_STRIP        := $(CROSS_PREFIX)strip
  Windows-x86_CCFLAGS      := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -Os -msse4.2 -maes
@@ -181,7 +184,7 @@ index 9bc779e..fe71aa1 100644
  Windows-x86_64_SQLITE_FLAGS :=
  
 diff --git a/docker/dockcross-armv5 b/docker/dockcross-armv5
-index 1961108..4046004 100755
+index 19611084..40460044 100755
 --- a/docker/dockcross-armv5
 +++ b/docker/dockcross-armv5
 @@ -1,6 +1,6 @@
@@ -193,7 +196,7 @@ index 1961108..4046004 100755
  #------------------------------------------------------------------------------
  # Helpers
 diff --git a/docker/dockcross-armv6-lts b/docker/dockcross-armv6-lts
-index 7f2010e..7e2e6b5 100755
+index 7f2010e2..7e2e6b56 100755
 --- a/docker/dockcross-armv6-lts
 +++ b/docker/dockcross-armv6-lts
 @@ -1,6 +1,6 @@
@@ -205,7 +208,7 @@ index 7f2010e..7e2e6b5 100755
  #------------------------------------------------------------------------------
  # Helpers
 diff --git a/docker/dockcross-musl-arm64 b/docker/dockcross-musl-arm64
-index 9f974d7..6488c70 100755
+index 9f974d7d..6488c705 100755
 --- a/docker/dockcross-musl-arm64
 +++ b/docker/dockcross-musl-arm64
 @@ -1,6 +1,6 @@

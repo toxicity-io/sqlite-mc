@@ -1,14 +1,14 @@
-From a3ed30311f836d11b0c7d8d181addad7d68e4fdd Mon Sep 17 00:00:00 2001
+From f1bb6d15a69dc8dc6692092a5e70b2dd8b7fd96e Mon Sep 17 00:00:00 2001
 From: Toxicity <contact@toxicity.io>
-Date: Thu, 27 Mar 2025 11:09:09 -0400
-Subject: [PATCH 6/9] Disable macOS adhoc signing
+Date: Tue, 19 Aug 2025 06:38:56 -0400
+Subject: [PATCH 06/10] Disable macOS adhoc signing
 
 ---
  Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index 35df43f..fc1f668 100644
+index 35df43fd..fc1f668b 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -116,7 +116,7 @@ NATIVE_TARGET_DIR:=$(TARGET)/classes/org/sqlite/native/$(OS_NAME)/$(OS_ARCH)

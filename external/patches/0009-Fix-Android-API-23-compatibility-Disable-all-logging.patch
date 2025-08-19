@@ -1,7 +1,7 @@
-From dc6d8007a4c90ecdb2461862c6d04708e9d1c5f3 Mon Sep 17 00:00:00 2001
+From d63c3cdf593e4579bd2d9e0d9ba56df1f25c0b58 Mon Sep 17 00:00:00 2001
 From: Toxicity <contact@toxicity.io>
-Date: Thu, 27 Mar 2025 11:09:11 -0400
-Subject: [PATCH 9/9] Fix Android API 23- compatibility (Disable all logging)
+Date: Tue, 19 Aug 2025 06:44:22 -0400
+Subject: [PATCH 09/10] Fix Android API 23- compatibility (Disable all logging)
 
 ---
  src/main/java/org/sqlite/JDBC.java            |  8 ++--
@@ -13,7 +13,7 @@ Subject: [PATCH 9/9] Fix Android API 23- compatibility (Disable all logging)
  6 files changed, 68 insertions(+), 68 deletions(-)
 
 diff --git a/src/main/java/org/sqlite/JDBC.java b/src/main/java/org/sqlite/JDBC.java
-index 9c4813a..4c73cf4 100644
+index 9c4813af..4c73cf45 100644
 --- a/src/main/java/org/sqlite/JDBC.java
 +++ b/src/main/java/org/sqlite/JDBC.java
 @@ -19,18 +19,18 @@ package org.sqlite;
@@ -40,7 +40,7 @@ index 9c4813a..4c73cf4 100644
      }
  
 diff --git a/src/main/java/org/sqlite/SQLiteJDBCLoader.java b/src/main/java/org/sqlite/SQLiteJDBCLoader.java
-index cfd41ab..d736344 100644
+index cfd41abc..d7363447 100644
 --- a/src/main/java/org/sqlite/SQLiteJDBCLoader.java
 +++ b/src/main/java/org/sqlite/SQLiteJDBCLoader.java
 @@ -41,8 +41,8 @@ import java.util.Properties;
@@ -146,7 +146,7 @@ index cfd41ab..d736344 100644
              VERSION = version;
          }
 diff --git a/src/main/java/org/sqlite/core/NativeDB.java b/src/main/java/org/sqlite/core/NativeDB.java
-index a71e8ea..b563484 100644
+index a71e8ea9..b563484b 100644
 --- a/src/main/java/org/sqlite/core/NativeDB.java
 +++ b/src/main/java/org/sqlite/core/NativeDB.java
 @@ -26,12 +26,12 @@ import org.sqlite.Function;
@@ -200,7 +200,7 @@ index a71e8ea..b563484 100644
      }
  
 diff --git a/src/main/java/org/sqlite/jdbc3/JDBC3DatabaseMetaData.java b/src/main/java/org/sqlite/jdbc3/JDBC3DatabaseMetaData.java
-index 59aadfb..6e94570 100644
+index 49e55456..e6884657 100644
 --- a/src/main/java/org/sqlite/jdbc3/JDBC3DatabaseMetaData.java
 +++ b/src/main/java/org/sqlite/jdbc3/JDBC3DatabaseMetaData.java
 @@ -25,8 +25,8 @@ import org.sqlite.SQLiteConnection;
@@ -260,7 +260,7 @@ index 59aadfb..6e94570 100644
 +//    }
  }
 diff --git a/src/main/java/org/sqlite/jdbc3/JDBC3Statement.java b/src/main/java/org/sqlite/jdbc3/JDBC3Statement.java
-index 1af5694..958527c 100644
+index 1af5694b..958527cd 100644
 --- a/src/main/java/org/sqlite/jdbc3/JDBC3Statement.java
 +++ b/src/main/java/org/sqlite/jdbc3/JDBC3Statement.java
 @@ -15,8 +15,8 @@ import org.sqlite.SQLiteConnection;
@@ -294,10 +294,10 @@ index 1af5694..958527c 100644
      }
  
 diff --git a/src/main/java/org/sqlite/util/OSInfo.java b/src/main/java/org/sqlite/util/OSInfo.java
-index 731a155..8f80716 100644
+index d20991f2..dc2e0788 100644
 --- a/src/main/java/org/sqlite/util/OSInfo.java
 +++ b/src/main/java/org/sqlite/util/OSInfo.java
-@@ -161,7 +161,7 @@ public class OSInfo {
+@@ -176,7 +176,7 @@ public class OSInfo {
          try {
              return processRunner.runAndWaitFor("uname -m");
          } catch (Throwable e) {
@@ -306,7 +306,7 @@ index 731a155..8f80716 100644
              return "unknown";
          }
      }
-@@ -228,9 +228,9 @@ public class OSInfo {
+@@ -243,9 +243,9 @@ public class OSInfo {
                          return "armv7";
                      }
                  } else {
@@ -319,7 +319,7 @@ index 731a155..8f80716 100644
                  }
              } catch (IOException | InterruptedException e) {
                  // ignored: fall back to "arm" arch (soft-float ABI)
-@@ -279,11 +279,11 @@ public class OSInfo {
+@@ -294,11 +294,11 @@ public class OSInfo {
          return archName.replaceAll("\\W", "");
      }
  

@@ -14,7 +14,6 @@
  * limitations under the License.
  **/
 import app.cash.sqldelight.gradle.SqlDelightExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     id("configuration")
@@ -69,14 +68,6 @@ kmpConfiguration {
         kotlin {
             project.extensions.configure<SqlDelightExtension>("sqldelight") {
                 linkSqlite.set(false)
-
-                targets.filterIsInstance<KotlinNativeTarget>()
-                    .filter { it.konanTarget.family.isAppleFamily }
-                    .flatMap { it.binaries }
-                    .forEach { compilationUnit ->
-                        compilationUnit.linkerOpts("-framework", "Security")
-                    }
-
                 databases {
                     create("TestDatabase") {
                         packageName.set("io.toxicity.sqlite.mc.driver.test")

@@ -21,7 +21,7 @@ okio                        = "3.9.1"
 
 sql-delight-dialect         = "sqlite-3-38-dialect"
 sql-delight                 = "2.1.0"
-sql-jdbc-xerial             = "3.49.1.0"
+sql-jdbc-xerial             = "3.50.3.0"
 
 [libraries]
 androidx-startup-runtime    = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup" }
