@@ -17,8 +17,6 @@ package io.toxicity.sqlite.mc.gradle
 
 import app.cash.sqldelight.gradle.SqlDelightExtension
 import org.gradle.api.Plugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 
@@ -59,18 +57,18 @@ abstract class SQLiteMCPlugin internal constructor(): Plugin<Project> {
 
         // TODO: Add android-unit-test dependency to android source sets (if available)
 
-        if (!isMultiplatform) return
-
-        extensions
-            .findByType(KotlinMultiplatformExtension::class.java)
-            ?.linkSQLite3MultipleCiphers()
+//        if (!isMultiplatform) return
+//
+//        extensions
+//            .findByType(KotlinMultiplatformExtension::class.java)
+//            ?.linkSQLite3MultipleCiphers()
     }
 
-    private fun KotlinMultiplatformExtension.linkSQLite3MultipleCiphers() {
-        targets
-            .filterIsInstance<KotlinNativeTarget>()
-            .filter { it.konanTarget.family.isAppleFamily }
-            .flatMap { it.binaries }
-            .forEach { it.linkerOpts("-framework", "Security") }
-    }
+//    private fun KotlinMultiplatformExtension.linkSQLite3MultipleCiphers() {
+//        targets
+//            .filterIsInstance<KotlinNativeTarget>()
+//            .filter { it.konanTarget.family.isAppleFamily }
+//            .flatMap { it.binaries }
+//            .forEach { it.linkerOpts("-framework", "Security") }
+//    }
 }
